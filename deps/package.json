@@ -1,0 +1,25 @@
+{
+  "name": "@synthetixio/deps",
+  "private": true,
+  "version": "1.0.0",
+  "author": "Nikita <nikita@cc.snxdao.io>",
+  "repository": "github:Synthetixio/v3ui",
+  "license": "MIT",
+  "bin": {
+    "deps": "./deps.js",
+    "deps-circular": "./circular.js",
+    "deps-mismatched": "./mismatched.js",
+    "deps-version": "./version.js"
+  },
+  "devDependencies": {
+    "depcheck": "^1.4.7",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.2"
+  },
+  "depcheck": {
+    "ignorePatterns": [],
+    "ignoreMatches": [
+      "typescript"
+    ]
+  }
+}

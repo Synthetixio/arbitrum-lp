@@ -1,0 +1,60 @@
+{
+  "name": "root",
+  "version": "3.0.0",
+  "workspaces": [
+    "contracts",
+    "deps",
+    "**/*"
+  ],
+  "private": true,
+  "scripts": {
+    "start": "yarn workspace @snx-v3/liquidity start",
+    "build": "yarn workspace @snx-v3/liquidity build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "pretty": "prettier . --check",
+    "pretty:fix": "prettier . --write",
+    "clean": "yarn workspaces foreach --parallel exec rm -rf dist coverage build && find . -name 'tsconfig.tsbuildinfo' -delete",
+    "typecheck": "tsc --noEmit",
+    "deps": "deps",
+    "deps:fix": "deps --fix",
+    "deps:mismatched": "deps-mismatched",
+    "deps:circular": "deps-circular",
+    "deps:version": "deps-version",
+    "upgrade-browsers": "yarn up browserslist caniuse-lite --recursive"
+  },
+  "browserslist": [
+    "last 1 Chrome version",
+    "last 1 Firefox version",
+    "last 1 Edge version",
+    "last 1 Opera version"
+  ],
+  "resolutions": {
+    "@emotion/is-prop-valid": "^1.2.0",
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/bignumber": "^5.7.0",
+    "@ethersproject/bytes": "^5.7.0",
+    "big.js": "^6.1.1",
+    "bn.js": "^5.2.1",
+    "browserslist": "4",
+    "caniuse-lite": "1",
+    "ethers": "^5.7.2",
+    "classnames": "2.3.2"
+  },
+  "packageManager": "yarn@4.3.1",
+  "devDependencies": {
+    "@babel/core": "^7.24.7",
+    "@babel/eslint-parser": "^7.24.7",
+    "@babel/preset-env": "^7.24.7",
+    "@babel/preset-typescript": "^7.24.7",
+    "@synthetixio/deps": "workspace:*",
+    "@types/babel__core": "^7",
+    "@types/babel__preset-env": "^7",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react": "^7.34.3",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.2"
+  }
+}
