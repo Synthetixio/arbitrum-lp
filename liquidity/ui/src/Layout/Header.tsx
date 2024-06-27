@@ -4,7 +4,6 @@ import React from 'react';
 import { Logo } from './Logo';
 import { LogoIcon } from './LogoIcon';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
-import { Text } from '@chakra-ui/react';
 
 export default function Header() {
   const { onClose } = useDisclosure();

@@ -13,7 +13,7 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 import { Link as ReactRouterLink } from 'react-router-dom';
-import { theme } from '../theme';
+import { theme } from './theme';
 
 interface TermsModalProps {
   defaultOpen: boolean;

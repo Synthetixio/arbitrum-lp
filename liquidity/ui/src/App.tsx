@@ -1,20 +1,24 @@
 import { ChakraProvider, useColorMode } from '@chakra-ui/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import coinbaseModule from '@web3-onboard/coinbase';
 import gnosisModule from '@web3-onboard/gnosis';
 import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import ledgerModule from '@web3-onboard/ledger';
-import { init, Web3OnboardProvider } from '@web3-onboard/react';
+import { init, useConnectWallet, Web3OnboardProvider } from '@web3-onboard/react';
 import trezorModule from '@web3-onboard/trezor';
 import walletConnectModule from '@web3-onboard/walletconnect';
+import { ethers } from 'ethers';
 import { useEffect } from 'react';
 import { HashRouter } from 'react-router-dom';
+import { Fonts } from './Fonts';
 import { Router } from './Router';
 import SynthetixIcon from './SynthetixIcon.svg';
 import SynthetixLogo from './SynthetixLogo.svg';
 import { TermsModal } from './TermsModal';
-import { Fonts, theme } from './theme';
+import { theme } from './theme';
 
 export const appMetadata = {
   name: 'Synthetix Liquidity',
@@ -79,15 +83,17 @@ export const onboard = init({
     },
   },
   notify: {
-    enabled: false,
+    enabled: true,
   },
 });
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      retry: false,
       refetchInterval: false, //  if queries needs refetching we should be explicit about it, given erc7412
       staleTime: 5 * 60 * 1000,
+      gcTime: 60 * 60 * 1000, // 1h
       refetchOnWindowFocus: false,
       throwOnError: (e) => {
         console.error(e);
@@ -102,8 +108,13 @@ const queryClient = new QueryClient({
     },
   },
 });
+const localStoragePersister = createSyncStoragePersister({
+  storage: window.localStorage,
+});
 
-function ColorMode() {
+// window.$provider
+
+function useDarkColors() {
   const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
@@ -114,23 +125,47 @@ function ColorMode() {
   return null;
 }
 
+declare global {
+  var $provider: ethers.providers.Web3Provider;
+  var $signer: ethers.Signer;
+  var $tx: ethers.ContractTransaction[];
+  var $txResult: ethers.ContractReceipt[];
+}
+
+const Content = () => {
+  useDarkColors();
+
+  const [{ wallet }] = useConnectWallet();
+  if (wallet?.provider && wallet?.accounts?.[0]?.address) {
+    window.$provider = new ethers.providers.Web3Provider(wallet.provider);
+    window.$signer = window.$provider.getSigner(wallet?.accounts?.[0]?.address);
+  }
+
+  return (
+    <>
+      <Fonts />
+      <HashRouter>
+        <TermsModal
+          defaultOpen={window.sessionStorage.getItem('TERMS_CONDITIONS_ACCEPTED') !== 'true'}
+        />
+        <Router />
+      </HashRouter>
+    </>
+  );
+};
+
 export const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: localStoragePersister }}
+    >
       <Web3OnboardProvider web3Onboard={onboard}>
         <ChakraProvider theme={theme}>
-          <ColorMode />
-          <Fonts />
-          <HashRouter>
-            <TermsModal
-              defaultOpen={window.sessionStorage.getItem('TERMS_CONDITIONS_ACCEPTED') !== 'true'}
-            />
-            <Router />
-          </HashRouter>
-
+          <Content />
           <ReactQueryDevtools />
         </ChakraProvider>
       </Web3OnboardProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 };
