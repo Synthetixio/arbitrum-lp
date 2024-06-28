@@ -24,7 +24,8 @@ export function useAccounts() {
       const accounts = await Promise.all(
         accountIndexes.map((i) => AccountProxy.tokenOfOwnerByIndex(walletAddress, i))
       );
-      return accounts.map((accountId) => accountId.toString());
+      return accounts;
     },
+    select: (accounts) => accounts.map((accountId) => ethers.BigNumber.from(accountId).toString()),
   });
 }

@@ -6,6 +6,7 @@ import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { usePriceUpdateTxn } from './usePriceUpdateTxn';
 import { useCoreProxy } from './useCoreProxy';
 import { useMulticall } from './useMulticall';
+import { fetchAccountCollateral } from './fetchAccountCollateral';
 
 export function useAccountCollateral({
   accountId,
@@ -47,58 +48,20 @@ export function useAccountCollateral({
       ) {
         throw 'OMFG';
       }
-      const provider = new ethers.providers.Web3Provider(wallet.provider);
-      const CoreProxy = new ethers.Contract(
-        CoreProxyContract.address,
-        CoreProxyContract.abi,
-        provider
-      );
-      const Multicall = new ethers.Contract(
-        MulticallContract.address,
-        MulticallContract.abi,
-        provider
-      );
-
-      const getAccountCollateralTxn = {
-        target: CoreProxyContract.address,
-        callData: CoreProxy.interface.encodeFunctionData('getAccountCollateral', [
-          accountId,
-          tokenAddress,
-        ]),
-        value: 0,
-        requireSuccess: true,
-      };
-
-      console.time('getAccountCollateral');
-      const response = await provider
-        .call({
-          to: MulticallContract.address,
-          data: Multicall.interface.encodeFunctionData('aggregate3Value', [
-            [
-              getAccountCollateralTxn,
-              ...(priceUpdateTxn.callData === ethers.constants.HashZero ? [] : [priceUpdateTxn]),
-            ],
-          ]),
-          value: priceUpdateTxn.value,
-        })
-        .catch(errorParser);
-      console.timeEnd('getAccountCollateral');
-
-      const [[getAccountCollateralTxnData]] = Multicall.interface.decodeFunctionResult(
-        'aggregate3Value',
-        response || ''
-      );
-
-      const accountCollateral = CoreProxy.interface.decodeFunctionResult(
-        'getAccountCollateral',
-        getAccountCollateralTxnData.returnData
-      );
-
-      return {
-        totalAssigned: accountCollateral.totalAssigned,
-        totalDeposited: accountCollateral.totalDeposited,
-        totalLocked: accountCollateral.totalLocked,
-      };
+      return fetchAccountCollateral({
+        wallet,
+        CoreProxyContract,
+        MulticallContract,
+        accountId,
+        tokenAddress,
+        priceUpdateTxn,
+        errorParser,
+      });
     },
+    select: (accountCollateral) => ({
+      totalAssigned: ethers.BigNumber.from(accountCollateral.totalAssigned),
+      totalDeposited: ethers.BigNumber.from(accountCollateral.totalDeposited),
+      totalLocked: ethers.BigNumber.from(accountCollateral.totalLocked),
+    }),
   });
 }

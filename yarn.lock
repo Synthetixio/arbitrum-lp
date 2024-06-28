@@ -4445,7 +4445,7 @@ __metadata:
   resolution: "@snx-v3/contracts@workspace:contracts"
   dependencies:
     "@synthetixio/v3-contracts": "npm:^6.1.0"
-    viem: "npm:^2.16.2"
+    viem: "npm:^2.16.3"
   languageName: unknown
   linkType: soft
 
@@ -4470,15 +4470,15 @@ __metadata:
     "@snx-v3/contracts": "workspace:*"
     "@snx-v3/useParams": "workspace:*"
     "@synthetixio/safe-import": "workspace:*"
-    "@synthetixio/wei": "npm:^2.74.4"
     "@tanstack/query-sync-storage-persister": "npm:^5.48.0"
     "@tanstack/react-query": "npm:^5.48.0"
     "@tanstack/react-query-devtools": "npm:^5.48.0"
     "@tanstack/react-query-persist-client": "npm:^5.48.0"
-    "@types/react": "npm:^18"
-    "@types/react-dom": "npm:^18"
-    "@types/react-helmet": "npm:^6"
+    "@types/react": "npm:^18.3.3"
+    "@types/react-dom": "npm:^18.3.0"
+    "@types/react-helmet": "npm:^6.1.11"
     "@web3-onboard/coinbase": "npm:^2.4.1"
+    "@web3-onboard/core": "npm:^2.22.2"
     "@web3-onboard/gnosis": "npm:^2.3.1"
     "@web3-onboard/injected-wallets": "npm:^2.11.1"
     "@web3-onboard/ledger": "npm:2.7.1"
@@ -4518,7 +4518,7 @@ __metadata:
   dependencies:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-router-dom: "npm:^6.23.1"
+    react-router-dom: "npm:^6.24.0"
   languageName: unknown
   linkType: soft
 
@@ -4760,17 +4760,6 @@ __metadata:
   version: 6.1.0
   resolution: "@synthetixio/v3-contracts@npm:6.1.0"
   checksum: 10/ddd6569211f32212a152eb24b6137c49baf9bf48a604a0d0a103af33c2c2457602d34a07aa9d157bb301ed38e996405a7d35e0ba37eae76ae122c4ae20881b63
-  languageName: node
-  linkType: hard
-
-"@synthetixio/wei@npm:^2.74.4":
-  version: 2.74.4
-  resolution: "@synthetixio/wei@npm:2.74.4"
-  dependencies:
-    "@ethersproject/bignumber": "npm:^5.6.2"
-    "@ethersproject/bytes": "npm:^5.6.1"
-    big.js: "npm:^6.1.1"
-  checksum: 10/84c7e8a3717682e50debacb6fabf887d74caa71d1d558426c26a6b787930ad601a256a7fee64664fe4501e2197b205a8dffb1867053213eaa2fa66a4bb7e309c
   languageName: node
   linkType: hard
 
@@ -5088,7 +5077,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/babel__core@npm:^7":
+"@types/babel__core@npm:^7.20.5":
   version: 7.20.5
   resolution: "@types/babel__core@npm:7.20.5"
   dependencies:
@@ -5110,7 +5099,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/babel__preset-env@npm:^7":
+"@types/babel__preset-env@npm:^7.9.7":
   version: 7.9.7
   resolution: "@types/babel__preset-env@npm:7.9.7"
   checksum: 10/624425a84d9149aec04795fed6b1ac2f27dfd5d7976fde479bb1a4d754de34c92cdc28a1a373a5826382a68127b536420a0e090aa5fae522cb62724b7a571cb5
@@ -5372,7 +5361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18":
+"@types/react-dom@npm:^18.3.0":
   version: 18.3.0
   resolution: "@types/react-dom@npm:18.3.0"
   dependencies:
@@ -5381,7 +5370,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-helmet@npm:^6":
+"@types/react-helmet@npm:^6.1.11":
   version: 6.1.11
   resolution: "@types/react-helmet@npm:6.1.11"
   dependencies:
@@ -5390,7 +5379,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18":
+"@types/react@npm:*, @types/react@npm:^18.3.3":
   version: 18.3.3
   resolution: "@types/react@npm:18.3.3"
   dependencies:
@@ -6233,7 +6222,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/core@npm:2.22.2":
+"@web3-onboard/core@npm:2.22.2, @web3-onboard/core@npm:^2.22.2":
   version: 2.22.2
   resolution: "@web3-onboard/core@npm:2.22.2"
   dependencies:
@@ -7653,9 +7642,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:1":
-  version: 1.0.30001636
-  resolution: "caniuse-lite@npm:1.0.30001636"
-  checksum: 10/9e6c5ab4c20df31df36720dda77cf6a781549ac2ad844bc0a416b327a793da21486358a1f85fdd6c39e22d336f70aac3b0e232f5f228cdff0ceb6e3e1c5e98fd
+  version: 1.0.30001638
+  resolution: "caniuse-lite@npm:1.0.30001638"
+  checksum: 10/f30c80a5a33e659c990909046d5299af1584441059785460b012d10a58f0885da25fde08ab655ed0cf76b2695d0b3a32c41875bb9b7a730b34f992ec2512d430
   languageName: node
   linkType: hard
 
@@ -13545,7 +13534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.23.1, react-router-dom@npm:^6.24.0":
+"react-router-dom@npm:^6.24.0":
   version: 6.24.0
   resolution: "react-router-dom@npm:6.24.0"
   dependencies:
@@ -14037,8 +14026,8 @@ __metadata:
     "@babel/preset-env": "npm:^7.24.7"
     "@babel/preset-typescript": "npm:^7.24.7"
     "@synthetixio/deps": "workspace:*"
-    "@types/babel__core": "npm:^7"
-    "@types/babel__preset-env": "npm:^7"
+    "@types/babel__core": "npm:^7.20.5"
+    "@types/babel__preset-env": "npm:^7.9.7"
     eslint: "npm:^8.57.0"
     eslint-plugin-import: "npm:^2.29.1"
     eslint-plugin-react: "npm:^7.34.3"
@@ -15738,9 +15727,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.1.1, viem@npm:^2.16.2":
-  version: 2.16.2
-  resolution: "viem@npm:2.16.2"
+"viem@npm:^2.1.1, viem@npm:^2.16.3":
+  version: 2.16.3
+  resolution: "viem@npm:2.16.3"
   dependencies:
     "@adraffy/ens-normalize": "npm:1.10.0"
     "@noble/curves": "npm:1.2.0"
@@ -15755,7 +15744,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/fc6f61853f513ecced75b81e1489ad27fd64de94ddac3747378c7ed29af468da5f844a04760239193b6234a3c15d524e462e04642a8a3780f6422e880f6dc8be
+  checksum: 10/52948f2b23ab717b6368effefc0790b658e5d84e041aef273e806221adcab6e6b32fd95620fea8e66ea9dcf639af15099d60775ec25fad4bd430991556a774d8
   languageName: node
   linkType: hard
 

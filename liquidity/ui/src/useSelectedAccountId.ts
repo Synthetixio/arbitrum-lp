@@ -6,7 +6,6 @@ export function useSelectedAccountId() {
   const { data: accounts } = useAccounts();
   const [params] = useParams();
 
-  // { [key: string]: string }
   return React.useMemo(
     () => (accounts && accounts.includes(params.accountId) ? params.accountId : undefined),
     [accounts, params.accountId]

@@ -1,16 +1,20 @@
+import type { WalletState } from '@web3-onboard/core';
 import { ethers } from 'ethers';
 
 export async function approveToken({
-  signer,
+  wallet,
   tokenAddress,
   spenderAddress,
   allowance,
 }: {
-  signer: ethers.Signer;
+  wallet: WalletState;
   tokenAddress: string;
   spenderAddress: string;
   allowance: ethers.BigNumber;
 }) {
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const provider = new ethers.providers.Web3Provider(wallet.provider);
+  const signer = provider.getSigner(walletAddress);
   const Token = new ethers.Contract(
     tokenAddress,
     ['function approve(address spender, uint256 amount) returns (bool)'],

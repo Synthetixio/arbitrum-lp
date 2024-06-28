@@ -1,19 +1,24 @@
+import type { WalletState } from '@web3-onboard/core';
 import { importCoreProxy } from '@snx-v3/contracts';
 import { ethers } from 'ethers';
 
 export async function depositCollateral({
-  signer,
+  wallet,
+  CoreProxyContract,
   accountId,
   tokenAddress,
   depositAmount,
 }: {
-  signer: ethers.Signer;
+  wallet: WalletState;
+  CoreProxyContract: { address: string; abi: string };
   accountId: string;
   tokenAddress: string;
   depositAmount: ethers.BigNumber;
 }) {
-  const chainId = await signer.getChainId();
-  const CoreProxyContract = await importCoreProxy(chainId, 'main');
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const provider = new ethers.providers.Web3Provider(wallet.provider);
+  const signer = provider.getSigner(walletAddress);
+
   const CoreProxy = new ethers.Contract(CoreProxyContract.address, CoreProxyContract.abi, signer);
   const tx: ethers.ContractTransaction = await CoreProxy['deposit'](
     //

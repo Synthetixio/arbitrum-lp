@@ -28,6 +28,7 @@ export function useTokenAllowance({
       const provider = new ethers.providers.Web3Provider(wallet.provider);
       return fetchTokenAllowance({ provider, tokenAddress, ownerAddress, spenderAddress });
     },
+    select: (allowance) => ethers.BigNumber.from(allowance),
     refetchInterval: 60_000,
   });
 }

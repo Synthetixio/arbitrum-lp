@@ -7,8 +7,8 @@ export function useTokenBalance({
   tokenAddress,
   ownerAddress,
 }: {
-  tokenAddress: string;
-  ownerAddress: string;
+  tokenAddress?: string;
+  ownerAddress?: string;
 }) {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
@@ -22,6 +22,7 @@ export function useTokenBalance({
       const provider = new ethers.providers.Web3Provider(wallet.provider);
       return fetchTokenBalance({ provider, tokenAddress, ownerAddress });
     },
+    select: (balance) => ethers.BigNumber.from(balance),
     refetchInterval: 60_000,
   });
 }

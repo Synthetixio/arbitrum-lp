@@ -7,7 +7,7 @@ export function useCoreProxy() {
   return useQuery({
     enabled: Boolean(connectedChain?.id),
     queryKey: [connectedChain?.id, 'CoreProxy'],
-    queryFn: async () => {
+    queryFn: async (): Promise<{ address: string; abi: string }> => {
       if (!connectedChain?.id) {
         throw 'OMFG';
       }

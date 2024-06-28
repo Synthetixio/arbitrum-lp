@@ -7,7 +7,7 @@ export function usePythERC7412Wrapper() {
   return useQuery({
     enabled: Boolean(connectedChain?.id),
     queryKey: [connectedChain?.id, 'PythERC7412Wrapper'],
-    queryFn: async () => {
+    queryFn: async (): Promise<{ address: string; abi: string }> => {
       if (!connectedChain?.id) {
         throw 'OMFG';
       }

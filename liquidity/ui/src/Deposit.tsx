@@ -10,21 +10,19 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 import { approveToken } from './approveToken';
 import { depositCollateral } from './depositCollateral';
-import { fetchTokenAllowance } from './fetchTokenAllowance';
-import { fetchTokenBalance } from './fetchTokenBalance';
 import { useAccountCollateral } from './useAccountCollateral';
 import { useCoreProxy } from './useCoreProxy';
 import { usePositionCollateral } from './usePositionCollateral';
-
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useTokenAllowance } from './useTokenAllowance';
+import { useTokenBalance } from './useTokenBalance';
 
 export function Deposit() {
   const [{ connectedChain }] = useSetChain();
@@ -36,20 +34,23 @@ export function Deposit() {
 
   const { data: CoreProxyContract } = useCoreProxy();
 
-  const { data: currentAllowance } = useTokenAllowance({
+  const { data: currentAllowance, refetch: tokenAllowanceRefetch } = useTokenAllowance({
     ownerAddress: walletAddress,
     tokenAddress: collateralType?.address,
     spenderAddress: CoreProxyContract?.address,
   });
 
-  const queryClient = useQueryClient();
+  const { refetch: tokenBalanceRefetch } = useTokenBalance({
+    ownerAddress: walletAddress,
+    tokenAddress: collateralType?.address,
+  });
 
   const { data: accountCollateral, refetch: accountCollateralRefetch } = useAccountCollateral({
     accountId,
     tokenAddress: collateralType?.address,
   });
 
-  const { data: positionCollateral, refetch: positionCollateralRefetch } = usePositionCollateral({
+  const { refetch: positionCollateralRefetch } = usePositionCollateral({
     accountId,
     poolId: '1',
     tokenAddress: collateralType?.address,
@@ -57,16 +58,7 @@ export function Deposit() {
 
   const deposit = useMutation({
     mutationFn: async (inputAmount: string) => {
-      if (
-        !(
-          CoreProxyContract &&
-          connectedChain?.id &&
-          walletAddress &&
-          wallet?.provider &&
-          accountId &&
-          collateralType
-        )
-      ) {
+      if (!(wallet && CoreProxyContract && connectedChain?.id && accountId && collateralType)) {
         throw 'OMFG';
       }
 
@@ -79,82 +71,62 @@ export function Deposit() {
         throw new Error('Amount required');
       }
 
-      const provider = new ethers.providers.Web3Provider(wallet.provider);
-
-      const freshBalance = await fetchTokenBalance({
-        provider,
-        tokenAddress: collateralType.address,
-        ownerAddress: walletAddress,
-      });
-      queryClient.setQueryData(
-        [
-          connectedChain.id,
-          'Balance',
-          { tokenAddress: collateralType.address, ownerAddress: walletAddress },
-        ],
-        freshBalance
-      );
-      if (freshBalance.lt(depositAmount)) {
+      const freshBalance = await tokenBalanceRefetch();
+      if (!freshBalance.data) {
+        throw freshBalance.error;
+      }
+      if (freshBalance.data.lt(depositAmount)) {
         throw new Error('Not enough balance');
       }
+      const freshAllowance = await tokenAllowanceRefetch();
+      if (!freshAllowance.data) {
+        throw freshAllowance.error;
+      }
 
-      const freshAllowance = await fetchTokenAllowance({
-        provider,
-        tokenAddress: collateralType.address,
-        ownerAddress: walletAddress,
-        spenderAddress: CoreProxyContract.address,
-      });
-      queryClient.setQueryData(
-        [
-          connectedChain.id,
-          'Allowance',
-          {
-            tokenAddress: collateralType.address,
-            ownerAddress: walletAddress,
-            spenderAddress: CoreProxyContract.address,
-          },
-        ],
-        freshAllowance
-      );
-
-      const signer = provider.getSigner(walletAddress);
-
-      if (freshAllowance.lt(depositAmount)) {
+      if (freshAllowance.data.lt(depositAmount)) {
         await approveToken({
-          signer,
+          wallet,
           tokenAddress: collateralType.address,
           spenderAddress: CoreProxyContract.address,
-          allowance: depositAmount.sub(freshAllowance),
+          allowance: depositAmount.sub(freshAllowance.data),
         });
       }
 
       await depositCollateral({
-        signer,
+        wallet,
+        CoreProxyContract,
         accountId,
         tokenAddress: collateralType.address,
         depositAmount,
       });
 
-      accountCollateralRefetch();
-      positionCollateralRefetch();
+      await Promise.all([
+        //
+        accountCollateralRefetch(),
+        positionCollateralRefetch(),
+      ]);
     },
   });
 
   const [value, setValue] = React.useState('');
 
   const hasEnoughAllowance = React.useMemo(() => {
+    if (!(collateralType?.decimals && currentAllowance)) {
+      return true;
+    }
     const filteredNumber = `${value}`.replace(/[^0-9.]+/gi, '');
-    return filteredNumber && collateralType?.decimals
-      ? currentAllowance.gte(ethers.utils.parseUnits(filteredNumber, collateralType.decimals))
-      : true;
-  }, [value, collateralType?.decimals]);
+    if (!filteredNumber) {
+      return true;
+    }
+    return currentAllowance.gte(ethers.utils.parseUnits(filteredNumber, collateralType.decimals));
+  }, [value, collateralType?.decimals, currentAllowance]);
 
   return (
     <>
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
         Deposit
         <Text fontSize="1rem">
-          Total Deposited:{' '}
+          Total deposit:{' '}
           {accountCollateral && collateralType
             ? ethers.utils.formatUnits(accountCollateral.totalDeposited, collateralType.decimals)
             : ''}
@@ -178,32 +150,6 @@ export function Deposit() {
             deposit.mutate(value);
           }}
         >
-          {/*
-          <Text>
-            Delegated to the pool:{' '}
-            {positionCollateral && collateralType
-              ? ethers.utils.formatUnits(positionCollateral, collateralType.decimals)
-              : ''}
-          </Text>
-          <Text>
-            Total Deposited:{' '}
-            {accountCollateral && collateralType
-              ? ethers.utils.formatUnits(accountCollateral.totalDeposited, collateralType.decimals)
-              : ''}
-          </Text>
-          <Text>
-            Total Delegated:{' '}
-            {accountCollateral && collateralType
-              ? ethers.utils.formatUnits(accountCollateral.totalAssigned, collateralType.decimals)
-              : ''}
-          </Text>
-          <Text>
-            Total Locked:{' '}
-            {accountCollateral && collateralType
-              ? ethers.utils.formatUnits(accountCollateral.totalLocked, collateralType.decimals)
-              : ''}
-          </Text>
-*/}
           <InputGroup>
             <Input
               required

@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
+import { fetchPositionCollateral } from './fetchPositionCollateral';
 import { useCoreProxy } from './useCoreProxy';
+import { useErrorParser } from './parseError';
 
 export function usePositionCollateral({
   accountId,
@@ -12,6 +14,7 @@ export function usePositionCollateral({
   poolId?: string;
   tokenAddress?: string;
 }) {
+  const errorParser = useErrorParser();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const { data: CoreProxyContract } = useCoreProxy();
@@ -38,18 +41,15 @@ export function usePositionCollateral({
       ) {
         throw 'OMFG';
       }
-      const provider = new ethers.providers.Web3Provider(wallet.provider);
-      const CoreProxy = new ethers.Contract(
-        CoreProxyContract.address,
-        CoreProxyContract.abi,
-        provider
-      );
-      const positionCollateral = await CoreProxy.getPositionCollateral(
+      return fetchPositionCollateral({
+        wallet,
+        CoreProxyContract,
         accountId,
         poolId,
-        tokenAddress
-      );
-      return positionCollateral;
+        tokenAddress,
+        errorParser,
+      });
     },
+    select: (positionCollateral) => ethers.BigNumber.from(positionCollateral),
   });
 }

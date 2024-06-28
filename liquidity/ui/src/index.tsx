@@ -9,8 +9,21 @@ export async function bootstrap() {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    const { Wei, wei } = await import('@synthetixio/wei');
     const { ethers } = await import('ethers');
+    function number(obj: any) {
+      if (obj.eq(ethers.constants.MaxUint256)) {
+        return 'MaxUint256';
+      }
+      if (obj.eq(ethers.constants.MaxInt256)) {
+        return 'MaxInt256';
+      }
+      if (obj.abs().gt(1e10)) {
+        // Assuming everything bigger than 1e10 is a wei
+        return `wei ${parseFloat(ethers.utils.formatEther(`${obj}`))}`;
+      }
+      return parseFloat(obj.toString());
+    }
+
     // @ts-ignore
     window.devtoolsFormatters = window.devtoolsFormatters ?? [];
     // @ts-ignore
@@ -20,17 +33,10 @@ export async function bootstrap() {
           return [
             'div',
             { style: 'color: #f33' },
-            ['span', {}, 'ethers.BigNumber('],
-            ['span', { style: 'color: #3f3' }, wei(obj).toString()],
-            ['span', {}, ')'],
-          ];
-        }
-        if (obj instanceof Wei) {
-          return [
-            'div',
-            { style: 'color: #f33' },
-            ['span', {}, 'Wei('],
-            ['span', { style: 'color: #3f3' }, obj.toString()],
+            ['span', {}, 'BigNumber('],
+            ['span', { style: 'color: #ff3' }, number(obj)],
+            ['span', {}, ' '],
+            ['span', { style: 'color: #3f3' }, obj.toHexString()],
             ['span', {}, ')'],
           ];
         }

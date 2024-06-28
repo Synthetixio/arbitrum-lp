@@ -4,10 +4,11 @@ import { Helmet } from 'react-helmet';
 import { Accounts } from './Accounts';
 import { CollateralTokens } from './CollateralTokens';
 import { Deposit } from './Deposit';
+import { Delegate } from './Delegate';
 
 export function HomePage() {
   return (
-    <>
+    <Flex flexDir="column" mb={20}>
       <Helmet>
         <title>Synthetix Liquidity V3</title>
         <meta name="description" content="Synthetix V3 - Dashboard" />
@@ -29,7 +30,10 @@ export function HomePage() {
       <Flex flexDir="column" mt={10}>
         <Deposit />
       </Flex>
-    </>
+      <Flex flexDir="column" mt={10}>
+        <Delegate />
+      </Flex>
+    </Flex>
   );
 }
 

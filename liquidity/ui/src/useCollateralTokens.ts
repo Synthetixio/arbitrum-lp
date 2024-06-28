@@ -28,15 +28,15 @@ export function useCollateralTokens() {
         parseInt(connectedChain.id, 16),
         'main'
       );
-      return tokens
-        .filter(({ depositingEnabled }) => depositingEnabled)
-        .map((config) => {
-          config.issuanceRatioD18 = ethers.BigNumber.from(config.issuanceRatioD18);
-          config.liquidationRatioD18 = ethers.BigNumber.from(config.liquidationRatioD18);
-          config.liquidationRewardD18 = ethers.BigNumber.from(config.liquidationRewardD18);
-          config.minDelegationD18 = ethers.BigNumber.from(config.minDelegationD18);
-          return config;
-        });
+      return tokens.filter(({ depositingEnabled }) => depositingEnabled);
     },
+    select: (tokens) =>
+      tokens.map((config) => {
+        config.issuanceRatioD18 = ethers.BigNumber.from(config.issuanceRatioD18);
+        config.liquidationRatioD18 = ethers.BigNumber.from(config.liquidationRatioD18);
+        config.liquidationRewardD18 = ethers.BigNumber.from(config.liquidationRewardD18);
+        config.minDelegationD18 = ethers.BigNumber.from(config.minDelegationD18);
+        return config;
+      }),
   });
 }

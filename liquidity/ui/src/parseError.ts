@@ -50,27 +50,17 @@ export const PYTH_ERRORS = [
 
 export async function parseError({
   error,
-  provider,
   chainId,
   preset,
 }: {
   error: any;
-  provider: ethers.providers.JsonRpcProvider;
   chainId: string;
   preset: string;
 }) {
+  console.log({ error });
   let errorData = error.data || error.error?.data?.data || error.error?.error?.data;
   if (!errorData) {
-    try {
-      console.log('Error is missing revert data, trying provider.call, instead of estimate gas..');
-      // Some wallets swallows the revert reason when calling estimate gas,try to get the error by using provider.call
-      // provider.call wont actually revert, instead the error data is just returned
-      const lookedUpError = await provider.call(error.transaction);
-      errorData = lookedUpError;
-    } catch (newError: any) {
-      console.log('provider.call(error.transaction) failed, trying to extract error');
-      console.log('Error data: ', errorData);
-    }
+    throw error;
   }
 
   if (`${errorData}`.startsWith('0x08c379a0')) {
@@ -107,7 +97,7 @@ export function useErrorParser() {
     (error: Error) => {
       if (wallet?.provider && connectedChain?.id) {
         const provider = new ethers.providers.Web3Provider(wallet.provider);
-        parseError({ error, provider, chainId: connectedChain.id, preset: 'main' });
+        parseError({ error, chainId: connectedChain.id, preset: 'main' });
         throw error;
       }
     },
