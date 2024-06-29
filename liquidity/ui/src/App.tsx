@@ -1,4 +1,12 @@
-import { ChakraProvider, useColorMode } from '@chakra-ui/react';
+import {
+  Box,
+  ChakraProvider,
+  Container,
+  Flex,
+  Link,
+  useColorMode,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -11,14 +19,29 @@ import { init, useConnectWallet, Web3OnboardProvider } from '@web3-onboard/react
 import trezorModule from '@web3-onboard/trezor';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import { ethers } from 'ethers';
-import { useEffect } from 'react';
-import { HashRouter } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import {
+  HashRouter,
+  NavLink as RouterLink,
+  Outlet,
+  Route,
+  Routes,
+  useLocation,
+} from 'react-router-dom';
+import { DiscordIcon } from './DiscordIcon';
 import { Fonts } from './Fonts';
-import { Router } from './Router';
+import { GithubIcon } from './GithubIcon';
+import { HomePage } from './HomePage';
+import { Logo } from './Logo';
+import { NotFoundPage } from './NotFoundPage';
 import SynthetixIcon from './SynthetixIcon.svg';
 import SynthetixLogo from './SynthetixLogo.svg';
 import { TermsModal } from './TermsModal';
 import { theme } from './theme';
+import { UserMenu } from './UserMenu';
+import { WarpcastIcon } from './WarpcastIcon';
+import { XIcon } from './XIcon';
+import { YoutubeIcon } from './YoutubeIcon';
 
 export const appMetadata = {
   name: 'Synthetix Liquidity',
@@ -132,8 +155,86 @@ declare global {
   var $txResult: ethers.ContractReceipt[];
 }
 
-const Content = () => {
+function Layout() {
+  return (
+    <Box
+      as="main"
+      minHeight="100vh"
+      color="rgba(255,255,255,0.85)"
+      display="flex"
+      flexDirection="column"
+      bg="navy.900"
+    >
+      <Flex flex="1" flexDirection="column">
+        <Flex
+          bg="navy.700"
+          mb="4"
+          py="3"
+          borderBottomWidth="1px"
+          borderBottomColor="gray.900"
+          px="10"
+        >
+          <Container maxW="1236px" as={Flex} justifyContent="space-between" alignItems="center">
+            <Link
+              to={{
+                pathname: '/',
+                search: location.search,
+              }}
+              as={RouterLink}
+              py={4}
+            >
+              <Logo />
+            </Link>
+            <Flex gap={3} flexWrap="wrap-reverse" justifyContent="center" alignItems="center">
+              <UserMenu />
+            </Flex>
+          </Container>
+        </Flex>
+        <Container display="flex" flexDir="column" maxW="1236px" flex="1">
+          <Outlet />
+        </Container>
+
+        <Flex borderTop="1px solid" borderTopColor="gray.900" bg="navy.700">
+          <Container
+            maxW="1236px"
+            as={Flex}
+            height="72px"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Logo withText={false} />
+            <Flex alignItems="center">
+              <Link href="https://discord.com/invite/synthetix" target="_blank">
+                <DiscordIcon w="24px" h="24px" mr={2} />
+              </Link>
+              <Link href="https://x.com/synthetix_io" target="_blank">
+                <XIcon w="24px" h="24px" mr={2} />
+              </Link>
+              <Link href="https://github.com/Synthetixio/" target="_blank">
+                <GithubIcon w="24px" h="24px" mr={2} />
+              </Link>
+              <Link href="https://warpcast.com/~/channel/synthetix" target="_blank">
+                <WarpcastIcon w="24px" h="24px" mr={2} />
+              </Link>
+              <Link href="https://www.youtube.com/@synthetix.v3" target="_blank">
+                <YoutubeIcon w="24px" h="24px" />
+              </Link>
+            </Flex>
+          </Container>
+        </Flex>
+      </Flex>
+    </Box>
+  );
+}
+
+function Router() {
   useDarkColors();
+
+  const { onClose } = useDisclosure();
+  const location = useLocation();
+  React.useEffect(() => {
+    onClose();
+  }, [location, onClose]);
 
   const [{ wallet }] = useConnectWallet();
   if (wallet?.provider && wallet?.accounts?.[0]?.address) {
@@ -142,19 +243,16 @@ const Content = () => {
   }
 
   return (
-    <>
-      <Fonts />
-      <HashRouter>
-        <TermsModal
-          defaultOpen={window.sessionStorage.getItem('TERMS_CONDITIONS_ACCEPTED') !== 'true'}
-        />
-        <Router />
-      </HashRouter>
-    </>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
-};
+}
 
-export const App = () => {
+export function App() {
   return (
     <PersistQueryClientProvider
       client={queryClient}
@@ -162,10 +260,16 @@ export const App = () => {
     >
       <Web3OnboardProvider web3Onboard={onboard}>
         <ChakraProvider theme={theme}>
-          <Content />
+          <HashRouter>
+            <Router />
+            <TermsModal
+              defaultOpen={window.sessionStorage.getItem('TERMS_CONDITIONS_ACCEPTED') !== 'true'}
+            />
+          </HashRouter>
           <ReactQueryDevtools />
+          <Fonts />
         </ChakraProvider>
       </Web3OnboardProvider>
     </PersistQueryClientProvider>
   );
-};
+}

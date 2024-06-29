@@ -122,7 +122,16 @@ export function Deposit() {
   }, [value, collateralType?.decimals, currentAllowance]);
 
   return (
-    <>
+    <Stack
+      gap={3}
+      as="form"
+      method="POST"
+      action="#"
+      onSubmit={(e) => {
+        e.preventDefault();
+        deposit.mutate(value);
+      }}
+    >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
         Deposit
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
@@ -134,40 +143,28 @@ export function Deposit() {
           </b>
         </Text>
       </Heading>
-      <Flex flexDir="column" gap={3} alignItems="flex-start">
-        {deposit.isError ? (
-          <Alert status="error" maxWidth="40rem">
-            <AlertIcon />
-            <AlertTitle>{deposit.error.message}</AlertTitle>
-          </Alert>
-        ) : null}
+      {deposit.isError ? (
+        <Alert status="error" maxWidth="40rem">
+          <AlertIcon />
+          <AlertTitle>{deposit.error.message}</AlertTitle>
+        </Alert>
+      ) : null}
 
-        <Stack
-          spacing={4}
-          as="form"
-          method="POST"
-          action="#"
-          onSubmit={(e) => {
-            e.preventDefault();
-            deposit.mutate(value);
+      <InputGroup gap={3}>
+        <Input
+          required
+          placeholder="Enter amount"
+          value={value}
+          onChange={(e) => {
+            deposit.reset();
+            setValue(e.target.value);
           }}
-        >
-          <InputGroup gap={4}>
-            <Input
-              required
-              placeholder="Enter amount"
-              value={value}
-              onChange={(e) => {
-                deposit.reset();
-                setValue(e.target.value);
-              }}
-            />
-            <Button type="submit" isLoading={deposit.isPending}>
-              {hasEnoughAllowance ? 'Deposit' : 'Approve and Deposit'}
-            </Button>
-          </InputGroup>
-        </Stack>
-      </Flex>
-    </>
+          maxWidth="10rem"
+        />
+        <Button type="submit" isLoading={deposit.isPending}>
+          {hasEnoughAllowance ? 'Deposit' : 'Approve and Deposit'}
+        </Button>
+      </InputGroup>
+    </Stack>
   );
 }

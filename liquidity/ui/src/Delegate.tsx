@@ -152,7 +152,16 @@ export function Delegate() {
   ]);
 
   return (
-    <>
+    <Stack
+      gap={3}
+      as="form"
+      method="POST"
+      action="#"
+      onSubmit={(e) => {
+        e.preventDefault();
+        delegate.mutate(value);
+      }}
+    >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
         Lock
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
@@ -173,40 +182,28 @@ export function Delegate() {
           </b>
         </Text>
       </Heading>
-      <Flex flexDir="column" gap={3} alignItems="flex-start">
-        {delegate.isError ? (
-          <Alert status="error" maxWidth="40rem">
-            <AlertIcon />
-            <AlertTitle>{delegate.error.message}</AlertTitle>
-          </Alert>
-        ) : null}
+      {delegate.isError ? (
+        <Alert status="error" maxWidth="40rem">
+          <AlertIcon />
+          <AlertTitle>{delegate.error.message}</AlertTitle>
+        </Alert>
+      ) : null}
 
-        <Stack
-          spacing={4}
-          as="form"
-          method="POST"
-          action="#"
-          onSubmit={(e) => {
-            e.preventDefault();
-            delegate.mutate(value);
+      <InputGroup gap={3}>
+        <Input
+          required
+          placeholder="Enter amount"
+          value={value}
+          onChange={(e) => {
+            delegate.reset();
+            setValue(e.target.value);
           }}
-        >
-          <InputGroup gap={4}>
-            <Input
-              required
-              placeholder="Enter amount"
-              value={value}
-              onChange={(e) => {
-                delegate.reset();
-                setValue(e.target.value);
-              }}
-            />
-            <Button type="submit" isLoading={delegate.isPending} disabled={!hasEnoughDeposit}>
-              {hasEnoughDeposit ? 'Lock' : 'Deposit and Lock'}
-            </Button>
-          </InputGroup>
-        </Stack>
-      </Flex>
-    </>
+          maxWidth="10rem"
+        />
+        <Button type="submit" isLoading={delegate.isPending} disabled={!hasEnoughDeposit}>
+          {hasEnoughDeposit ? 'Lock' : 'Deposit and Lock'}
+        </Button>
+      </InputGroup>
+    </Stack>
   );
 }

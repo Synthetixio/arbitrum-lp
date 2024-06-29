@@ -182,7 +182,7 @@ export function Borrow() {
             borrow.mutate(value);
           }}
         >
-          <InputGroup gap={4}>
+          <InputGroup gap={3}>
             <Input
               required
               placeholder="Enter amount"
