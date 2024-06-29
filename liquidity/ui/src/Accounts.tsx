@@ -1,4 +1,5 @@
-import { Button, Flex, Heading, Text } from '@chakra-ui/react';
+import { ChevronDownIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { Button, Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
@@ -6,6 +7,19 @@ import { ethers } from 'ethers';
 import React from 'react';
 import { useAccounts } from './useAccounts';
 import { useCoreProxy } from './useCoreProxy';
+import { useSelectedAccountId } from './useSelectedAccountId';
+
+function shortAccount(accountId?: string) {
+  if (!accountId) {
+    return '---';
+  }
+  const hex = ethers.BigNumber.from(accountId).toHexString();
+  // auto-generated 0x80000000000000000000000000000008 value
+  if (hex.length === 34) {
+    return `0x...${hex.slice(-4)}`;
+  }
+  return accountId;
+}
 
 export function Accounts() {
   const [params, setParams] = useParams();
@@ -15,6 +29,7 @@ export function Accounts() {
   const { data: accounts } = useAccounts();
   const queryClient = useQueryClient();
   const { data: CoreProxyContract } = useCoreProxy();
+  const accountId = useSelectedAccountId();
 
   const createAccount = useMutation({
     mutationFn: async () => {
@@ -60,26 +75,31 @@ export function Accounts() {
 
   return (
     <>
-      <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
-        Accounts
-      </Heading>
-      <Flex flexDir="column" gap={3} alignItems="flex-start">
+      {accounts && accounts.length > 0 ? (
+        <Menu>
+          <MenuButton as={Button} variant="text" rightIcon={<ChevronDownIcon />}>
+            Account {shortAccount(accountId)}
+          </MenuButton>
+          <MenuList>
+            {accounts &&
+              accounts.map((id) => (
+                <MenuItem
+                  key={id}
+                  type="button"
+                  icon={accountId === id ? <ChevronRightIcon /> : undefined}
+                  onClick={() => setParams({ ...params, accountId: id })}
+                >
+                  {shortAccount(id)}
+                </MenuItem>
+              ))}
+            {accounts && !accounts.length ? <MenuItem>No accounts</MenuItem> : null}
+          </MenuList>
+        </Menu>
+      ) : (
         <Button type="button" onClick={() => createAccount.mutate()}>
           Create account
         </Button>
-        {accounts &&
-          accounts.map((accountId) => (
-            <Button
-              key={accountId}
-              type="button"
-              variant={params?.accountId === accountId ? undefined : 'outline'}
-              onClick={() => setParams({ ...params, accountId })}
-            >
-              {accountId}
-            </Button>
-          ))}
-        {accounts && !accounts.length ? <Text as="span">No accounts</Text> : null}
-      </Flex>
+      )}
     </>
   );
 }

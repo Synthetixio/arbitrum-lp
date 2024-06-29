@@ -1,9 +1,10 @@
 import { Box, Button, Container, Flex, Link, useDisclosure } from '@chakra-ui/react';
-import { NavLink as RouterLink, useLocation } from 'react-router-dom';
+import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import React from 'react';
+import { NavLink as RouterLink, useLocation } from 'react-router-dom';
+import { Accounts } from '../Accounts';
 import { Logo } from './Logo';
 import { LogoIcon } from './LogoIcon';
-import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 
 export default function Header() {
   const { onClose } = useDisclosure();
@@ -113,6 +114,7 @@ export default function Header() {
                 {wallet.accounts[0].address.slice(0, 5)} ... {wallet.accounts[0].address.slice(-3)}
               </Button>
             ) : null}
+            <Accounts />
             {wallet ? (
               <Button
                 type="button"

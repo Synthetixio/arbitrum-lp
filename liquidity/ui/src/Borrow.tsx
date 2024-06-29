@@ -26,7 +26,7 @@ import { usePythERC7412Wrapper } from './usePythERC7412Wrapper';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 
-export function Delegate() {
+export function Borrow() {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
@@ -53,7 +53,7 @@ export function Delegate() {
   const { data: MulticallContract } = useMulticall();
   const { data: PythERC7412WrapperContract } = usePythERC7412Wrapper();
 
-  const delegate = useMutation({
+  const borrow = useMutation({
     mutationFn: async (inputAmount: string) => {
       if (
         !(
@@ -154,30 +154,21 @@ export function Delegate() {
   return (
     <>
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
-        Lock
+        Borrow
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
-          Locked:{' '}
+          Debt:{' '}
           <b>
             {positionCollateral && collateralType
               ? ethers.utils.formatUnits(positionCollateral, collateralType.decimals)
               : ''}
           </b>
-          , Available:{' '}
-          <b>
-            {accountCollateral && collateralType
-              ? ethers.utils.formatUnits(
-                  accountCollateral.totalDeposited.sub(accountCollateral.totalAssigned),
-                  collateralType.decimals
-                )
-              : ''}
-          </b>
         </Text>
       </Heading>
       <Flex flexDir="column" gap={3} alignItems="flex-start">
-        {delegate.isError ? (
+        {borrow.isError ? (
           <Alert status="error" maxWidth="40rem">
             <AlertIcon />
-            <AlertTitle>{delegate.error.message}</AlertTitle>
+            <AlertTitle>{borrow.error.message}</AlertTitle>
           </Alert>
         ) : null}
 
@@ -188,7 +179,7 @@ export function Delegate() {
           action="#"
           onSubmit={(e) => {
             e.preventDefault();
-            delegate.mutate(value);
+            borrow.mutate(value);
           }}
         >
           <InputGroup gap={4}>
@@ -197,12 +188,12 @@ export function Delegate() {
               placeholder="Enter amount"
               value={value}
               onChange={(e) => {
-                delegate.reset();
+                borrow.reset();
                 setValue(e.target.value);
               }}
             />
-            <Button type="submit" isLoading={delegate.isPending} disabled={!hasEnoughDeposit}>
-              {hasEnoughDeposit ? 'Lock' : 'Deposit and Lock'}
+            <Button type="submit" isLoading={borrow.isPending}>
+              Borrow
             </Button>
           </InputGroup>
         </Stack>

@@ -125,11 +125,13 @@ export function Deposit() {
     <>
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
         Deposit
-        <Text fontSize="1rem">
-          Total deposit:{' '}
-          {accountCollateral && collateralType
-            ? ethers.utils.formatUnits(accountCollateral.totalDeposited, collateralType.decimals)
-            : ''}
+        <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
+          Deposited:{' '}
+          <b>
+            {accountCollateral && collateralType
+              ? ethers.utils.formatUnits(accountCollateral.totalDeposited, collateralType.decimals)
+              : ''}
+          </b>
         </Text>
       </Heading>
       <Flex flexDir="column" gap={3} alignItems="flex-start">
@@ -150,7 +152,7 @@ export function Deposit() {
             deposit.mutate(value);
           }}
         >
-          <InputGroup>
+          <InputGroup gap={4}>
             <Input
               required
               placeholder="Enter amount"
@@ -160,8 +162,6 @@ export function Deposit() {
                 setValue(e.target.value);
               }}
             />
-          </InputGroup>
-          <InputGroup>
             <Button type="submit" isLoading={deposit.isPending}>
               {hasEnoughAllowance ? 'Deposit' : 'Approve and Deposit'}
             </Button>
