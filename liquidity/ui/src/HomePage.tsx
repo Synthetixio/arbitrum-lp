@@ -5,6 +5,7 @@ import { CollateralTokens } from './CollateralTokens';
 import { Delegate } from './Delegate';
 import { Deposit } from './Deposit';
 import { Undelegate } from './Undelegate';
+import { Withdraw } from './Withdraw';
 
 export function HomePage() {
   return (
@@ -15,10 +16,11 @@ export function HomePage() {
       </Helmet>
       <CollateralTokens />
       <Deposit />
-      <Flex flexDir="row" mt={10} gap={10}>
+      <Flex flexDir="row" gap={10}>
         <Delegate />
         <Undelegate />
       </Flex>
+      <Withdraw />
     </Flex>
   );
 }

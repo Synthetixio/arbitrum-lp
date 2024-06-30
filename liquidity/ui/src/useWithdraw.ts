@@ -1,10 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
-import { delegateCollateral } from './delegateCollateral';
-import { delegateCollateralWithPriceUpdate } from './delegateCollateralWithPriceUpdate';
 import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
-import { fetchPositionCollateral } from './fetchPositionCollateral';
 import { fetchPriceUpdateTxn } from './fetchPriceUpdateTxn';
 import { useErrorParser } from './parseError';
 import { useAllPriceFeeds } from './useAllPriceFeeds';
@@ -13,16 +10,16 @@ import { useMulticall } from './useMulticall';
 import { usePythERC7412Wrapper } from './usePythERC7412Wrapper';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
-import { useSelectedPoolId } from './useSelectedPoolId';
+import { withdrawCollateral } from './withdrawCollateral';
+import { withdrawCollateralWithPriceUpdate } from './withdrawCollateralWithPriceUpdate';
 
-export function useDelegateCollateral() {
+export function useWithdraw() {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const accountId = useSelectedAccountId();
   const collateralType = useSelectedCollateralType();
-  const poolId = useSelectedPoolId();
 
   const { data: CoreProxyContract } = useCoreProxy();
 
@@ -34,7 +31,7 @@ export function useDelegateCollateral() {
   const queryClient = useQueryClient();
   return useMutation({
     retry: false,
-    mutationFn: async (delegateAmountDelta: ethers.BigNumber) => {
+    mutationFn: async (withdrawAmount: ethers.BigNumber) => {
       if (
         !(
           CoreProxyContract &&
@@ -45,14 +42,13 @@ export function useDelegateCollateral() {
           walletAddress &&
           wallet?.provider &&
           accountId &&
-          poolId &&
           collateralType
         )
       ) {
         throw 'OMFG';
       }
 
-      if (delegateAmountDelta.eq(0)) {
+      if (withdrawAmount.eq(0)) {
         throw new Error('Amount required');
       }
 
@@ -72,51 +68,37 @@ export function useDelegateCollateral() {
       });
       console.log(`freshAccountAvailableCollateral`, freshAccountAvailableCollateral);
 
-      const hasEnoughDeposit = freshAccountAvailableCollateral.gte(delegateAmountDelta);
+      const hasEnoughDeposit = freshAccountAvailableCollateral.gte(withdrawAmount);
       if (!hasEnoughDeposit) {
-        throw new Error('Not enough deposit');
+        throw new Error('Not enough unlocked collateral');
       }
 
-      const freshPositionCollateral = await fetchPositionCollateral({
-        wallet,
-        CoreProxyContract,
-        accountId,
-        poolId,
-        tokenAddress: collateralType.address,
-      });
-      console.log(`freshPositionCollateral`, freshPositionCollateral);
-
-      const delegateAmount = freshPositionCollateral.add(delegateAmountDelta);
-      console.log(`delegateAmount`, delegateAmount);
-
       if (freshPriceUpdateTxn.value) {
-        console.log('-> delegateCollateralWithPriceUpdate');
-        await delegateCollateralWithPriceUpdate({
+        console.log('-> withdrawCollateralWithPriceUpdate');
+        await withdrawCollateralWithPriceUpdate({
           wallet,
           CoreProxyContract,
           MulticallContract,
           accountId,
-          poolId,
           tokenAddress: collateralType.address,
-          delegateAmount,
+          withdrawAmount,
           priceUpdateTxn: freshPriceUpdateTxn,
         });
       } else {
-        console.log('-> delegateCollateral');
-        await delegateCollateral({
+        console.log('-> withdrawCollateral');
+        await withdrawCollateral({
           wallet,
           CoreProxyContract,
           accountId,
-          poolId,
           tokenAddress: collateralType.address,
-          delegateAmount,
+          withdrawAmount,
         });
       }
       return { priceUpdated: true };
     },
     throwOnError: (error) => {
       // TODO: show toast
-      errorParser(error).then();
+      errorParser(error);
       return false;
     },
     onSuccess: async ({ priceUpdated }) => {
@@ -154,11 +136,10 @@ export function useDelegateCollateral() {
       queryClient.invalidateQueries({
         queryKey: [
           connectedChain?.id,
-          'PositionCollateral',
+          'Balance',
           {
-            accountId: accountId?.toHexString(),
-            poolId: poolId?.toHexString(),
             tokenAddress: collateralType?.address,
+            ownerAddress: walletAddress,
           },
         ],
       });

@@ -115,12 +115,12 @@ async function parseError({
   preset: string;
 }) {
   const errorData =
-    error?.data ||
-    error?.data?.data ||
-    error?.error?.data ||
     error?.error?.error?.error?.data ||
+    error?.error?.error?.data ||
     error?.error?.data?.data ||
-    error?.error?.error?.data;
+    error?.error?.data ||
+    error?.data?.data ||
+    error?.data;
 
   if (!errorData) {
     console.log('Error data missing', { error });
@@ -206,7 +206,7 @@ export function useErrorParser() {
   return React.useCallback(
     async (error: Error) => {
       if (connectedChain?.id) {
-        await parseError({ error, chainId: connectedChain.id, preset: 'main' });
+        return await parseError({ error, chainId: connectedChain.id, preset: 'main' });
       }
       throw error;
     },

@@ -1,5 +1,4 @@
 import {
-  Box,
   ChakraProvider,
   Container,
   Flex,
@@ -158,73 +157,70 @@ window.ethers = ethers;
 
 function Layout() {
   return (
-    <Box
-      as="main"
-      minHeight="100vh"
-      color="rgba(255,255,255,0.85)"
-      display="flex"
-      flexDirection="column"
-      bg="navy.900"
-    >
-      <Flex flex="1" flexDirection="column">
-        <Flex
-          bg="navy.700"
-          mb="4"
-          py="3"
-          borderBottomWidth="1px"
-          borderBottomColor="gray.900"
-          px="10"
+    <Flex as="main" minHeight="100vh" flexDirection="column" bg="navy.900" gap={10}>
+      <Flex bg="navy.700" borderBottomWidth={1} borderBottomColor="gray.900">
+        <Container
+          as={Flex}
+          maxW="1236px"
+          py={3}
+          px={10}
+          height="72px"
+          justifyContent="space-between"
+          alignItems="center"
         >
-          <Container maxW="1236px" as={Flex} justifyContent="space-between" alignItems="center">
-            <Link
-              to={{
-                pathname: '/',
-                search: location.search,
-              }}
-              as={RouterLink}
-              py={4}
-            >
-              <Logo />
-            </Link>
-            <Flex gap={3} flexWrap="wrap-reverse" justifyContent="center" alignItems="center">
-              <UserMenu />
-            </Flex>
-          </Container>
-        </Flex>
-        <Container display="flex" flexDir="column" maxW="1236px" flex="1">
+          <Link
+            to={{
+              pathname: '/',
+              search: location.search,
+            }}
+            as={RouterLink}
+            py={4}
+          >
+            <Logo />
+          </Link>
+          <Flex gap={3} flexWrap="wrap-reverse" justifyContent="center" alignItems="center">
+            <UserMenu />
+          </Flex>
+        </Container>
+      </Flex>
+
+      <Flex bg="navy.900" flex={1}>
+        <Container as={Flex} maxW="1236px" py={3} px={10}>
           <Outlet />
         </Container>
-
-        <Flex borderTop="1px solid" borderTopColor="gray.900" bg="navy.700">
-          <Container
-            maxW="1236px"
-            as={Flex}
-            height="72px"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Logo withText={false} />
-            <Flex alignItems="center">
-              <Link href="https://discord.com/invite/synthetix" target="_blank">
-                <DiscordIcon w="24px" h="24px" mr={2} />
-              </Link>
-              <Link href="https://x.com/synthetix_io" target="_blank">
-                <XIcon w="24px" h="24px" mr={2} />
-              </Link>
-              <Link href="https://github.com/Synthetixio/" target="_blank">
-                <GithubIcon w="24px" h="24px" mr={2} />
-              </Link>
-              <Link href="https://warpcast.com/~/channel/synthetix" target="_blank">
-                <WarpcastIcon w="24px" h="24px" mr={2} />
-              </Link>
-              <Link href="https://www.youtube.com/@synthetix.v3" target="_blank">
-                <YoutubeIcon w="24px" h="24px" />
-              </Link>
-            </Flex>
-          </Container>
-        </Flex>
       </Flex>
-    </Box>
+
+      <Flex bg="navy.700" borderTopWidth={1} borderTopColor="gray.900">
+        <Container
+          as={Flex}
+          maxW="1236px"
+          py={3}
+          px={10}
+          height="72px"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Logo withText={false} />
+          <Flex alignItems="center">
+            <Link href="https://discord.com/invite/synthetix" target="_blank">
+              <DiscordIcon w="24px" h="24px" mr={2} />
+            </Link>
+            <Link href="https://x.com/synthetix_io" target="_blank">
+              <XIcon w="24px" h="24px" mr={2} />
+            </Link>
+            <Link href="https://github.com/Synthetixio/" target="_blank">
+              <GithubIcon w="24px" h="24px" mr={2} />
+            </Link>
+            <Link href="https://warpcast.com/~/channel/synthetix" target="_blank">
+              <WarpcastIcon w="24px" h="24px" mr={2} />
+            </Link>
+            <Link href="https://www.youtube.com/@synthetix.v3" target="_blank">
+              <YoutubeIcon w="24px" h="24px" />
+            </Link>
+          </Flex>
+        </Container>
+      </Flex>
+    </Flex>
   );
 }
 
