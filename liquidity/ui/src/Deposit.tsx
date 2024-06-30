@@ -12,11 +12,12 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useConnectWallet } from '@web3-onboard/react';
-import { ethers } from 'ethers';
 import React from 'react';
+import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useCoreProxy } from './useCoreProxy';
 import { useDeposit } from './useDeposit';
+import { parseAmount } from './parseAmount';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useTokenAllowance } from './useTokenAllowance';
@@ -50,17 +51,7 @@ export function Deposit() {
   const deposit = useDeposit();
 
   const [value, setValue] = React.useState('');
-
-  const hasEnoughAllowance = React.useMemo(() => {
-    if (!(collateralType?.decimals && currentAllowance)) {
-      return true;
-    }
-    const filteredNumber = `${value}`.replace(/[^0-9.]+/gi, '');
-    if (!filteredNumber) {
-      return true;
-    }
-    return currentAllowance.gte(ethers.utils.parseUnits(filteredNumber, collateralType.decimals));
-  }, [value, collateralType?.decimals, currentAllowance]);
+  const parsedAmount = parseAmount(value, collateralType?.decimals);
 
   return (
     <Stack
@@ -70,20 +61,13 @@ export function Deposit() {
       action="#"
       onSubmit={(e) => {
         e.preventDefault();
-        deposit.mutate(value);
+        deposit.mutate(parsedAmount);
       }}
     >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
         Deposit
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
-          Deposited:{' '}
-          <b>
-            {accountAvailableCollateral && collateralType
-              ? parseFloat(
-                  ethers.utils.formatUnits(accountAvailableCollateral, collateralType.decimals)
-                ).toFixed(1)
-              : ''}
-          </b>
+          Deposited: <b>{renderAmount(accountAvailableCollateral, collateralType)}</b>
         </Text>
       </Heading>
       {deposit.isError ? (
@@ -104,19 +88,21 @@ export function Deposit() {
             }}
             maxWidth="10rem"
           />
-          <Button type="submit" isLoading={deposit.isPending}>
-            {hasEnoughAllowance ? 'Deposit' : 'Approve and Deposit'}
+          <Button
+            type="submit"
+            isLoading={deposit.isPending}
+            isDisabled={
+              !(parsedAmount.gt(0) && currentBalance && currentBalance.sub(parsedAmount).gte(0))
+            }
+          >
+            {currentAllowance && currentAllowance.gte(parsedAmount)
+              ? 'Deposit'
+              : 'Approve and Deposit'}
+            {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, collateralType)}` : null}
           </Button>
         </InputGroup>
         <FormHelperText>
-          Max:{' '}
-          <b>
-            {currentBalance && collateralType
-              ? parseFloat(
-                  ethers.utils.formatUnits(currentBalance, collateralType.decimals)
-                ).toFixed(1)
-              : ''}
-          </b>
+          Max: <b>{renderAmount(currentBalance, collateralType)}</b>
         </FormHelperText>
       </FormControl>
     </Stack>

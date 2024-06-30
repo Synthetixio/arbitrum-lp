@@ -8,21 +8,15 @@ import { Undelegate } from './Undelegate';
 
 export function HomePage() {
   return (
-    <Flex flexDir="column" mb={20}>
+    <Flex flexDir="column" mb={20} gap={10}>
       <Helmet>
         <title>Synthetix Liquidity V3</title>
         <meta name="description" content="Synthetix V3 - Dashboard" />
       </Helmet>
-      <Flex flexDir="column" mt={10}>
-        <CollateralTokens />
-      </Flex>
-      <Flex flexDir="column" mt={10}>
-        <Deposit />
-      </Flex>
-      <Flex flexDir="column" mt={10}>
+      <CollateralTokens />
+      <Deposit />
+      <Flex flexDir="row" mt={10} gap={10}>
         <Delegate />
-      </Flex>
-      <Flex flexDir="column" mt={10}>
         <Undelegate />
       </Flex>
     </Flex>

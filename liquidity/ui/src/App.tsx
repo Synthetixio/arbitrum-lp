@@ -8,7 +8,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import coinbaseModule from '@web3-onboard/coinbase';
@@ -136,8 +136,6 @@ const localStoragePersister = createSyncStoragePersister({
   storage: window.localStorage,
 });
 
-// window.$provider
-
 function useDarkColors() {
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -150,11 +148,13 @@ function useDarkColors() {
 }
 
 declare global {
+  var ethers: any;
   var $provider: ethers.providers.Web3Provider;
   var $signer: ethers.Signer;
   var $tx: ethers.ContractTransaction[];
   var $txResult: ethers.ContractReceipt[];
 }
+window.ethers = ethers;
 
 function Layout() {
   return (
@@ -259,12 +259,6 @@ export function App() {
       client={queryClient}
       persistOptions={{ persister: localStoragePersister }}
     >
-      {/*
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister: localStoragePersister }}
-    >
-*/}
       <Web3OnboardProvider web3Onboard={onboard}>
         <ChakraProvider theme={theme}>
           <HashRouter>

@@ -9,11 +9,12 @@ import {
   Input,
   InputGroup,
   Stack,
+  Text,
 } from '@chakra-ui/react';
-import { ethers } from 'ethers';
 import React from 'react';
-import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
+import { renderAmount } from './renderAmount';
 import { useDelegateCollateral } from './useDelegateCollateral';
+import { parseAmount } from './parseAmount';
 import { usePositionCollateral } from './usePositionCollateral';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
@@ -24,11 +25,6 @@ export function Undelegate() {
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
 
-  const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
-    accountId,
-    tokenAddress: collateralType?.address,
-  });
-
   const { data: positionCollateral } = usePositionCollateral({
     accountId,
     poolId,
@@ -36,19 +32,7 @@ export function Undelegate() {
   });
 
   const [value, setValue] = React.useState('');
-
-  const hasEnoughDeposit = React.useMemo(() => {
-    if (!(collateralType?.decimals && accountAvailableCollateral)) {
-      return true;
-    }
-    const filteredNumber = `${value}`.replace(/[^0-9.]+/gi, '');
-    if (!filteredNumber) {
-      return true;
-    }
-    return accountAvailableCollateral.gte(
-      ethers.utils.parseUnits(filteredNumber, collateralType.decimals)
-    );
-  }, [value, collateralType?.decimals, accountAvailableCollateral]);
+  const parsedAmount = parseAmount(value, collateralType?.decimals);
 
   const undelegate = useDelegateCollateral();
 
@@ -60,18 +44,14 @@ export function Undelegate() {
       action="#"
       onSubmit={(e) => {
         e.preventDefault();
-        if (!collateralType) {
-          return;
-        }
-        const filteredInput = `${value}`.replace(/[^0-9.]+/gi, '');
-        const delegateAmountDelta = filteredInput
-          ? ethers.utils.parseUnits(filteredInput.trim(), collateralType.decimals)
-          : ethers.BigNumber.from(0);
-        undelegate.mutate(delegateAmountDelta.mul(-1));
+        undelegate.mutate(parsedAmount.mul(-1));
       }}
     >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
         Unlock
+        <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
+          &nbsp;
+        </Text>
       </Heading>
       {undelegate.isError ? (
         <Alert status="error" maxWidth="40rem">
@@ -95,20 +75,20 @@ export function Undelegate() {
           <Button
             type="submit"
             isLoading={undelegate.isPending}
-            disabled={positionCollateral && positionCollateral.lte(0)}
+            isDisabled={
+              !(
+                parsedAmount.gt(0) &&
+                positionCollateral &&
+                positionCollateral.sub(parsedAmount).gte(0)
+              )
+            }
           >
             Unlock
+            {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, collateralType)}` : null}
           </Button>
         </InputGroup>
         <FormHelperText>
-          Max:{' '}
-          <b>
-            {positionCollateral && collateralType
-              ? parseFloat(
-                  ethers.utils.formatUnits(positionCollateral, collateralType.decimals)
-                ).toFixed(1)
-              : ''}
-          </b>
+          Max: <b>{renderAmount(positionCollateral, collateralType)}</b>
         </FormHelperText>
       </FormControl>
     </Stack>

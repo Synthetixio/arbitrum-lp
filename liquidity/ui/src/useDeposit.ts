@@ -25,7 +25,7 @@ export function useDeposit() {
   const errorParser = useErrorParser();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (inputAmount: string) => {
+    mutationFn: async (depositAmount: ethers.BigNumber) => {
       if (
         !(
           wallet &&
@@ -39,12 +39,7 @@ export function useDeposit() {
         throw 'OMFG';
       }
 
-      const filteredInput = `${inputAmount}`.replace(/[^0-9.]+/gi, '');
-      const depositAmount = filteredInput
-        ? ethers.utils.parseUnits(inputAmount.trim(), collateralType.decimals)
-        : ethers.BigNumber.from(0);
-
-      if (!depositAmount.gt(0)) {
+      if (depositAmount.lte(0)) {
         throw new Error('Amount required');
       }
 
