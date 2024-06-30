@@ -35,7 +35,7 @@ export function useDelegateCollateral() {
   const queryClient = useQueryClient();
   return useMutation({
     retry: false,
-    mutationFn: async (inputAmount: string) => {
+    mutationFn: async (delegateAmountDelta: ethers.BigNumber) => {
       if (
         !(
           CoreProxyContract &&
@@ -53,12 +53,7 @@ export function useDelegateCollateral() {
         throw 'OMFG';
       }
 
-      const filteredInput = `${inputAmount}`.replace(/[^0-9.]+/gi, '');
-      const delegateAmountDelta = filteredInput
-        ? ethers.utils.parseUnits(inputAmount.trim(), collateralType.decimals)
-        : ethers.BigNumber.from(0);
-
-      if (!delegateAmountDelta.gt(0)) {
+      if (delegateAmountDelta.eq(0)) {
         throw new Error('Amount required');
       }
 

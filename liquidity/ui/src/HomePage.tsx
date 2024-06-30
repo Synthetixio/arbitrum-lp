@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { CollateralTokens } from './CollateralTokens';
 import { Delegate } from './Delegate';
 import { Deposit } from './Deposit';
+import { Undelegate } from './Undelegate';
 
 export function HomePage() {
   return (
@@ -20,6 +21,9 @@ export function HomePage() {
       </Flex>
       <Flex flexDir="column" mt={10}>
         <Delegate />
+      </Flex>
+      <Flex flexDir="column" mt={10}>
+        <Undelegate />
       </Flex>
     </Flex>
   );

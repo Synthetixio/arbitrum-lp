@@ -9,7 +9,6 @@ import {
   Input,
   InputGroup,
   Stack,
-  Text,
 } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import React from 'react';
@@ -20,7 +19,7 @@ import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
-export function Delegate() {
+export function Undelegate() {
   const accountId = useSelectedAccountId();
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
@@ -51,7 +50,7 @@ export function Delegate() {
     );
   }, [value, collateralType?.decimals, accountAvailableCollateral]);
 
-  const delegate = useDelegateCollateral();
+  const undelegate = useDelegateCollateral();
 
   return (
     <Stack
@@ -68,26 +67,16 @@ export function Delegate() {
         const delegateAmountDelta = filteredInput
           ? ethers.utils.parseUnits(filteredInput.trim(), collateralType.decimals)
           : ethers.BigNumber.from(0);
-        delegate.mutate(delegateAmountDelta);
+        undelegate.mutate(delegateAmountDelta.mul(-1));
       }}
     >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
-        Lock
-        <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
-          Locked:{' '}
-          <b>
-            {positionCollateral && collateralType
-              ? parseFloat(
-                  ethers.utils.formatUnits(positionCollateral, collateralType.decimals)
-                ).toFixed(1)
-              : ''}
-          </b>
-        </Text>
+        Unlock
       </Heading>
-      {delegate.isError ? (
+      {undelegate.isError ? (
         <Alert status="error" maxWidth="40rem">
           <AlertIcon />
-          <AlertTitle>{delegate.error.message}</AlertTitle>
+          <AlertTitle>{undelegate.error.message}</AlertTitle>
         </Alert>
       ) : null}
 
@@ -98,21 +87,25 @@ export function Delegate() {
             placeholder="Enter amount"
             value={value}
             onChange={(e) => {
-              delegate.reset();
+              undelegate.reset();
               setValue(e.target.value);
             }}
             maxWidth="10rem"
           />
-          <Button type="submit" isLoading={delegate.isPending} disabled={!hasEnoughDeposit}>
-            {hasEnoughDeposit ? 'Lock' : 'Deposit and Lock'}
+          <Button
+            type="submit"
+            isLoading={undelegate.isPending}
+            disabled={positionCollateral && positionCollateral.lte(0)}
+          >
+            Unlock
           </Button>
         </InputGroup>
         <FormHelperText>
           Max:{' '}
           <b>
-            {accountAvailableCollateral && collateralType
+            {positionCollateral && collateralType
               ? parseFloat(
-                  ethers.utils.formatUnits(accountAvailableCollateral, collateralType.decimals)
+                  ethers.utils.formatUnits(positionCollateral, collateralType.decimals)
                 ).toFixed(1)
               : ''}
           </b>
