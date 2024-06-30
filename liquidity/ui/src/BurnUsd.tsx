@@ -43,7 +43,9 @@ export function BurnUsd() {
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, collateralType?.decimals);
 
-  const burnUsd = useBurnUsd();
+  const burnUsd = useBurnUsd({
+    onSuccess: () => setValue(''),
+  });
 
   return (
     <Stack

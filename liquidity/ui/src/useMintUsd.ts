@@ -14,7 +14,7 @@ import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 import { useSystemToken } from './useSystemToken';
 
-export function useMintUsd() {
+export function useMintUsd({ onSuccess }: { onSuccess: () => void }) {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
@@ -124,6 +124,8 @@ export function useMintUsd() {
           },
         ],
       });
+
+      onSuccess();
     },
   });
 }

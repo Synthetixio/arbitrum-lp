@@ -13,11 +13,11 @@ import {
 } from '@chakra-ui/react';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
+import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useCoreProxy } from './useCoreProxy';
 import { useDeposit } from './useDeposit';
-import { parseAmount } from './parseAmount';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useTokenAllowance } from './useTokenAllowance';
@@ -48,10 +48,12 @@ export function Deposit() {
     tokenAddress: collateralType?.address,
   });
 
-  const deposit = useDeposit();
-
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, collateralType?.decimals);
+
+  const deposit = useDeposit({
+    onSuccess: () => setValue(''),
+  });
 
   return (
     <Stack

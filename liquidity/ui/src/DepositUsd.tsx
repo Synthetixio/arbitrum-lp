@@ -48,10 +48,12 @@ export function DepositUsd() {
     tokenAddress: systemToken?.address,
   });
 
-  const deposit = useDeposit();
-
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, systemToken?.decimals);
+
+  const deposit = useDeposit({
+    onSuccess: () => setValue(''),
+  });
 
   return (
     <Stack

@@ -12,9 +12,9 @@ import {
   Text,
 } from '@chakra-ui/react';
 import React from 'react';
+import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useDelegateCollateral } from './useDelegateCollateral';
-import { parseAmount } from './parseAmount';
 import { usePositionCollateral } from './usePositionCollateral';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
@@ -34,7 +34,9 @@ export function Undelegate() {
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, collateralType?.decimals);
 
-  const undelegate = useDelegateCollateral();
+  const undelegate = useDelegateCollateral({
+    onSuccess: () => setValue(''),
+  });
 
   return (
     <Stack

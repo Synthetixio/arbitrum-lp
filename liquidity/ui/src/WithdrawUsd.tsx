@@ -39,10 +39,12 @@ export function WithdrawUsd() {
     tokenAddress: systemToken?.address,
   });
 
-  const withdraw = useWithdraw();
-
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, systemToken?.decimals);
+
+  const withdraw = useWithdraw({
+    onSuccess: () => setValue(''),
+  });
 
   const withdrawTimer = useWithdrawTimer();
 

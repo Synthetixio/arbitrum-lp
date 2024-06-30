@@ -62,7 +62,9 @@ export function MintUsd() {
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, collateralType?.decimals);
 
-  const mintUsd = useMintUsd();
+  const mintUsd = useMintUsd({
+    onSuccess: () => setValue(''),
+  });
 
   return (
     <Stack

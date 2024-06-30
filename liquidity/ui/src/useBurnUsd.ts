@@ -15,7 +15,7 @@ import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 import { useSystemToken } from './useSystemToken';
 
-export function useBurnUsd() {
+export function useBurnUsd({ onSuccess }: { onSuccess: () => void }) {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
@@ -139,6 +139,8 @@ export function useBurnUsd() {
           },
         ],
       });
+
+      onSuccess();
     },
   });
 }

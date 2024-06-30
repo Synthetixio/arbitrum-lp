@@ -11,7 +11,7 @@ import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
-export function useDeposit() {
+export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
@@ -108,6 +108,8 @@ export function useDeposit() {
           },
         ],
       });
+
+      onSuccess();
     },
   });
 }

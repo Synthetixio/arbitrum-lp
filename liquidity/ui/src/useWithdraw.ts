@@ -13,7 +13,7 @@ import { usePythERC7412Wrapper } from './usePythERC7412Wrapper';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 
-export function useWithdraw() {
+export function useWithdraw({ onSuccess }: { onSuccess: () => void }) {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
@@ -143,6 +143,8 @@ export function useWithdraw() {
           },
         ],
       });
+
+      onSuccess();
     },
   });
 }

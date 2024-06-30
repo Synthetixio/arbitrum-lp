@@ -15,7 +15,7 @@ import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
-export function useDelegateCollateral() {
+export function useDelegateCollateral({ onSuccess }: { onSuccess: () => void }) {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
@@ -162,6 +162,15 @@ export function useDelegateCollateral() {
           },
         ],
       });
+      queryClient.invalidateQueries({
+        queryKey: [
+          connectedChain?.id,
+          'PositionDebt',
+          { accountId: accountId?.toHexString(), tokenAddress: collateralType?.address },
+        ],
+      });
+
+      onSuccess();
     },
   });
 }
