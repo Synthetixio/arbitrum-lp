@@ -1,11 +1,12 @@
 import type { WalletState } from '@web3-onboard/core';
 import { ethers } from 'ethers';
 
-export async function fetchAccountCollateralWithPriceUpdate({
+export async function fetchPositionDebtWithPriceUpdate({
   wallet,
   CoreProxyContract,
   MulticallContract,
   accountId,
+  poolId,
   tokenAddress,
   priceUpdateTxn,
 }: {
@@ -13,6 +14,7 @@ export async function fetchAccountCollateralWithPriceUpdate({
   CoreProxyContract: { address: string; abi: string };
   MulticallContract: { address: string; abi: string };
   accountId: ethers.BigNumber;
+  poolId: ethers.BigNumber;
   tokenAddress: string;
   priceUpdateTxn: {
     target: string;
@@ -21,48 +23,47 @@ export async function fetchAccountCollateralWithPriceUpdate({
     requireSuccess: boolean;
   };
 }) {
+  // const CoreProxyInterface = new ethers.Contract(CoreProxyContract.address, CoreProxyContract.abi, provider);
   const CoreProxyInterface = new ethers.utils.Interface(CoreProxyContract.abi);
   const MulticallInterface = new ethers.utils.Interface(MulticallContract.abi);
 
   await new Promise((ok) => setTimeout(ok, 500));
 
-  const getAccountCollateralTxn = {
+  const getPositionDebtTxn = {
     target: CoreProxyContract.address,
-    callData: CoreProxyInterface.encodeFunctionData('getAccountCollateral', [
+    callData: CoreProxyInterface.encodeFunctionData('getPositionDebt', [
       accountId,
+      poolId,
       tokenAddress,
     ]),
     value: 0,
     requireSuccess: true,
   };
+  // const Multicall = new ethers.Contract(MulticallContract.address, MulticallContract.abi, provider);
 
-  console.time('fetchAccountCollateralWithPriceUpdate');
+  console.time('fetchPositionDebtWithPriceUpdate');
   const provider = new ethers.providers.Web3Provider(wallet.provider);
   const response = await provider.call({
     to: MulticallContract.address,
     data: MulticallInterface.encodeFunctionData('aggregate3Value', [
-      [priceUpdateTxn, getAccountCollateralTxn],
+      [priceUpdateTxn, getPositionDebtTxn],
     ]),
     value: priceUpdateTxn.value,
   });
-  console.timeEnd('fetchAccountCollateralWithPriceUpdate');
+  console.timeEnd('fetchPositionDebtWithPriceUpdate');
   console.log({ response });
 
   if (response) {
     const decodedMulticall = MulticallInterface.decodeFunctionResult('aggregate3Value', response);
     console.log({ decodedMulticall });
     if (decodedMulticall?.returnData?.[1]?.returnData) {
-      const getAccountCollateralTxnData = decodedMulticall.returnData[1].returnData;
-      console.log({ getAccountCollateralTxnData });
-      const accountCollateral = CoreProxyInterface.decodeFunctionResult(
-        'getAccountCollateral',
-        getAccountCollateralTxnData
+      const getPositionDebtTxnData = decodedMulticall.returnData[1].returnData;
+      console.log({ getPositionDebtTxnData });
+      const positionDebt = CoreProxyInterface.decodeFunctionResult(
+        'getPositionDebt',
+        getPositionDebtTxnData
       );
-      return {
-        totalAssigned: accountCollateral.totalAssigned,
-        totalDeposited: accountCollateral.totalDeposited,
-        totalLocked: accountCollateral.totalLocked,
-      };
+      return positionDebt.debt;
     } else {
       console.error({ decodedMulticall });
       throw new Error('Unexpected multicall response');

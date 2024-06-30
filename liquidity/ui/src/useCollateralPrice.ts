@@ -1,21 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
-import { fetchAccountCollateral } from './fetchAccountCollateral';
-import { fetchAccountCollateralWithPriceUpdate } from './fetchAccountCollateralWithPriceUpdate';
+import { fetchCollateralPrice } from './fetchCollateralPrice';
+import { fetchCollateralPriceWithPriceUpdate } from './fetchCollateralPriceWithPriceUpdate';
 import { useErrorParser } from './parseError';
 import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useCoreProxy } from './useCoreProxy';
 import { useMulticall } from './useMulticall';
 import { usePriceUpdateTxn } from './usePriceUpdateTxn';
 
-export function useAccountCollateral({
-  accountId,
-  tokenAddress,
-}: {
-  accountId?: ethers.BigNumber;
-  tokenAddress?: string;
-}) {
+export function useCollateralPrice({ tokenAddress }: { tokenAddress?: string }) {
   const errorParser = useErrorParser();
   const { data: allPriceFeeds } = useAllPriceFeeds();
   const { data: priceUpdateTxn } = usePriceUpdateTxn(allPriceFeeds);
@@ -31,15 +25,10 @@ export function useAccountCollateral({
         wallet?.provider &&
         CoreProxyContract &&
         MulticallContract &&
-        accountId &&
         tokenAddress &&
         priceUpdateTxn
     ),
-    queryKey: [
-      connectedChain?.id,
-      'AccountCollateral',
-      { accountId: accountId?.toHexString(), tokenAddress },
-    ],
+    queryKey: [connectedChain?.id, 'CollateralPrice', { tokenAddress }],
     queryFn: async () => {
       if (
         !(
@@ -47,7 +36,6 @@ export function useAccountCollateral({
           wallet?.provider &&
           CoreProxyContract &&
           MulticallContract &&
-          accountId &&
           tokenAddress &&
           priceUpdateTxn
         )
@@ -58,27 +46,24 @@ export function useAccountCollateral({
         wallet,
         CoreProxyContract,
         MulticallContract,
-        accountId,
         tokenAddress,
         priceUpdateTxn,
       });
 
       if (priceUpdateTxn.value) {
-        console.log('-> fetchAccountCollateralWithPriceUpdate');
-        return fetchAccountCollateralWithPriceUpdate({
+        console.log('-> fetchCollateralPriceWithPriceUpdate');
+        return fetchCollateralPriceWithPriceUpdate({
           wallet,
           CoreProxyContract,
           MulticallContract,
-          accountId,
           tokenAddress,
           priceUpdateTxn,
         });
       } else {
-        console.log('-> fetchAccountCollateral');
-        return fetchAccountCollateral({
+        console.log('-> fetchCollateralPrice');
+        return fetchCollateralPrice({
           wallet,
           CoreProxyContract,
-          accountId,
           tokenAddress,
         });
       }
@@ -88,11 +73,7 @@ export function useAccountCollateral({
       errorParser(error);
       return false;
     },
-    select: (accountCollateral) => ({
-      totalAssigned: ethers.BigNumber.from(accountCollateral.totalAssigned),
-      totalDeposited: ethers.BigNumber.from(accountCollateral.totalDeposited),
-      totalLocked: ethers.BigNumber.from(accountCollateral.totalLocked),
-    }),
+    select: (collateralPrice) => ethers.BigNumber.from(collateralPrice),
     retry: 5,
     retryDelay: (attempt) => 2 ** attempt * 1000,
   });

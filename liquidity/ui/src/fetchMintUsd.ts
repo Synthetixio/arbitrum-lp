@@ -1,35 +1,38 @@
 import type { WalletState } from '@web3-onboard/core';
 import { ethers } from 'ethers';
 
-export async function withdrawCollateral({
+export async function fetchMintUsd({
   wallet,
   CoreProxyContract,
   accountId,
+  poolId,
   tokenAddress,
-  withdrawAmount,
+  mintUsdAmount,
 }: {
   wallet: WalletState;
   CoreProxyContract: { address: string; abi: string };
   accountId: ethers.BigNumber;
+  poolId: ethers.BigNumber;
   tokenAddress: string;
-  withdrawAmount: ethers.BigNumber;
+  mintUsdAmount: ethers.BigNumber;
 }) {
   const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = new ethers.providers.Web3Provider(wallet.provider);
   const signer = provider.getSigner(walletAddress);
   const CoreProxy = new ethers.Contract(CoreProxyContract.address, CoreProxyContract.abi, signer);
 
-  const withdrawCollateralTxnArgs = [
+  const mintUsdTxnArgs = [
     //
     accountId,
+    poolId,
     tokenAddress,
-    withdrawAmount,
+    mintUsdAmount,
   ];
-  console.log(`withdrawCollateralTxnArgs`, withdrawCollateralTxnArgs);
+  console.log(`mintUsdTxnArgs`, mintUsdTxnArgs);
 
-  console.time('withdrawCollateral');
-  const tx: ethers.ContractTransaction = await CoreProxy.withdraw(...withdrawCollateralTxnArgs);
-  console.timeEnd('withdrawCollateral');
+  console.time('mintUsd');
+  const tx: ethers.ContractTransaction = await CoreProxy.mintUsd(...mintUsdTxnArgs);
+  console.timeEnd('mintUsd');
 
   console.log({ tx });
   if (window.$tx) {

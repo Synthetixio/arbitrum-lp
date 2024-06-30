@@ -1,7 +1,7 @@
 import type { WalletState } from '@web3-onboard/core';
 import { ethers } from 'ethers';
 
-export async function withdrawCollateralWithPriceUpdate({
+export async function fetchWithdrawCollateralWithPriceUpdate({
   wallet,
   CoreProxyContract,
   MulticallContract,
@@ -32,7 +32,7 @@ export async function withdrawCollateralWithPriceUpdate({
     tokenAddress,
     withdrawAmount,
   ];
-  console.log(`withdrawCollateralTxnArgs`, withdrawCollateralTxnArgs);
+  console.log({ withdrawCollateralTxnArgs });
 
   const withdrawCollateralTxn = {
     target: CoreProxyContract.address,
@@ -43,7 +43,7 @@ export async function withdrawCollateralWithPriceUpdate({
     value: 0,
     requireSuccess: true,
   };
-  console.log(`withdrawCollateralTxn`, withdrawCollateralTxn);
+  console.log({ withdrawCollateralTxn });
 
   const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = new ethers.providers.Web3Provider(wallet.provider);
@@ -53,11 +53,11 @@ export async function withdrawCollateralWithPriceUpdate({
     from: walletAddress,
     to: MulticallContract.address,
     data: MulticallInterface.encodeFunctionData('aggregate3Value', [
-      [...(priceUpdateTxn.value ? [priceUpdateTxn] : []), withdrawCollateralTxn],
+      [priceUpdateTxn, withdrawCollateralTxn],
     ]),
     value: priceUpdateTxn.value,
   };
-  console.log(`multicallTxn`, multicallTxn);
+  console.log({ multicallTxn });
 
   console.time('withdrawCollateral');
   const tx: ethers.ContractTransaction = await signer.sendTransaction(multicallTxn);

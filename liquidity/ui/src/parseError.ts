@@ -166,6 +166,7 @@ async function parseError({
         }
         const errorOracleDataRequired = new Error('OracleDataRequired');
         Object.assign(errorOracleDataRequired, {
+          name: data.name,
           error,
           args: {
             oracleAddress,

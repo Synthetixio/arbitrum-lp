@@ -1,14 +1,14 @@
 import type { WalletState } from '@web3-onboard/core';
 import { ethers } from 'ethers';
 
-export async function delegateCollateralWithPriceUpdate({
+export async function fetchMintUsdWithPriceUpdate({
   wallet,
   CoreProxyContract,
   MulticallContract,
   accountId,
   poolId,
   tokenAddress,
-  delegateAmount,
+  mintUsdAmount,
   priceUpdateTxn,
 }: {
   wallet: WalletState;
@@ -17,7 +17,7 @@ export async function delegateCollateralWithPriceUpdate({
   accountId: ethers.BigNumber;
   poolId: ethers.BigNumber;
   tokenAddress: string;
-  delegateAmount: ethers.BigNumber;
+  mintUsdAmount: ethers.BigNumber;
   priceUpdateTxn: {
     target: string;
     callData: string;
@@ -28,26 +28,25 @@ export async function delegateCollateralWithPriceUpdate({
   const CoreProxyInterface = new ethers.utils.Interface(CoreProxyContract.abi);
   const MulticallInterface = new ethers.utils.Interface(MulticallContract.abi);
 
-  const delegateCollateralTxnArgs = [
+  const mintUsdTxnArgs = [
     //
     accountId,
     poolId,
     tokenAddress,
-    delegateAmount,
-    ethers.utils.parseEther('1'), // Leverage
+    mintUsdAmount,
   ];
-  console.log(`delegateCollateralTxnArgs`, delegateCollateralTxnArgs);
+  console.log({ mintUsdTxnArgs });
 
-  const delegateCollateralTxn = {
+  const mintUsdTxn = {
     target: CoreProxyContract.address,
-    callData: CoreProxyInterface.encodeFunctionData('delegateCollateral', [
+    callData: CoreProxyInterface.encodeFunctionData('mintUsd', [
       //
-      ...delegateCollateralTxnArgs,
+      ...mintUsdTxnArgs,
     ]),
     value: 0,
     requireSuccess: true,
   };
-  console.log({ delegateCollateralTxn });
+  console.log({ mintUsdTxn });
 
   const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = new ethers.providers.Web3Provider(wallet.provider);
@@ -56,16 +55,14 @@ export async function delegateCollateralWithPriceUpdate({
   const multicallTxn = {
     from: walletAddress,
     to: MulticallContract.address,
-    data: MulticallInterface.encodeFunctionData('aggregate3Value', [
-      [priceUpdateTxn, delegateCollateralTxn],
-    ]),
+    data: MulticallInterface.encodeFunctionData('aggregate3Value', [[priceUpdateTxn, mintUsdTxn]]),
     value: priceUpdateTxn.value,
   };
   console.log({ multicallTxn });
 
-  console.time('delegateCollateral');
+  console.time('mintUsd');
   const tx: ethers.ContractTransaction = await signer.sendTransaction(multicallTxn);
-  console.timeEnd('delegateCollateral');
+  console.timeEnd('mintUsd');
 
   console.log({ tx });
   if (window.$tx) {

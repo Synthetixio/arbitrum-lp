@@ -17,32 +17,32 @@ import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
+import { useSystemToken } from './useSystemToken';
 import { useTokenBalance } from './useTokenBalance';
 import { useWithdraw } from './useWithdraw';
 import { useWithdrawTimer } from './useWithdrawTimer';
 
-export function Withdraw() {
+export function WithdrawUsd() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const accountId = useSelectedAccountId();
-  const collateralType = useSelectedCollateralType();
+  const { data: systemToken } = useSystemToken();
 
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
     accountId,
-    tokenAddress: collateralType?.address,
+    tokenAddress: systemToken?.address,
   });
 
   const { data: currentBalance } = useTokenBalance({
     ownerAddress: walletAddress,
-    tokenAddress: collateralType?.address,
+    tokenAddress: systemToken?.address,
   });
 
   const withdraw = useWithdraw();
 
   const [value, setValue] = React.useState('');
-  const parsedAmount = parseAmount(value, collateralType?.decimals);
+  const parsedAmount = parseAmount(value, systemToken?.decimals);
 
   const withdrawTimer = useWithdrawTimer();
 
@@ -58,17 +58,11 @@ export function Withdraw() {
       }}
     >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
-        Withdraw
+        Withdraw {systemToken ? systemToken.symbol : null}
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
           &nbsp;
         </Text>
       </Heading>
-      {withdrawTimer.h === 0 && withdrawTimer.m === 0 && withdrawTimer.s === 0 ? null : (
-        <Alert status="warning" maxWidth="40rem">
-          <AlertIcon />
-          <AlertTitle>Withdrawal timeout</AlertTitle>
-        </Alert>
-      )}
       {withdraw.isError ? (
         <Alert status="error" maxWidth="40rem">
           <AlertIcon />
@@ -101,21 +95,21 @@ export function Withdraw() {
               )
             }
           >
+            Withdraw
             {withdrawTimer.h === 0 && withdrawTimer.m === 0 && withdrawTimer.s === 0
-              ? `Withdraw`
+              ? parsedAmount.gt(0)
+                ? ` ${renderAmount(parsedAmount, systemToken)}`
+                : null
               : null}
             {withdrawTimer.h === 0 && withdrawTimer.m === 0 && withdrawTimer.s > 0
-              ? `Withdraw in ${withdrawTimer.s}s`
+              ? ` in ${withdrawTimer.s}s`
               : null}
-            {withdrawTimer.h === 0 && withdrawTimer.m > 0
-              ? `Withdraw in ${withdrawTimer.m}m`
-              : null}
-            {withdrawTimer.h > 0 ? `Withdraw in ${withdrawTimer.h}h` : null}
-            {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, collateralType)}` : null}
+            {withdrawTimer.h === 0 && withdrawTimer.m > 0 ? ` in ${withdrawTimer.m}m` : null}
+            {withdrawTimer.h > 0 ? ` in ${withdrawTimer.h}h` : null}
           </Button>
         </InputGroup>
         <FormHelperText>
-          Max: <b>{renderAmount(accountAvailableCollateral, collateralType)}</b>
+          Max: <b>{renderAmount(accountAvailableCollateral, systemToken)}</b>
         </FormHelperText>
       </FormControl>
     </Stack>

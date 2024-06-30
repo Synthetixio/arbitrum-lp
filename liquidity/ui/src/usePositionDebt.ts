@@ -1,19 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
-import { fetchAccountCollateral } from './fetchAccountCollateral';
-import { fetchAccountCollateralWithPriceUpdate } from './fetchAccountCollateralWithPriceUpdate';
+import { fetchPositionDebt } from './fetchPositionDebt';
+import { fetchPositionDebtWithPriceUpdate } from './fetchPositionDebtWithPriceUpdate';
 import { useErrorParser } from './parseError';
 import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useCoreProxy } from './useCoreProxy';
 import { useMulticall } from './useMulticall';
 import { usePriceUpdateTxn } from './usePriceUpdateTxn';
 
-export function useAccountCollateral({
+export function usePositionDebt({
   accountId,
+  poolId,
   tokenAddress,
 }: {
   accountId?: ethers.BigNumber;
+  poolId?: ethers.BigNumber;
   tokenAddress?: string;
 }) {
   const errorParser = useErrorParser();
@@ -32,12 +34,13 @@ export function useAccountCollateral({
         CoreProxyContract &&
         MulticallContract &&
         accountId &&
+        poolId &&
         tokenAddress &&
         priceUpdateTxn
     ),
     queryKey: [
       connectedChain?.id,
-      'AccountCollateral',
+      'PositionDebt',
       { accountId: accountId?.toHexString(), tokenAddress },
     ],
     queryFn: async () => {
@@ -48,6 +51,7 @@ export function useAccountCollateral({
           CoreProxyContract &&
           MulticallContract &&
           accountId &&
+          poolId &&
           tokenAddress &&
           priceUpdateTxn
         )
@@ -64,21 +68,23 @@ export function useAccountCollateral({
       });
 
       if (priceUpdateTxn.value) {
-        console.log('-> fetchAccountCollateralWithPriceUpdate');
-        return fetchAccountCollateralWithPriceUpdate({
+        console.log('-> fetchPositionDebtWithPriceUpdate');
+        return fetchPositionDebtWithPriceUpdate({
           wallet,
           CoreProxyContract,
           MulticallContract,
           accountId,
+          poolId,
           tokenAddress,
           priceUpdateTxn,
         });
       } else {
-        console.log('-> fetchAccountCollateral');
-        return fetchAccountCollateral({
+        console.log('-> fetchPositionDebt');
+        return fetchPositionDebt({
           wallet,
           CoreProxyContract,
           accountId,
+          poolId,
           tokenAddress,
         });
       }
@@ -88,11 +94,7 @@ export function useAccountCollateral({
       errorParser(error);
       return false;
     },
-    select: (accountCollateral) => ({
-      totalAssigned: ethers.BigNumber.from(accountCollateral.totalAssigned),
-      totalDeposited: ethers.BigNumber.from(accountCollateral.totalDeposited),
-      totalLocked: ethers.BigNumber.from(accountCollateral.totalLocked),
-    }),
+    select: (positionDebt) => ethers.BigNumber.from(positionDebt),
     retry: 5,
     retryDelay: (attempt) => 2 ** attempt * 1000,
   });

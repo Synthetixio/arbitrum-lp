@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
+import { fetchBurnUsd } from './fetchBurnUsd';
+import { fetchBurnUsdWithPriceUpdate } from './fetchBurnUsdWithPriceUpdate';
 import { fetchPriceUpdateTxn } from './fetchPriceUpdateTxn';
-import { fetchWithdrawCollateral } from './fetchWithdrawCollateral';
-import { fetchWithdrawCollateralWithPriceUpdate } from './fetchWithdrawCollateralWithPriceUpdate';
 import { useErrorParser } from './parseError';
 import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useCoreProxy } from './useCoreProxy';
@@ -12,14 +12,19 @@ import { useMulticall } from './useMulticall';
 import { usePythERC7412Wrapper } from './usePythERC7412Wrapper';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
+import { useSelectedPoolId } from './useSelectedPoolId';
+import { useSystemToken } from './useSystemToken';
 
-export function useWithdraw() {
+export function useBurnUsd() {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const accountId = useSelectedAccountId();
   const collateralType = useSelectedCollateralType();
+  const poolId = useSelectedPoolId();
+
+  const { data: systemToken } = useSystemToken();
 
   const { data: CoreProxyContract } = useCoreProxy();
 
@@ -31,7 +36,7 @@ export function useWithdraw() {
   const queryClient = useQueryClient();
   return useMutation({
     retry: false,
-    mutationFn: async (withdrawAmount: ethers.BigNumber) => {
+    mutationFn: async (burnUsdAmount: ethers.BigNumber) => {
       if (
         !(
           CoreProxyContract &&
@@ -42,13 +47,15 @@ export function useWithdraw() {
           walletAddress &&
           wallet?.provider &&
           accountId &&
-          collateralType
+          poolId &&
+          collateralType &&
+          systemToken
         )
       ) {
         throw 'OMFG';
       }
 
-      if (withdrawAmount.eq(0)) {
+      if (burnUsdAmount.eq(0)) {
         throw new Error('Amount required');
       }
 
@@ -58,47 +65,49 @@ export function useWithdraw() {
         PythERC7412WrapperContract,
         priceIds,
       });
-      console.log(`freshPriceUpdateTxn`, freshPriceUpdateTxn);
+      console.log({ freshPriceUpdateTxn });
 
-      const freshAccountAvailableCollateral = await fetchAccountAvailableCollateral({
+      const freshAccountAvailableUsd = await fetchAccountAvailableCollateral({
         wallet,
         CoreProxyContract,
         accountId,
-        tokenAddress: collateralType.address,
+        tokenAddress: systemToken.address,
       });
-      console.log(`freshAccountAvailableCollateral`, freshAccountAvailableCollateral);
+      console.log({ freshAccountAvailableUsd });
 
-      const hasEnoughDeposit = freshAccountAvailableCollateral.gte(withdrawAmount);
+      const hasEnoughDeposit = freshAccountAvailableUsd.gte(burnUsdAmount);
       if (!hasEnoughDeposit) {
-        throw new Error('Not enough unlocked collateral');
+        throw new Error(`Not enough deposited ${systemToken.symbol}`);
       }
 
       if (freshPriceUpdateTxn.value) {
-        console.log('-> withdrawCollateralWithPriceUpdate');
-        await fetchWithdrawCollateralWithPriceUpdate({
+        console.log('-> burnUsdWithPriceUpdate');
+        await fetchBurnUsdWithPriceUpdate({
           wallet,
           CoreProxyContract,
           MulticallContract,
           accountId,
+          poolId,
           tokenAddress: collateralType.address,
-          withdrawAmount,
+          burnUsdAmount,
           priceUpdateTxn: freshPriceUpdateTxn,
         });
       } else {
-        console.log('-> withdrawCollateral');
-        await fetchWithdrawCollateral({
+        console.log('-> burnUsd');
+        await fetchBurnUsd({
           wallet,
           CoreProxyContract,
           accountId,
+          poolId,
           tokenAddress: collateralType.address,
-          withdrawAmount,
+          burnUsdAmount,
         });
       }
       return { priceUpdated: true };
     },
     throwOnError: (error) => {
       // TODO: show toast
-      errorParser(error);
+      errorParser(error).then();
       return false;
     },
     onSuccess: async ({ priceUpdated }) => {
@@ -116,11 +125,8 @@ export function useWithdraw() {
       queryClient.invalidateQueries({
         queryKey: [
           connectedChain?.id,
-          'AccountCollateral',
-          {
-            accountId: accountId?.toHexString(),
-            tokenAddress: collateralType?.address,
-          },
+          'PositionDebt',
+          { accountId: accountId?.toHexString(), tokenAddress: collateralType?.address },
         ],
       });
       queryClient.invalidateQueries({
@@ -129,17 +135,7 @@ export function useWithdraw() {
           'AccountAvailableCollateral',
           {
             accountId: accountId?.toHexString(),
-            tokenAddress: collateralType?.address,
-          },
-        ],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [
-          connectedChain?.id,
-          'Balance',
-          {
-            tokenAddress: collateralType?.address,
-            ownerAddress: walletAddress,
+            tokenAddress: systemToken?.address,
           },
         ],
       });
