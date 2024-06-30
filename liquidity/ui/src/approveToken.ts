@@ -20,7 +20,7 @@ export async function approveToken({
     ['function approve(address spender, uint256 amount) returns (bool)'],
     signer
   );
-  const tx: ethers.ContractTransaction = await Token['approve'](spenderAddress, allowance);
+  const tx: ethers.ContractTransaction = await Token.approve(spenderAddress, allowance);
   console.log({ tx });
   if (window.$tx) {
     window.$tx.push(tx);

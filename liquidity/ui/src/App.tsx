@@ -8,7 +8,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import coinbaseModule from '@web3-onboard/coinbase';
@@ -118,14 +118,15 @@ const queryClient = new QueryClient({
       staleTime: 5 * 60 * 1000,
       gcTime: 60 * 60 * 1000, // 1h
       refetchOnWindowFocus: false,
-      throwOnError: (e) => {
-        console.error(e);
+      throwOnError: (queryError) => {
+        console.error({ queryError });
         return false;
       },
     },
     mutations: {
-      throwOnError: (e) => {
-        console.error(e);
+      retry: false,
+      throwOnError: (mutationError) => {
+        console.error({ mutationError });
         return false;
       },
     },
@@ -258,6 +259,12 @@ export function App() {
       client={queryClient}
       persistOptions={{ persister: localStoragePersister }}
     >
+      {/*
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: localStoragePersister }}
+    >
+*/}
       <Web3OnboardProvider web3Onboard={onboard}>
         <ChakraProvider theme={theme}>
           <HashRouter>

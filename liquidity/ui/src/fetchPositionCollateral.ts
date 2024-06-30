@@ -7,21 +7,15 @@ export async function fetchPositionCollateral({
   accountId,
   poolId,
   tokenAddress,
-  errorParser,
 }: {
   wallet: WalletState;
   CoreProxyContract: { address: string; abi: string };
-  accountId: string;
-  poolId: string;
+  accountId: ethers.BigNumber;
+  poolId: ethers.BigNumber;
   tokenAddress: string;
-  errorParser: (error: Error) => void;
 }) {
   const provider = new ethers.providers.Web3Provider(wallet.provider);
   const CoreProxy = new ethers.Contract(CoreProxyContract.address, CoreProxyContract.abi, provider);
-  const positionCollateral = await CoreProxy.getPositionCollateral(
-    accountId,
-    poolId,
-    tokenAddress
-  ).catch(errorParser);
+  const positionCollateral = await CoreProxy.getPositionCollateral(accountId, poolId, tokenAddress);
   return positionCollateral;
 }

@@ -1,7 +1,7 @@
 import type { WalletState } from '@web3-onboard/core';
 import { ethers } from 'ethers';
 
-export async function fetchAccountCollateral({
+export async function fetchAccountAvailableCollateral({
   wallet,
   CoreProxyContract,
   accountId,
@@ -14,12 +14,11 @@ export async function fetchAccountCollateral({
 }) {
   const provider = new ethers.providers.Web3Provider(wallet.provider);
   const CoreProxy = new ethers.Contract(CoreProxyContract.address, CoreProxyContract.abi, provider);
-  console.time('fetchAccountCollateral');
-  const accountCollateral = await CoreProxy.getAccountCollateral(accountId, tokenAddress);
-  console.timeEnd('fetchAccountCollateral');
-  return {
-    totalAssigned: accountCollateral.totalAssigned,
-    totalDeposited: accountCollateral.totalDeposited,
-    totalLocked: accountCollateral.totalLocked,
-  };
+  console.time('fetchAccountAvailableCollateral');
+  const accountAvailableCollateral = await CoreProxy.getAccountAvailableCollateral(
+    accountId,
+    tokenAddress
+  );
+  console.timeEnd('fetchAccountAvailableCollateral');
+  return accountAvailableCollateral;
 }

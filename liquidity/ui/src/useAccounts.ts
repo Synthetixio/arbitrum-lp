@@ -9,7 +9,7 @@ export function useAccounts() {
   const walletAddress = wallet?.accounts?.[0]?.address;
   return useQuery({
     enabled: Boolean(connectedChain?.id && walletAddress && wallet?.provider),
-    queryKey: [connectedChain?.id, walletAddress, 'Accounts'],
+    queryKey: [connectedChain?.id, 'Accounts', { ownerAddress: walletAddress }],
     queryFn: async () => {
       if (!(connectedChain?.id && walletAddress && wallet?.provider)) throw 'OMFG';
       const { address, abi } = await importAccountProxy(parseInt(connectedChain.id, 16), 'main');
@@ -26,6 +26,6 @@ export function useAccounts() {
       );
       return accounts;
     },
-    select: (accounts) => accounts.map((accountId) => ethers.BigNumber.from(accountId).toString()),
+    select: (accounts) => accounts.map((accountId) => ethers.BigNumber.from(accountId)),
   });
 }

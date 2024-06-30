@@ -1,18 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
+import { fetchAccountCollateral } from './fetchAccountCollateral';
+import { fetchAccountCollateralWithPriceUpdate } from './fetchAccountCollateralWithPriceUpdate';
 import { useErrorParser } from './parseError';
 import { useAllPriceFeeds } from './useAllPriceFeeds';
-import { usePriceUpdateTxn } from './usePriceUpdateTxn';
 import { useCoreProxy } from './useCoreProxy';
 import { useMulticall } from './useMulticall';
-import { fetchAccountCollateral } from './fetchAccountCollateral';
+import { usePriceUpdateTxn } from './usePriceUpdateTxn';
 
 export function useAccountCollateral({
   accountId,
   tokenAddress,
 }: {
-  accountId?: string;
+  accountId?: ethers.BigNumber;
   tokenAddress?: string;
 }) {
   const errorParser = useErrorParser();
@@ -23,6 +24,7 @@ export function useAccountCollateral({
   const [{ wallet }] = useConnectWallet();
   const { data: CoreProxyContract } = useCoreProxy();
   const { data: MulticallContract } = useMulticall();
+
   return useQuery({
     enabled: Boolean(
       connectedChain?.id &&
@@ -33,7 +35,11 @@ export function useAccountCollateral({
         tokenAddress &&
         priceUpdateTxn
     ),
-    queryKey: [connectedChain?.id, 'AccountCollateral', { accountId, tokenAddress }],
+    queryKey: [
+      connectedChain?.id,
+      'AccountCollateral',
+      { accountId: accountId?.toHexString(), tokenAddress },
+    ],
     queryFn: async () => {
       if (
         !(
@@ -48,15 +54,39 @@ export function useAccountCollateral({
       ) {
         throw 'OMFG';
       }
-      return fetchAccountCollateral({
+      console.log({
         wallet,
         CoreProxyContract,
         MulticallContract,
         accountId,
         tokenAddress,
         priceUpdateTxn,
-        errorParser,
       });
+
+      if (priceUpdateTxn.value) {
+        console.log('-> fetchAccountCollateralWithPriceUpdate');
+        return fetchAccountCollateralWithPriceUpdate({
+          wallet,
+          CoreProxyContract,
+          MulticallContract,
+          accountId,
+          tokenAddress,
+          priceUpdateTxn,
+        });
+      } else {
+        console.log('-> fetchAccountCollateral');
+        return fetchAccountCollateral({
+          wallet,
+          CoreProxyContract,
+          accountId,
+          tokenAddress,
+        });
+      }
+    },
+    throwOnError: (error) => {
+      // TODO: show toast
+      errorParser(error);
+      return false;
     },
     select: (accountCollateral) => ({
       totalAssigned: ethers.BigNumber.from(accountCollateral.totalAssigned),

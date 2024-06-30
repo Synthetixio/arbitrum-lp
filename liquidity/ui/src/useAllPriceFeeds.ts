@@ -21,6 +21,5 @@ export function useAllPriceFeeds() {
         .map(([, value]) => value as string);
     },
     staleTime: 60 * 60 * 1000,
-    refetchInterval: 60 * 60 * 1000,
   });
 }

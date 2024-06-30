@@ -3,29 +3,26 @@ import {
   AlertIcon,
   AlertTitle,
   Button,
-  Flex,
+  FormControl,
+  FormHelperText,
   Heading,
   Input,
   InputGroup,
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useMutation } from '@tanstack/react-query';
-import { useConnectWallet, useSetChain } from '@web3-onboard/react';
+import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
-import { approveToken } from './approveToken';
-import { depositCollateral } from './depositCollateral';
-import { useAccountCollateral } from './useAccountCollateral';
+import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useCoreProxy } from './useCoreProxy';
-import { usePositionCollateral } from './usePositionCollateral';
+import { useDeposit } from './useDeposit';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useTokenAllowance } from './useTokenAllowance';
 import { useTokenBalance } from './useTokenBalance';
 
 export function Deposit() {
-  const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
@@ -34,79 +31,23 @@ export function Deposit() {
 
   const { data: CoreProxyContract } = useCoreProxy();
 
-  const { data: currentAllowance, refetch: tokenAllowanceRefetch } = useTokenAllowance({
+  const { data: currentBalance } = useTokenBalance({
+    ownerAddress: walletAddress,
+    tokenAddress: collateralType?.address,
+  });
+
+  const { data: currentAllowance } = useTokenAllowance({
     ownerAddress: walletAddress,
     tokenAddress: collateralType?.address,
     spenderAddress: CoreProxyContract?.address,
   });
 
-  const { refetch: tokenBalanceRefetch } = useTokenBalance({
-    ownerAddress: walletAddress,
-    tokenAddress: collateralType?.address,
-  });
-
-  const { data: accountCollateral, refetch: accountCollateralRefetch } = useAccountCollateral({
+  const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
     accountId,
     tokenAddress: collateralType?.address,
   });
 
-  const { refetch: positionCollateralRefetch } = usePositionCollateral({
-    accountId,
-    poolId: '1',
-    tokenAddress: collateralType?.address,
-  });
-
-  const deposit = useMutation({
-    mutationFn: async (inputAmount: string) => {
-      if (!(wallet && CoreProxyContract && connectedChain?.id && accountId && collateralType)) {
-        throw 'OMFG';
-      }
-
-      const filteredInput = `${inputAmount}`.replace(/[^0-9.]+/gi, '');
-      const depositAmount = filteredInput
-        ? ethers.utils.parseUnits(inputAmount.trim(), collateralType.decimals)
-        : ethers.BigNumber.from(0);
-
-      if (!depositAmount.gt(0)) {
-        throw new Error('Amount required');
-      }
-
-      const freshBalance = await tokenBalanceRefetch();
-      if (!freshBalance.data) {
-        throw freshBalance.error;
-      }
-      if (freshBalance.data.lt(depositAmount)) {
-        throw new Error('Not enough balance');
-      }
-      const freshAllowance = await tokenAllowanceRefetch();
-      if (!freshAllowance.data) {
-        throw freshAllowance.error;
-      }
-
-      if (freshAllowance.data.lt(depositAmount)) {
-        await approveToken({
-          wallet,
-          tokenAddress: collateralType.address,
-          spenderAddress: CoreProxyContract.address,
-          allowance: depositAmount.sub(freshAllowance.data),
-        });
-      }
-
-      await depositCollateral({
-        wallet,
-        CoreProxyContract,
-        accountId,
-        tokenAddress: collateralType.address,
-        depositAmount,
-      });
-
-      await Promise.all([
-        //
-        accountCollateralRefetch(),
-        positionCollateralRefetch(),
-      ]);
-    },
-  });
+  const deposit = useDeposit();
 
   const [value, setValue] = React.useState('');
 
@@ -137,8 +78,10 @@ export function Deposit() {
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
           Deposited:{' '}
           <b>
-            {accountCollateral && collateralType
-              ? ethers.utils.formatUnits(accountCollateral.totalDeposited, collateralType.decimals)
+            {accountAvailableCollateral && collateralType
+              ? parseFloat(
+                  ethers.utils.formatUnits(accountAvailableCollateral, collateralType.decimals)
+                ).toFixed(1)
               : ''}
           </b>
         </Text>
@@ -149,22 +92,33 @@ export function Deposit() {
           <AlertTitle>{deposit.error.message}</AlertTitle>
         </Alert>
       ) : null}
-
-      <InputGroup gap={3}>
-        <Input
-          required
-          placeholder="Enter amount"
-          value={value}
-          onChange={(e) => {
-            deposit.reset();
-            setValue(e.target.value);
-          }}
-          maxWidth="10rem"
-        />
-        <Button type="submit" isLoading={deposit.isPending}>
-          {hasEnoughAllowance ? 'Deposit' : 'Approve and Deposit'}
-        </Button>
-      </InputGroup>
+      <FormControl>
+        <InputGroup gap={3}>
+          <Input
+            required
+            placeholder="Enter amount"
+            value={value}
+            onChange={(e) => {
+              deposit.reset();
+              setValue(e.target.value);
+            }}
+            maxWidth="10rem"
+          />
+          <Button type="submit" isLoading={deposit.isPending}>
+            {hasEnoughAllowance ? 'Deposit' : 'Approve and Deposit'}
+          </Button>
+        </InputGroup>
+        <FormHelperText>
+          Max:{' '}
+          <b>
+            {currentBalance && collateralType
+              ? parseFloat(
+                  ethers.utils.formatUnits(currentBalance, collateralType.decimals)
+                ).toFixed(1)
+              : ''}
+          </b>
+        </FormHelperText>
+      </FormControl>
     </Stack>
   );
 }

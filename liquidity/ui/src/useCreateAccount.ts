@@ -43,7 +43,7 @@ export function useCreateAccount() {
         const accountId = event?.args?.accountId?.toString();
         if (accountId) {
           queryClient.setQueryData(
-            [connectedChain.id, walletAddress, 'Accounts'],
+            [connectedChain.id, 'Accounts', { ownerAddress: walletAddress }],
             (oldData: string[]) => oldData.concat([accountId])
           );
           setParams({ ...params, accountId });

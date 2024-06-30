@@ -13,13 +13,17 @@ export async function fetchPriceUpdateTxn({
   PythERC7412WrapperContract: { address: string; abi: string };
   priceIds: string[];
 }) {
-  const stalenessTolerance = 3600;
+  console.time('fetchPriceUpdateTxn');
+  const stalenessTolerance = 1800; // half of 3600 required tolerance
 
-  const multicallInterface = new ethers.utils.Interface(MulticallContract.abi);
-  const erc7412Interface = new ethers.utils.Interface(PythERC7412WrapperContract.abi);
+  const MulticallInterface = new ethers.utils.Interface(MulticallContract.abi);
+  const PythERC7412WrapperInterface = new ethers.utils.Interface(PythERC7412WrapperContract.abi);
   const txs = priceIds.map((priceId) => ({
     target: PythERC7412WrapperContract.address,
-    callData: erc7412Interface.encodeFunctionData('getLatestPrice', [priceId, stalenessTolerance]),
+    callData: PythERC7412WrapperInterface.encodeFunctionData('getLatestPrice', [
+      priceId,
+      stalenessTolerance,
+    ]),
     value: 0,
     requireSuccess: false,
   }));
@@ -28,9 +32,9 @@ export async function fetchPriceUpdateTxn({
 
   const result = await provider.call({
     to: MulticallContract.address,
-    data: multicallInterface.encodeFunctionData('aggregate3Value', [txs]),
+    data: MulticallInterface.encodeFunctionData('aggregate3Value', [txs]),
   });
-  const [latestPrices] = multicallInterface.decodeFunctionResult('aggregate3Value', result);
+  const [latestPrices] = MulticallInterface.decodeFunctionResult('aggregate3Value', result);
   const stalePriceIds = priceIds.filter((_priceId, i) => !latestPrices[i].success);
   if (stalePriceIds.length < 1) {
     return {
@@ -49,10 +53,13 @@ export async function fetchPriceUpdateTxn({
     ['uint8', 'uint64', 'bytes32[]', 'bytes[]'],
     [updateType, stalenessTolerance, stalePriceIds, signedOffchainData]
   );
-  return {
+  console.timeEnd('fetchPriceUpdateTxn');
+  const priceUpdateTxn = {
     target: PythERC7412WrapperContract.address,
-    callData: erc7412Interface.encodeFunctionData('fulfillOracleQuery', [data]),
+    callData: PythERC7412WrapperInterface.encodeFunctionData('fulfillOracleQuery', [data]),
     value: stalePriceIds.length,
     requireSuccess: true,
   };
+  console.log('fetchPriceUpdateTxn', { priceUpdateTxn });
+  return priceUpdateTxn;
 }

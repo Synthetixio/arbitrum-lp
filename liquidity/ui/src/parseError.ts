@@ -1,5 +1,5 @@
 import { importAllErrors } from '@snx-v3/contracts';
-import { useConnectWallet, useSetChain } from '@web3-onboard/react';
+import { useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 
@@ -48,59 +48,168 @@ export const PYTH_ERRORS = [
   'error InvalidWormholeAddressToSet()',
 ];
 
-export async function parseError({
+function decodeBuiltinErrors(data: string) {
+  let sighash = ethers.utils.id('Panic(uint256)').slice(0, 10);
+  if (data.startsWith(sighash)) {
+    // this is the `Panic` builtin opcode
+    const reason = ethers.utils.defaultAbiCoder.decode(['uint256'], '0x' + data.slice(10))[0];
+    switch (reason.toNumber()) {
+      case 0x00:
+        return { name: 'Panic("generic/unknown error")', sighash, args: [{ reason }] };
+      case 0x01:
+        return { name: 'Panic("assertion failed")', sighash, args: [{ reason }] };
+      case 0x11:
+        return { name: 'Panic("unchecked underflow/overflow")', sighash, args: [{ reason }] };
+      case 0x12:
+        return { name: 'Panic("division by zero")', sighash, args: [{ reason }] };
+      case 0x21:
+        return { name: 'Panic("invalid number to enum conversion")', sighash, args: [{ reason }] };
+      case 0x22:
+        return {
+          name: 'Panic("access to incorrect storage byte array")',
+          sighash,
+          args: [{ reason }],
+        };
+      case 0x31:
+        return { name: 'Panic("pop() empty array")', sighash, args: [{ reason }] };
+      case 0x32:
+        return { name: 'Panic("out of bounds array access")', sighash, args: [{ reason }] };
+      case 0x41:
+        return { name: 'Panic("out of memory")', sighash, args: [{ reason }] };
+      case 0x51:
+        return { name: 'Panic("invalid internal function")', sighash, args: [{ reason }] };
+      default:
+        return { name: 'Panic("unknown")', sighash, args: [{ reason }] };
+    }
+  }
+  sighash = ethers.utils.id('Error(string)').slice(0, 10);
+  if (data.startsWith(sighash)) {
+    // this is the `Error` builtin opcode
+    const reason = ethers.utils.defaultAbiCoder.decode(['string'], '0x' + data.slice(10));
+    return { name: `Error("${reason}")`, sighash, args: [{ reason }] };
+  }
+
+  return;
+}
+
+function decodePythErrors(data: string) {
+  const PythInterface = new ethers.utils.Interface(PYTH_ERRORS);
+  try {
+    const decodedError = PythInterface.parseError(data);
+    Object.assign(decodedError, {
+      name: `PythError.${decodedError.name}`,
+    });
+    return decodedError;
+  } catch (e) {
+    // whatever
+  }
+}
+
+async function parseError({
   error,
   chainId,
   preset,
 }: {
-  error: any;
+  error: Error | any;
   chainId: string;
   preset: string;
 }) {
-  console.log({ error });
-  let errorData = error.data || error.error?.data?.data || error.error?.error?.data;
+  const errorData =
+    error?.data ||
+    error?.data?.data ||
+    error?.error?.data ||
+    error?.error?.error?.error?.data ||
+    error?.error?.data?.data ||
+    error?.error?.error?.data;
+
   if (!errorData) {
+    console.log('Error data missing', { error });
     throw error;
   }
+  const AllErrorsContract = await importAllErrors(chainId, preset);
+  const errorParsed = (() => {
+    try {
+      const panic = decodeBuiltinErrors(errorData);
+      if (panic) {
+        return panic;
+      }
+      const pythError = decodePythErrors(errorData);
+      if (pythError) {
+        return pythError;
+      }
+      const AllErrorsInterface = new ethers.utils.Interface(AllErrorsContract.abi);
+      const data = AllErrorsInterface.parseError(errorData);
+      console.log({ decodedError: data });
 
-  if (`${errorData}`.startsWith('0x08c379a0')) {
-    const content = `0x${errorData.substring(10)}`;
-    // reason: string; for standard revert error string
-    const reason = ethers.utils.defaultAbiCoder.decode(['string'], content);
-    console.log(`Reason`, reason);
-    return {
-      name: reason[0],
-      args: [],
-    };
-  }
+      if (
+        data?.name === 'OracleDataRequired' &&
+        data?.args?.oracleContract &&
+        data?.args?.oracleQuery
+      ) {
+        const oracleAddress = data?.args?.oracleContract;
+        const oracleQueryRaw = data?.args?.oracleQuery;
 
-  try {
-    const AllErrors = await importAllErrors(chainId, preset);
-    const AllErrorsInterface = new ethers.utils.Interface([...AllErrors.abi, ...PYTH_ERRORS]);
-    const decodedError = AllErrorsInterface.parseError(errorData);
-    console.log({ decodedError });
-    return decodedError;
-  } catch (parseError) {
-    console.error(
-      'Error is not a ERC7412 error, re-throwing original error, for better parsing. Parse error reason: ',
-      parseError
-    );
-    // If we cant parse it, throw the original error
+        let updateType, publishTime, stalenessTolerance, feedIds, priceId;
+        [updateType, publishTime, priceId] = ethers.utils.defaultAbiCoder.decode(
+          ['uint8', 'uint64', 'bytes32'],
+          oracleQueryRaw
+        );
+
+        if (updateType === 1) {
+          [updateType, stalenessTolerance, feedIds] = ethers.utils.defaultAbiCoder.decode(
+            ['uint8', 'uint64', 'bytes32[]'],
+            oracleQueryRaw
+          );
+          publishTime = undefined;
+        } else {
+          feedIds = [priceId];
+        }
+        const errorOracleDataRequired = new Error('OracleDataRequired');
+        Object.assign(errorOracleDataRequired, {
+          error,
+          args: {
+            oracleAddress,
+            oracleQuery: {
+              updateType,
+              publishTime: Number(publishTime),
+              stalenessTolerance: Number(stalenessTolerance),
+              feedIds,
+            },
+            oracleQueryRaw,
+          },
+          signature: data.signature,
+          sighash: data.sighash,
+          errorFragment: data.errorFragment,
+        });
+        return errorOracleDataRequired;
+      }
+      return data;
+    } catch (e) {
+      console.log(e);
+    }
+    return error;
+  })();
+  if (!errorParsed.name) {
     throw error;
   }
+  const args = errorParsed?.args
+    ? Object.fromEntries(
+        Object.entries(errorParsed.args).filter(([key]) => `${parseInt(key)}` !== key)
+      )
+    : {};
+  error.message = `${errorParsed?.name}, ${errorParsed?.sighash} (${JSON.stringify(args)})`;
+  throw error;
 }
 
 export function useErrorParser() {
-  const [{ wallet }] = useConnectWallet();
   const [{ connectedChain }] = useSetChain();
   return React.useCallback(
-    (error: Error) => {
-      if (wallet?.provider && connectedChain?.id) {
-        const provider = new ethers.providers.Web3Provider(wallet.provider);
-        parseError({ error, chainId: connectedChain.id, preset: 'main' });
-        throw error;
+    async (error: Error) => {
+      if (connectedChain?.id) {
+        await parseError({ error, chainId: connectedChain.id, preset: 'main' });
       }
+      throw error;
     },
-    [wallet?.provider]
+    [connectedChain?.id]
   );
 }

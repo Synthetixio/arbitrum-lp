@@ -73,12 +73,12 @@ export function UserMenu() {
                 <MenuOptionGroup
                   title="Accounts"
                   type="radio"
-                  defaultValue={accountId}
-                  value={accountId}
-                  onChange={(id) => setParams({ ...params, accountId: `${id}` })}
+                  defaultValue={accountId?.toHexString() ?? ''}
+                  value={accountId?.toHexString() ?? ''}
+                  onChange={(value) => setParams({ ...params, accountId: `${value}` })}
                 >
                   {accounts.map((id) => (
-                    <MenuItemOption key={id} value={id}>
+                    <MenuItemOption key={id.toHexString()} value={id.toHexString()}>
                       {renderAccountId(id)}
                     </MenuItemOption>
                   ))}

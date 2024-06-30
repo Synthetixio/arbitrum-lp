@@ -10,7 +10,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
@@ -25,6 +25,7 @@ import { usePriceUpdateTxn } from './usePriceUpdateTxn';
 import { usePythERC7412Wrapper } from './usePythERC7412Wrapper';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
+import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function Borrow() {
   const [{ connectedChain }] = useSetChain();
@@ -33,6 +34,7 @@ export function Borrow() {
 
   const accountId = useSelectedAccountId();
   const collateralType = useSelectedCollateralType();
+  const poolId = useSelectedPoolId();
 
   const { data: CoreProxyContract } = useCoreProxy();
 
@@ -43,7 +45,7 @@ export function Borrow() {
 
   const { data: positionCollateral, refetch: positionCollateralRefetch } = usePositionCollateral({
     accountId,
-    poolId: '1',
+    poolId,
     tokenAddress: collateralType?.address,
   });
 
@@ -53,75 +55,19 @@ export function Borrow() {
   const { data: MulticallContract } = useMulticall();
   const { data: PythERC7412WrapperContract } = usePythERC7412Wrapper();
 
+  const queryClient = useQueryClient();
   const borrow = useMutation({
-    mutationFn: async (inputAmount: string) => {
-      if (
-        !(
-          CoreProxyContract &&
-          MulticallContract &&
-          PythERC7412WrapperContract &&
-          allPriceFeeds &&
-          connectedChain?.id &&
-          walletAddress &&
-          wallet?.provider &&
-          accountId &&
-          collateralType
-        )
-      ) {
-        throw 'OMFG';
+    mutationFn: async (inputAmount: string): Promise<{ priceUpdated: boolean }> => {
+      return { priceUpdated: false };
+    },
+    throwOnError: (error) => {
+      // TODO: show toast
+      errorParser(error);
+      return false;
+    },
+    onSuccess: async ({ priceUpdated }) => {
+      if (priceUpdated) {
       }
-
-      const filteredInput = `${inputAmount}`.replace(/[^0-9.]+/gi, '');
-      const delegateAmount = filteredInput
-        ? ethers.utils.parseUnits(inputAmount.trim(), collateralType.decimals)
-        : ethers.BigNumber.from(0);
-
-      if (!delegateAmount.gt(0)) {
-        throw new Error('Amount required');
-      }
-
-      const freshPriceUpdateTxn = await priceUpdateTxnRefetch();
-      console.log(`freshPriceUpdateTxn`, freshPriceUpdateTxn.data);
-      if (!freshPriceUpdateTxn.data) {
-        throw freshPriceUpdateTxn.error;
-      }
-
-      const freshAccountCollateral = await accountCollateralRefetch();
-      console.log(`freshAccountCollateral`, freshAccountCollateral.data);
-      if (!freshAccountCollateral.data) {
-        throw freshAccountCollateral.error;
-      }
-
-      const hasEnoughDeposit = freshAccountCollateral.data.totalDeposited
-        .sub(freshAccountCollateral.data.totalAssigned)
-        .gte(delegateAmount);
-      if (!hasEnoughDeposit) {
-        throw new Error('Not enough deposit');
-      }
-
-      const freshPositionCollateral = await positionCollateralRefetch();
-      console.log(`freshPositionCollateral`, freshPositionCollateral.data);
-      if (!freshPositionCollateral.data) {
-        throw freshPositionCollateral.error;
-      }
-
-      await delegateCollateral({
-        wallet,
-        CoreProxyContract,
-        MulticallContract,
-        accountId,
-        poolId: '1',
-        tokenAddress: collateralType.address,
-        delegateAmount: freshPositionCollateral.data.add(delegateAmount),
-        priceUpdateTxn: freshPriceUpdateTxn.data,
-        errorParser,
-      });
-
-      await Promise.all([
-        //
-        accountCollateralRefetch(),
-        positionCollateralRefetch(),
-      ]);
     },
   });
 

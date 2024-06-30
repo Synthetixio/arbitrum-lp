@@ -20,15 +20,12 @@ export function useTokenAllowance({
     ),
     queryKey: [connectedChain?.id, 'Allowance', { tokenAddress, ownerAddress, spenderAddress }],
     queryFn: async () => {
-      if (
-        !(connectedChain?.id && wallet?.provider && tokenAddress && ownerAddress && spenderAddress)
-      ) {
+      if (!(connectedChain?.id && wallet && tokenAddress && ownerAddress && spenderAddress)) {
         throw 'OMFG';
       }
-      const provider = new ethers.providers.Web3Provider(wallet.provider);
-      return fetchTokenAllowance({ provider, tokenAddress, ownerAddress, spenderAddress });
+      return fetchTokenAllowance({ wallet, tokenAddress, ownerAddress, spenderAddress });
     },
     select: (allowance) => ethers.BigNumber.from(allowance),
-    refetchInterval: 60_000,
+    refetchInterval: 5 * 60 * 1000,
   });
 }

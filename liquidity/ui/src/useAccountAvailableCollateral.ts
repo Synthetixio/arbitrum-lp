@@ -1,17 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
-import { fetchPositionCollateral } from './fetchPositionCollateral';
-import { useCoreProxy } from './useCoreProxy';
+import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
 import { useErrorParser } from './parseError';
+import { useCoreProxy } from './useCoreProxy';
 
-export function usePositionCollateral({
+export function useAccountAvailableCollateral({
   accountId,
-  poolId,
   tokenAddress,
 }: {
   accountId?: ethers.BigNumber;
-  poolId?: ethers.BigNumber;
   tokenAddress?: string;
 }) {
   const errorParser = useErrorParser();
@@ -20,36 +18,24 @@ export function usePositionCollateral({
   const { data: CoreProxyContract } = useCoreProxy();
   return useQuery({
     enabled: Boolean(
-      connectedChain?.id &&
-        wallet?.provider &&
-        CoreProxyContract &&
-        accountId &&
-        poolId &&
-        tokenAddress
+      connectedChain?.id && wallet?.provider && CoreProxyContract && accountId && tokenAddress
     ),
     queryKey: [
       connectedChain?.id,
-      'PositionCollateral',
-      { accountId: accountId?.toHexString(), poolId: poolId?.toHexString(), tokenAddress },
+      'AccountAvailableCollateral',
+      { accountId: accountId?.toHexString(), tokenAddress },
     ],
     queryFn: async () => {
       if (
-        !(
-          connectedChain?.id &&
-          wallet?.provider &&
-          CoreProxyContract &&
-          accountId &&
-          poolId &&
-          tokenAddress
-        )
+        !(connectedChain?.id && wallet?.provider && CoreProxyContract && accountId && tokenAddress)
       ) {
         throw 'OMFG';
       }
-      return fetchPositionCollateral({
+
+      return fetchAccountAvailableCollateral({
         wallet,
         CoreProxyContract,
         accountId,
-        poolId,
         tokenAddress,
       });
     },
@@ -58,6 +44,6 @@ export function usePositionCollateral({
       errorParser(error);
       return false;
     },
-    select: (positionCollateral) => ethers.BigNumber.from(positionCollateral),
+    select: (accountAvailableCollateral) => ethers.BigNumber.from(accountAvailableCollateral),
   });
 }

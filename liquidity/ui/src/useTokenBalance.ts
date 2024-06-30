@@ -16,13 +16,12 @@ export function useTokenBalance({
     enabled: Boolean(connectedChain?.id && wallet?.provider && tokenAddress && ownerAddress),
     queryKey: [connectedChain?.id, 'Balance', { tokenAddress, ownerAddress }],
     queryFn: async () => {
-      if (!(connectedChain?.id && wallet?.provider && tokenAddress && ownerAddress)) {
+      if (!(connectedChain?.id && wallet && tokenAddress && ownerAddress)) {
         throw 'OMFG';
       }
-      const provider = new ethers.providers.Web3Provider(wallet.provider);
-      return fetchTokenBalance({ provider, tokenAddress, ownerAddress });
+      return fetchTokenBalance({ wallet, tokenAddress, ownerAddress });
     },
     select: (balance) => ethers.BigNumber.from(balance),
-    refetchInterval: 60_000,
+    refetchInterval: 5 * 60 * 1000,
   });
 }

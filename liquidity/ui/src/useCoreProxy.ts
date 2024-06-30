@@ -15,6 +15,5 @@ export function useCoreProxy() {
       return { address, abi };
     },
     staleTime: 60 * 60 * 1000,
-    refetchInterval: 60 * 60 * 1000,
   });
 }
