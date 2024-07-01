@@ -50,7 +50,7 @@ export function Undelegate() {
       }}
     >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
-        Unlock
+        Undelegate
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
           &nbsp;
         </Text>
@@ -85,7 +85,7 @@ export function Undelegate() {
               )
             }
           >
-            Unlock
+            Undelegate
             {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, collateralType)}` : null}
           </Button>
         </InputGroup>

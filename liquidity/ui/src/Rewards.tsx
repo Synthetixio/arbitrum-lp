@@ -196,9 +196,7 @@ export function Rewards() {
         Rewards
       </Heading>
       <InputGroup gap={3}>
-        {collateralType &&
-          rewardsDistributors &&
-          poolId &&
+        {collateralType && rewardsDistributors && poolId ? (
           rewardsDistributors
             .filter(
               (rd) =>
@@ -211,7 +209,12 @@ export function Rewards() {
                 collateralType={collateralType}
                 rewardsDistributor={rd}
               />
-            ))}
+            ))
+        ) : (
+          <Button type="button" isDisabled>
+            No {collateralType ? collateralType.symbol : null} rewards available
+          </Button>
+        )}
       </InputGroup>
     </Stack>
   );

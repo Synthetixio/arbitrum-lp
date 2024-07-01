@@ -59,7 +59,7 @@ export function BurnUsd() {
       }}
     >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
-        Repay
+        Burn {systemToken ? systemToken.symbol : null}
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
           Available: <b>{renderAmount(accountAvailableUsd, systemToken)}</b>
         </Text>
@@ -90,7 +90,7 @@ export function BurnUsd() {
               !(parsedAmount.gt(0) && accountAvailableUsd && accountAvailableUsd.gte(parsedAmount))
             }
           >
-            Repay
+            Burn {systemToken ? systemToken.symbol : null}
             {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, systemToken)}` : null}
           </Button>
         </InputGroup>
