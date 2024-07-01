@@ -11,15 +11,19 @@ import { useCoreProxy } from './useCoreProxy';
 import { useMulticall } from './useMulticall';
 import { usePythERC7412Wrapper } from './usePythERC7412Wrapper';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 
-export function useWithdraw({ onSuccess }: { onSuccess: () => void }) {
+export function useWithdraw({
+  tokenAddress,
+  onSuccess,
+}: {
+  tokenAddress?: string;
+  onSuccess: () => void;
+}) {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const accountId = useSelectedAccountId();
-  const collateralType = useSelectedCollateralType();
 
   const { data: CoreProxyContract } = useCoreProxy();
 
@@ -42,7 +46,7 @@ export function useWithdraw({ onSuccess }: { onSuccess: () => void }) {
           walletAddress &&
           wallet?.provider &&
           accountId &&
-          collateralType
+          tokenAddress
         )
       ) {
         throw 'OMFG';
@@ -64,7 +68,7 @@ export function useWithdraw({ onSuccess }: { onSuccess: () => void }) {
         wallet,
         CoreProxyContract,
         accountId,
-        tokenAddress: collateralType.address,
+        tokenAddress,
       });
       console.log(`freshAccountAvailableCollateral`, freshAccountAvailableCollateral);
 
@@ -80,7 +84,7 @@ export function useWithdraw({ onSuccess }: { onSuccess: () => void }) {
           CoreProxyContract,
           MulticallContract,
           accountId,
-          tokenAddress: collateralType.address,
+          tokenAddress,
           withdrawAmount,
           priceUpdateTxn: freshPriceUpdateTxn,
         });
@@ -90,7 +94,7 @@ export function useWithdraw({ onSuccess }: { onSuccess: () => void }) {
           wallet,
           CoreProxyContract,
           accountId,
-          tokenAddress: collateralType.address,
+          tokenAddress,
           withdrawAmount,
         });
       }
@@ -119,7 +123,7 @@ export function useWithdraw({ onSuccess }: { onSuccess: () => void }) {
           'AccountCollateral',
           {
             accountId: accountId?.toHexString(),
-            tokenAddress: collateralType?.address,
+            tokenAddress,
           },
         ],
       });
@@ -129,7 +133,7 @@ export function useWithdraw({ onSuccess }: { onSuccess: () => void }) {
           'AccountAvailableCollateral',
           {
             accountId: accountId?.toHexString(),
-            tokenAddress: collateralType?.address,
+            tokenAddress,
           },
         ],
       });
@@ -138,7 +142,7 @@ export function useWithdraw({ onSuccess }: { onSuccess: () => void }) {
           connectedChain?.id,
           'Balance',
           {
-            tokenAddress: collateralType?.address,
+            tokenAddress,
             ownerAddress: walletAddress,
           },
         ],

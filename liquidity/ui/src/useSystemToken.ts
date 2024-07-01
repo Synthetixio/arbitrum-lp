@@ -16,6 +16,7 @@ export function useSystemToken() {
       if (!(connectedChain?.id && wallet && USDProxyContract)) {
         throw 'OMFG';
       }
+      console.log(`USDProxyContract`, USDProxyContract);
 
       const provider = new ethers.providers.Web3Provider(wallet.provider);
       const USDProxy = new ethers.Contract(

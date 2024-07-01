@@ -18,9 +18,9 @@ export function useWithdrawTimer() {
   React.useEffect(() => {
     const interval = window.setInterval(() => {
       const unlockTimeout = unlockUnixtime ? unlockUnixtime - Math.floor(Date.now() / 1000) : 0;
-      const hours = Math.floor(unlockTimeout / 3600);
-      const minutes = Math.floor((unlockTimeout - hours * 3600) / 60);
-      const seconds = unlockTimeout - hours * 3600 - minutes * 60;
+      const hours = Math.max(0, Math.floor(unlockTimeout / 3600));
+      const minutes = Math.max(0, Math.floor((unlockTimeout - hours * 3600) / 60));
+      const seconds = Math.max(0, unlockTimeout - hours * 3600 - minutes * 60);
       if (hours === 0 && minutes === 0 && seconds === 0) {
         window.clearInterval(interval);
       }

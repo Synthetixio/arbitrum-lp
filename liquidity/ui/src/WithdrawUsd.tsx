@@ -43,6 +43,7 @@ export function WithdrawUsd() {
   const parsedAmount = parseAmount(value, systemToken?.decimals);
 
   const withdraw = useWithdraw({
+    tokenAddress: systemToken?.address,
     onSuccess: () => setValue(''),
   });
 
@@ -62,7 +63,7 @@ export function WithdrawUsd() {
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
         Withdraw {systemToken ? systemToken.symbol : null}
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
-          &nbsp;
+          Balance: <b>{renderAmount(currentBalance, systemToken)}</b>
         </Text>
       </Heading>
       {withdraw.isError ? (
@@ -89,8 +90,8 @@ export function WithdrawUsd() {
             isDisabled={
               !(
                 parsedAmount.gt(0) &&
-                currentBalance &&
-                currentBalance.sub(parsedAmount).gte(0) &&
+                accountAvailableCollateral &&
+                accountAvailableCollateral.sub(parsedAmount).gte(0) &&
                 withdrawTimer.h === 0 &&
                 withdrawTimer.m === 0 &&
                 withdrawTimer.s === 0

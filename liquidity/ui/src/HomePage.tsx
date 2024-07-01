@@ -7,6 +7,7 @@ import { Delegate } from './Delegate';
 import { Deposit } from './Deposit';
 import { DepositUsd } from './DepositUsd';
 import { MintUsd } from './MintUsd';
+import { Rewards } from './Rewards';
 import { Undelegate } from './Undelegate';
 import { WithdrawCollateral } from './WithdrawCollateral';
 import { WithdrawUsd } from './WithdrawUsd';
@@ -18,6 +19,7 @@ export function HomePage() {
         <title>Synthetix Liquidity V3</title>
         <meta name="description" content="Synthetix V3 - Dashboard" />
       </Helmet>
+      <Rewards />
       <CollateralTokens />
       <Deposit />
       <DepositUsd />
@@ -29,7 +31,6 @@ export function HomePage() {
         <MintUsd />
         <BurnUsd />
       </Flex>
-
       <WithdrawCollateral />
       <WithdrawUsd />
     </Flex>

@@ -124,6 +124,13 @@ export function useMintUsd({ onSuccess }: { onSuccess: () => void }) {
           },
         ],
       });
+      queryClient.invalidateQueries({
+        queryKey: [
+          connectedChain?.id,
+          'AccountLastInteraction',
+          { accountId: accountId?.toHexString() },
+        ],
+      });
 
       onSuccess();
     },

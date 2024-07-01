@@ -43,6 +43,7 @@ export function WithdrawCollateral() {
   const parsedAmount = parseAmount(value, collateralType?.decimals);
 
   const withdraw = useWithdraw({
+    tokenAddress: collateralType?.address,
     onSuccess: () => setValue(''),
   });
 
@@ -62,7 +63,7 @@ export function WithdrawCollateral() {
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
         Withdraw {collateralType ? collateralType.symbol : null}
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
-          &nbsp;
+          Balance: <b>{renderAmount(currentBalance, collateralType)}</b>
         </Text>
       </Heading>
       {withdraw.isError ? (
@@ -89,8 +90,8 @@ export function WithdrawCollateral() {
             isDisabled={
               !(
                 parsedAmount.gt(0) &&
-                currentBalance &&
-                currentBalance.sub(parsedAmount).gte(0) &&
+                accountAvailableCollateral &&
+                accountAvailableCollateral.sub(parsedAmount).gte(0) &&
                 withdrawTimer.h === 0 &&
                 withdrawTimer.m === 0 &&
                 withdrawTimer.s === 0
