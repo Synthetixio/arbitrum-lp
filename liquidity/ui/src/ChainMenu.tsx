@@ -6,29 +6,24 @@ import {
   MenuItemOption,
   MenuList,
   MenuOptionGroup,
-  useDisclosure,
 } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSetChain } from '@web3-onboard/react';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useChain } from './useChain';
 
 export function ChainMenu() {
-  const { onClose } = useDisclosure();
-  const location = useLocation();
-
-  React.useEffect(() => {
-    onClose();
-  }, [location, onClose]);
-
   const [{ chains, connectedChain }, setChain] = useSetChain();
-
-  const chain = React.useMemo(() => {
-    const connectedAndSupported = chains.find((chain) => chain.id === connectedChain?.id);
-    if (connectedAndSupported) {
-      return connectedAndSupported;
+  const { data: chain } = useChain();
+  const queryClient = useQueryClient();
+  React.useEffect(() => {
+    if (connectedChain?.id) {
+      queryClient.setQueryData(
+        ['chain'],
+        chains.find((chain) => chain.id === connectedChain?.id) || chains[0]
+      );
     }
-    return chains[0];
-  }, [chains, connectedChain?.id]);
+  }, [connectedChain?.id]);
 
   return (
     <Menu>
@@ -41,9 +36,18 @@ export function ChainMenu() {
             <MenuOptionGroup
               title="Networks"
               type="radio"
-              defaultValue={chain.id ?? ''}
-              value={chain.id ?? ''}
-              onChange={(chainId) => setChain({ chainId: `${chainId}` })}
+              defaultValue={chain.id}
+              value={chain.id}
+              onChange={(id) => {
+                if (connectedChain?.id) {
+                  setChain({ chainId: `${id}` });
+                } else {
+                  queryClient.setQueryData(
+                    ['chain'],
+                    chains.find((chain) => chain.id === `${id}`) || chains[0]
+                  );
+                }
+              }}
             >
               {chains.map(({ id, label }) => (
                 <MenuItemOption key={id} value={id}>
