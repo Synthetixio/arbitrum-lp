@@ -8,25 +8,16 @@ import {
   MenuItemOption,
   MenuList,
   MenuOptionGroup,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import { renderAccountId } from './renderAccountId';
 import { useAccounts } from './useAccounts';
 import { useCreateAccount } from './useCreateAccount';
 import { useSelectedAccountId } from './useSelectedAccountId';
 
 export function UserMenu() {
-  const { onClose } = useDisclosure();
-  const location = useLocation();
-
-  React.useEffect(() => {
-    onClose();
-  }, [location, onClose]);
-
   const [{ chains, connectedChain }, setChain] = useSetChain();
   const [{ wallet }, connect, disconnect] = useConnectWallet();
 
