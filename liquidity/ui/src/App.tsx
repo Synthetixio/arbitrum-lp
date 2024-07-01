@@ -33,6 +33,7 @@ import { GithubIcon } from './GithubIcon';
 import { HomePage } from './HomePage';
 import { Logo } from './Logo';
 import { NotFoundPage } from './NotFoundPage';
+import { useErrorParser } from './parseError';
 import SynthetixIcon from './SynthetixIcon.svg';
 import SynthetixLogo from './SynthetixLogo.svg';
 import { TermsModal } from './TermsModal';
@@ -148,6 +149,7 @@ function useDarkColors() {
 
 declare global {
   var ethers: any;
+  var $parseErrorData: (data: string) => void;
   var $provider: ethers.providers.Web3Provider;
   var $signer: ethers.Signer;
   var $tx: ethers.ContractTransaction[];
@@ -238,6 +240,11 @@ function Router() {
     window.$provider = new ethers.providers.Web3Provider(wallet.provider);
     window.$signer = window.$provider.getSigner(wallet?.accounts?.[0]?.address);
   }
+
+  const errorParser = useErrorParser();
+  window.$parseErrorData = (data) => {
+    errorParser(Object.assign(new Error('OMFG'), { data }));
+  };
 
   return (
     <Routes>

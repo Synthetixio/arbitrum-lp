@@ -105,7 +105,7 @@ function decodePythErrors(data: string) {
   }
 }
 
-async function parseError({
+export async function parseError({
   error,
   chainId,
   preset,
@@ -122,7 +122,7 @@ async function parseError({
     error?.data?.data ||
     error?.data;
 
-  if (!errorData) {
+  if (typeof errorData !== 'string') {
     console.log('Error data missing', { error });
     throw error;
   }
