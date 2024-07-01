@@ -56,9 +56,9 @@ export function Delegate() {
       }}
     >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
-        Lock
+        Delegate
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
-          Locked: <b>{renderAmount(positionCollateral, collateralType)}</b>
+          Delegated: <b>{renderAmount(positionCollateral, collateralType)}</b>
         </Text>
       </Heading>
       {delegate.isError ? (
@@ -93,7 +93,7 @@ export function Delegate() {
               )
             }
           >
-            Lock
+            Delegate
             {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, collateralType)}` : null}
           </Button>
         </InputGroup>

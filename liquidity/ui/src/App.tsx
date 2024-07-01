@@ -44,6 +44,7 @@ import { UserMenu } from './UserMenu';
 import { WarpcastIcon } from './WarpcastIcon';
 import { XIcon } from './XIcon';
 import { YoutubeIcon } from './YoutubeIcon';
+import { ChainMenu } from './ChainMenu';
 
 export const appMetadata = {
   name: 'Synthetix Liquidity',
@@ -184,6 +185,7 @@ function Layout() {
           </Link>
           <Flex gap={3} flexWrap="wrap-reverse" justifyContent="center" alignItems="center">
             <UserMenu />
+            <ChainMenu />
           </Flex>
         </Container>
       </Flex>

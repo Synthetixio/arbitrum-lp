@@ -78,7 +78,7 @@ export function MintUsd() {
       }}
     >
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
-        Borrow
+        Mint {systemToken ? systemToken.symbol : null}
         <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
           Debt: <b>{renderAmount(readableDebt, systemToken)}</b>
         </Text>
@@ -107,7 +107,7 @@ export function MintUsd() {
             isLoading={mintUsd.isPending}
             isDisabled={!(parsedAmount.gt(0) && maxDebt && maxDebt.gte(parsedAmount))}
           >
-            Borrow
+            Mint {systemToken ? systemToken.symbol : null}
             {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, systemToken)}` : null}
           </Button>
         </InputGroup>
