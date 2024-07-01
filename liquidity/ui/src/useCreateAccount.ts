@@ -46,7 +46,7 @@ export function useCreateAccount() {
             [connectedChain.id, 'Accounts', { ownerAddress: walletAddress }],
             (oldData: string[]) => oldData.concat([accountId])
           );
-          setParams({ ...params, accountId });
+          setParams({ ...params, accountId: accountId.toHexString() });
         }
       }
 

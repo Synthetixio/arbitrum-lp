@@ -6,6 +6,7 @@ import {
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
+import { useParams } from '@snx-v3/useParams';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -38,6 +39,7 @@ import SynthetixIcon from './SynthetixIcon.svg';
 import SynthetixLogo from './SynthetixLogo.svg';
 import { TermsModal } from './TermsModal';
 import { theme } from './theme';
+import { useAccounts } from './useAccounts';
 import { UserMenu } from './UserMenu';
 import { WarpcastIcon } from './WarpcastIcon';
 import { XIcon } from './XIcon';
@@ -245,6 +247,34 @@ function Router() {
   window.$parseErrorData = (data) => {
     errorParser(Object.assign(new Error('OMFG'), { data }));
   };
+
+  // Initial account pre-selection
+  const [params, setParams] = useParams();
+  const { data: accounts } = useAccounts();
+  React.useEffect(() => {
+    if (!accounts) {
+      return;
+    }
+    if (!('accountId' in params) && accounts.length >= 1) {
+      const [firstAccount] = accounts;
+      setParams({ ...params, accountId: firstAccount.toHexString() });
+      return;
+    }
+    if ('accountId' in params && accounts.length < 1) {
+      const newParams = { ...params };
+      delete newParams.accountId;
+      setParams(newParams);
+      return;
+    }
+    if ('accountId' in params && accounts.length >= 1) {
+      const accountId = ethers.BigNumber.from(params.accountId);
+      if (!accounts.find((id) => id.eq(accountId))) {
+        const [firstAccount] = accounts;
+        setParams({ ...params, accountId: firstAccount.toHexString() });
+        return;
+      }
+    }
+  }, [params?.accountId, accounts, params]);
 
   return (
     <Routes>
