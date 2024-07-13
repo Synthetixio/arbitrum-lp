@@ -1,29 +1,13 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Menu,
-  MenuButton,
-  MenuItemOption,
-  MenuList,
-  MenuOptionGroup,
-} from '@chakra-ui/react';
-import { useQueryClient } from '@tanstack/react-query';
+import { Button, Menu, MenuButton, MenuItemOption, MenuList, MenuOptionGroup } from '@chakra-ui/react';
+import { useSynthetix } from '@synthetixio/react-sdk';
 import { useSetChain } from '@web3-onboard/react';
 import React from 'react';
-import { useChain } from './useChain';
 
 export function ChainMenu() {
   const [{ chains, connectedChain }, setChain] = useSetChain();
-  const { data: chain } = useChain();
-  const queryClient = useQueryClient();
-  React.useEffect(() => {
-    if (connectedChain?.id) {
-      queryClient.setQueryData(
-        ['chain'],
-        chains.find((chain) => chain.id === connectedChain?.id) || chains[0]
-      );
-    }
-  }, [connectedChain?.id]);
+  const { chainId, setChainId } = useSynthetix();
+  const chain = React.useMemo(() => chains.find((chain) => Number.parseInt(chain.id, 16) === chainId) || chains[0], [chainId, chains]);
 
   return (
     <Menu>
@@ -42,10 +26,9 @@ export function ChainMenu() {
                 if (connectedChain?.id) {
                   setChain({ chainId: `${id}` });
                 } else {
-                  queryClient.setQueryData(
-                    ['chain'],
-                    chains.find((chain) => chain.id === `${id}`) || chains[0]
-                  );
+                  const nextChain = chains.find((chain) => chain.id === `${id}`);
+                  const nextChainId = nextChain ? nextChain.id : chains[0].id;
+                  setChainId(Number.parseInt(nextChainId, 16));
                 }
               }}
             >

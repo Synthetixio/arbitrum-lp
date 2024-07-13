@@ -1,6 +1,6 @@
 import { useParams } from '@snx-v3/useParams';
-import React from 'react';
 import { ethers } from 'ethers';
+import React from 'react';
 import { useAccounts } from './useAccounts';
 
 export function useSelectedAccountId() {

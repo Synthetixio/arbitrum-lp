@@ -1,84 +1,73 @@
 import { Button, Heading, InputGroup, Stack } from '@chakra-ui/react';
+import { useErrorParser, useImportContract, useImportRewardsDistributors } from '@synthetixio/react-sdk';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
-import { useErrorParser } from './parseError';
 import { renderAmount } from './renderAmount';
-import { useCoreProxy } from './useCoreProxy';
 import { useDeposit } from './useDeposit';
-import type { RewardsDistributorType } from './useRewardsDistributors';
-import { useRewardsDistributors } from './useRewardsDistributors';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 function ClaimRewards({
-  collateralType,
+  accountId,
   rewardsDistributor,
 }: {
-  collateralType: { address: string; symbol: string; decimals: number };
-  rewardsDistributor: RewardsDistributorType;
+  accountId: ethers.BigNumber;
+  rewardsDistributor: {
+    address: string;
+    name: string;
+    poolId: string;
+    collateralType: {
+      address: string;
+      symbol: string;
+      name: string;
+      decimals: number;
+    };
+    payoutToken: {
+      address: string;
+      symbol: string;
+      name: string;
+      decimals: number;
+    };
+    rewardManager: string;
+    isRegistered: boolean;
+  };
 }) {
   const claim = useDeposit({
     onSuccess: () => {},
   });
 
-  const accountId = useSelectedAccountId();
-  const poolId = useSelectedPoolId();
-
   const errorParser = useErrorParser();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-  const { data: CoreProxyContract } = useCoreProxy();
+  const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
   const { data: rewardsAmount } = useQuery({
-    enabled: Boolean(
-      connectedChain?.id &&
-        wallet?.provider &&
-        walletAddress &&
-        CoreProxyContract &&
-        accountId &&
-        collateralType &&
-        rewardsDistributor
-    ),
+    enabled: Boolean(connectedChain?.id && wallet?.provider && walletAddress && CoreProxyContract && accountId && rewardsDistributor),
     queryKey: [
       connectedChain?.id,
       'AvailableRewards',
       {
         accountId: accountId?.toHexString(),
         rewardsDistributor: rewardsDistributor?.address,
-        collateralType: collateralType?.address,
+        collateralType: rewardsDistributor?.collateralType?.address,
       },
     ],
     queryFn: async () => {
-      if (
-        !(
-          connectedChain?.id &&
-          wallet?.provider &&
-          walletAddress &&
-          CoreProxyContract &&
-          accountId &&
-          poolId &&
-          collateralType &&
-          rewardsDistributor
-        )
-      ) {
+      if (!(connectedChain?.id && wallet?.provider && walletAddress && CoreProxyContract && accountId && rewardsDistributor)) {
         throw 'OMFG';
       }
       const provider = new ethers.providers.Web3Provider(wallet.provider);
       const signer = provider.getSigner(walletAddress);
-      const CoreProxy = new ethers.Contract(
-        CoreProxyContract.address,
-        CoreProxyContract.abi,
-        signer
-      );
+      const CoreProxy = new ethers.Contract(CoreProxyContract.address, CoreProxyContract.abi, signer);
       console.time('useAvailableRewards');
       const availableRewards = await CoreProxy.callStatic.claimRewards(
         accountId,
-        poolId,
-        collateralType.address,
+        rewardsDistributor.poolId,
+        rewardsDistributor.collateralType.address,
         rewardsDistributor.address
       );
       console.timeEnd('useAvailableRewards');
@@ -92,32 +81,19 @@ function ClaimRewards({
   const claimRewards = useMutation({
     retry: false,
     mutationFn: async () => {
-      if (
-        !(
-          CoreProxyContract &&
-          connectedChain?.id &&
-          walletAddress &&
-          wallet?.provider &&
-          accountId &&
-          poolId
-        )
-      ) {
+      if (!(CoreProxyContract && connectedChain?.id && walletAddress && wallet?.provider && accountId && rewardsDistributor)) {
         throw 'OMFG';
       }
 
       const provider = new ethers.providers.Web3Provider(wallet.provider);
       const signer = provider.getSigner(walletAddress);
-      const CoreProxy = new ethers.Contract(
-        CoreProxyContract.address,
-        CoreProxyContract.abi,
-        signer
-      );
+      const CoreProxy = new ethers.Contract(CoreProxyContract.address, CoreProxyContract.abi, signer);
 
       const claimRewardsTxnArgs = [
         //
         accountId,
-        poolId,
-        collateralType.address,
+        rewardsDistributor.poolId,
+        rewardsDistributor.collateralType.address,
         rewardsDistributor.address,
       ];
       console.log({ claimRewardsTxnArgs });
@@ -154,7 +130,7 @@ function ClaimRewards({
           {
             accountId: accountId?.toHexString(),
             rewardsDistributor: rewardsDistributor?.address,
-            collateralType: collateralType?.address,
+            collateralType: rewardsDistributor?.collateralType?.address,
           },
         ],
       });
@@ -163,7 +139,7 @@ function ClaimRewards({
           connectedChain?.id,
           'Balance',
           {
-            tokenAddress: collateralType?.address,
+            tokenAddress: rewardsDistributor?.collateralType?.address,
             ownerAddress: walletAddress,
           },
         ],
@@ -172,15 +148,10 @@ function ClaimRewards({
   });
 
   return (
-    <Button
-      type="button"
-      isLoading={claim.isPending}
-      isDisabled={!(rewardsAmount && rewardsAmount.gt(0))}
-      onClick={() => claimRewards.mutate()}
-    >
-      {rewardsAmount && rewardsAmount.gt(0)
-        ? `Claim ${renderAmount(rewardsAmount, collateralType)}`
-        : `No ${collateralType.symbol} rewards available`}
+    <Button type="button" isLoading={claim.isPending} isDisabled={!rewardsAmount?.gt(0)} onClick={() => claimRewards.mutate()}>
+      {rewardsAmount?.gt(0)
+        ? `Claim ${renderAmount(rewardsAmount, rewardsDistributor.payoutToken)}`
+        : `No ${rewardsDistributor.payoutToken.symbol} rewards available for ${rewardsDistributor.collateralType.symbol}`}
     </Button>
   );
 }
@@ -188,31 +159,22 @@ function ClaimRewards({
 export function Rewards() {
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
+  const accountId = useSelectedAccountId();
 
-  const { data: rewardsDistributors } = useRewardsDistributors();
+  const { data: rewardsDistributors } = useImportRewardsDistributors();
   return (
     <Stack gap={3}>
       <Heading color="gray.50" fontSize="2rem" lineHeight="120%">
         Rewards
       </Heading>
       <InputGroup gap={3}>
-        {collateralType && rewardsDistributors && poolId ? (
+        {collateralType && rewardsDistributors && poolId && accountId ? (
           rewardsDistributors
-            .filter(
-              (rd) =>
-                rd.collateralType.address.toLowerCase() === collateralType.address.toLowerCase() &&
-                poolId.eq(rd.poolId)
-            )
-            .map((rd) => (
-              <ClaimRewards
-                key={rd.address}
-                collateralType={collateralType}
-                rewardsDistributor={rd}
-              />
-            ))
+            .filter((rd) => rd.collateralType.address.toLowerCase() === collateralType.address.toLowerCase() && poolId.eq(rd.poolId))
+            .map((rd) => <ClaimRewards key={rd.address} rewardsDistributor={rd} accountId={accountId} />)
         ) : (
           <Button type="button" isDisabled>
-            No {collateralType ? collateralType.symbol : null} rewards available
+            No rewards available {collateralType ? `for ${collateralType.symbol}` : null}
           </Button>
         )}
       </InputGroup>

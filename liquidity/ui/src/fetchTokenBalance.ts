@@ -11,10 +11,6 @@ export async function fetchTokenBalance({
   ownerAddress: string;
 }) {
   const provider = new ethers.providers.Web3Provider(wallet.provider);
-  const Token = new ethers.Contract(
-    tokenAddress,
-    ['function balanceOf(address account) view returns (uint256)'],
-    provider
-  );
+  const Token = new ethers.Contract(tokenAddress, ['function balanceOf(address account) view returns (uint256)'], provider);
   return Token.balanceOf(ownerAddress);
 }

@@ -12,8 +12,8 @@ export async function fetchMintUsdWithPriceUpdate({
   priceUpdateTxn,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
-  MulticallContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
+  MulticallContract: { address: string; abi: string[] };
   accountId: ethers.BigNumber;
   poolId: ethers.BigNumber;
   tokenAddress: string;

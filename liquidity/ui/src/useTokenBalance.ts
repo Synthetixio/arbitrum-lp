@@ -1,8 +1,8 @@
+import { useErrorParser } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { fetchTokenBalance } from './fetchTokenBalance';
-import { useErrorParser } from './parseError';
 
 export function useTokenBalance({
   tokenAddress,

@@ -13,8 +13,7 @@
   },
   "devDependencies": {
     "depcheck": "^1.4.7",
-    "prettier": "^3.3.2",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.3"
   },
   "depcheck": {
     "ignorePatterns": [],

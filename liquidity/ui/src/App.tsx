@@ -1,50 +1,42 @@
-import {
-  ChakraProvider,
-  Container,
-  Flex,
-  Link,
-  useColorMode,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { ChakraProvider, Container, Flex, Link, useColorMode, useDisclosure } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient } from '@tanstack/react-query';
+import { SynthetixProvider, useErrorParser, useSynthetix } from '@synthetixio/react-sdk';
+// import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+// import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+// import { get, set, del } from 'idb-keyval'
+// import {
+//   PersistedClient,
+//   Persister,
+// } from '@tanstack/react-query-persist-client'
 import coinbaseModule from '@web3-onboard/coinbase';
 import gnosisModule from '@web3-onboard/gnosis';
 import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import ledgerModule from '@web3-onboard/ledger';
-import { init, useConnectWallet, Web3OnboardProvider } from '@web3-onboard/react';
+import { Web3OnboardProvider, init, useConnectWallet } from '@web3-onboard/react';
 import trezorModule from '@web3-onboard/trezor';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import { ethers } from 'ethers';
 import React, { useEffect } from 'react';
-import {
-  HashRouter,
-  NavLink as RouterLink,
-  Outlet,
-  Route,
-  Routes,
-  useLocation,
-} from 'react-router-dom';
-import { DiscordIcon } from './DiscordIcon';
+import { HashRouter, Outlet, Route, NavLink as RouterLink, Routes } from 'react-router-dom';
+import { ChainMenu } from './ChainMenu';
 import { Fonts } from './Fonts';
-import { GithubIcon } from './GithubIcon';
 import { HomePage } from './HomePage';
-import { Logo } from './Logo';
 import { NotFoundPage } from './NotFoundPage';
-import { useErrorParser } from './parseError';
 import SynthetixIcon from './SynthetixIcon.svg';
 import SynthetixLogo from './SynthetixLogo.svg';
 import { TermsModal } from './TermsModal';
+import { UserMenu } from './UserMenu';
+import DiscordIcon from './discord.svg';
+import GithubIcon from './github.svg';
+import LogoIcon from './logo-icon.svg';
+import Logo from './logo.svg';
 import { theme } from './theme';
 import { useAccounts } from './useAccounts';
-import { UserMenu } from './UserMenu';
-import { WarpcastIcon } from './WarpcastIcon';
-import { XIcon } from './XIcon';
-import { YoutubeIcon } from './YoutubeIcon';
-import { ChainMenu } from './ChainMenu';
+import WarpcastIcon from './warpcast.svg';
+import XIcon from './x.svg';
+import YoutubeIcon from './youtube.svg';
 
 export const appMetadata = {
   name: 'Synthetix Liquidity',
@@ -88,14 +80,14 @@ export const onboard = init({
       id: 42161,
       token: 'ETH',
       label: 'Arbitrum One',
-      rpcUrl: `https://arbitrum-mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
-      publicRpcUrl: 'https://arb1.arbitrum.io/rpc',
+      rpcUrl: `wss://arbitrum-mainnet.infura.io/ws/v3/${process.env.INFURA_KEY}`,
+      publicRpcUrl: 'https:8//arb1.arbitrum.io/rpc',
     },
     {
       id: 421614,
       token: 'ETH',
       label: 'Arbitrum Sepolia',
-      rpcUrl: `https://arbitrum-sepolia.infura.io/v3/${process.env.INFURA_KEY}`,
+      rpcUrl: `wss://arbitrum-sepolia.infura.io/ws/v3/${process.env.INFURA_KEY}`,
       publicRpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
     },
   ],
@@ -135,9 +127,8 @@ const queryClient = new QueryClient({
     },
   },
 });
-const localStoragePersister = createSyncStoragePersister({
-  storage: window.localStorage,
-});
+
+window.$ethers = ethers;
 
 function useDarkColors() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -151,28 +142,19 @@ function useDarkColors() {
 }
 
 declare global {
-  var ethers: any;
+  var $ethers: any;
   var $parseErrorData: (data: string) => void;
   var $provider: ethers.providers.Web3Provider;
   var $signer: ethers.Signer;
   var $tx: ethers.ContractTransaction[];
   var $txResult: ethers.ContractReceipt[];
 }
-window.ethers = ethers;
 
 function Layout() {
   return (
     <Flex as="main" minHeight="100vh" flexDirection="column" bg="navy.900" gap={10}>
       <Flex bg="navy.700" borderBottomWidth={1} borderBottomColor="gray.900">
-        <Container
-          as={Flex}
-          maxW="1236px"
-          py={3}
-          px={10}
-          height="72px"
-          justifyContent="space-between"
-          alignItems="center"
-        >
+        <Container as={Flex} maxW="1236px" py={3} px={10} minHeight="72px" justifyContent="space-between" alignItems="center">
           <Link
             to={{
               pathname: '/',
@@ -181,7 +163,7 @@ function Layout() {
             as={RouterLink}
             py={4}
           >
-            <Logo />
+            <img src={Logo} alt="Synthetix" />
           </Link>
           <Flex gap={3} flexWrap="wrap-reverse" justifyContent="center" alignItems="center">
             <UserMenu />
@@ -197,31 +179,23 @@ function Layout() {
       </Flex>
 
       <Flex bg="navy.700" borderTopWidth={1} borderTopColor="gray.900">
-        <Container
-          as={Flex}
-          maxW="1236px"
-          py={3}
-          px={10}
-          height="72px"
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Logo withText={false} />
-          <Flex alignItems="center">
+        <Container as={Flex} maxW="1236px" py={3} px={10} height="72px" alignItems="center" justifyContent="space-between">
+          <img src={LogoIcon} alt="Synthetix" />
+          <Flex alignItems="center" gap={2}>
             <Link href="https://discord.com/invite/synthetix" target="_blank">
-              <DiscordIcon w="24px" h="24px" mr={2} />
+              <img src={DiscordIcon} alt="Synthetix Discord" />
             </Link>
             <Link href="https://x.com/synthetix_io" target="_blank">
-              <XIcon w="24px" h="24px" mr={2} />
+              <img src={XIcon} alt="Synthetix Discord" />
             </Link>
             <Link href="https://github.com/Synthetixio/" target="_blank">
-              <GithubIcon w="24px" h="24px" mr={2} />
+              <img src={GithubIcon} alt="Synthetix Discord" />
             </Link>
             <Link href="https://warpcast.com/~/channel/synthetix" target="_blank">
-              <WarpcastIcon w="24px" h="24px" mr={2} />
+              <img src={WarpcastIcon} alt="Synthetix Discord" />
             </Link>
             <Link href="https://www.youtube.com/@synthetix.v3" target="_blank">
-              <YoutubeIcon w="24px" h="24px" />
+              <img src={YoutubeIcon} alt="Synthetix Discord" />
             </Link>
           </Flex>
         </Container>
@@ -234,10 +208,9 @@ function Router() {
   useDarkColors();
 
   const { onClose } = useDisclosure();
-  const location = useLocation();
   React.useEffect(() => {
     onClose();
-  }, [location, onClose]);
+  }, [onClose]);
 
   const [{ wallet }] = useConnectWallet();
   if (wallet?.provider && wallet?.accounts?.[0]?.address) {
@@ -263,8 +236,7 @@ function Router() {
       return;
     }
     if ('accountId' in params && accounts.length < 1) {
-      const newParams = { ...params };
-      delete newParams.accountId;
+      const { accountId: _accountId, ...newParams } = params;
       setParams(newParams);
       return;
     }
@@ -276,7 +248,15 @@ function Router() {
         return;
       }
     }
-  }, [params?.accountId, accounts, params]);
+  }, [params?.accountId, accounts, params, setParams]);
+
+  const [{ connectedChain }] = useSetChain();
+  const { setChainId } = useSynthetix();
+  React.useEffect(() => {
+    if (connectedChain?.id) {
+      setChainId(Number.parseInt(connectedChain?.id, 16));
+    }
+  }, [connectedChain?.id, setChainId]);
 
   return (
     <Routes>
@@ -290,22 +270,22 @@ function Router() {
 
 export function App() {
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister: localStoragePersister }}
-    >
+    <QueryClientProvider client={queryClient}>
+      {/* <QueryClientProvider client={queryClient} persistOptions={{ persister: createSyncStoragePersister({ storage: window.localStorage }) }}>*/}
       <Web3OnboardProvider web3Onboard={onboard}>
-        <ChakraProvider theme={theme}>
-          <HashRouter>
-            <Router />
-            <TermsModal
-              defaultOpen={window.sessionStorage.getItem('TERMS_CONDITIONS_ACCEPTED') !== 'true'}
-            />
-          </HashRouter>
-          <ReactQueryDevtools />
-          <Fonts />
-        </ChakraProvider>
+        <SynthetixProvider chainId={42161} preset="main" queryClient={queryClient}>
+          <ChakraProvider theme={theme}>
+            <HashRouter>
+              <Router />
+              <TermsModal defaultOpen={window.sessionStorage.getItem('TERMS_CONDITIONS_ACCEPTED') !== 'true'} />
+            </HashRouter>
+            <ReactQueryDevtools />
+            <Fonts />
+          </ChakraProvider>
+        </SynthetixProvider>
       </Web3OnboardProvider>
-    </PersistQueryClientProvider>
+    </QueryClientProvider>
   );
 }
+import { useSetChain } from '@web3-onboard/react';
+import { useChain } from './useChain';

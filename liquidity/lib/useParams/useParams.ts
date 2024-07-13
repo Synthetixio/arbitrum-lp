@@ -30,16 +30,13 @@ export function makeSearch(newParams: QueryParamsType) {
 export function useParams(): [QueryParamsType, SetQueryParamsType] {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const params = React.useMemo(
-    () => sortObject(searchParamsToObject(searchParams)),
-    [searchParams]
-  );
+  const params = React.useMemo(() => sortObject(searchParamsToObject(searchParams)), [searchParams]);
 
   const updateParams = React.useCallback(
     (newParams: QueryParamsType) => {
       setSearchParams(makeParams(newParams));
     },
-    [params, setSearchParams]
+    [setSearchParams]
   );
 
   return [params, updateParams];

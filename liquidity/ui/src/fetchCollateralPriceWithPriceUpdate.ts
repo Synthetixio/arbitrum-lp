@@ -9,8 +9,8 @@ export async function fetchCollateralPriceWithPriceUpdate({
   priceUpdateTxn,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
-  MulticallContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
+  MulticallContract: { address: string; abi: string[] };
   tokenAddress: string;
   priceUpdateTxn: {
     target: string;
@@ -33,11 +33,20 @@ export async function fetchCollateralPriceWithPriceUpdate({
 
   console.time('fetchCollateralPriceWithPriceUpdate');
   const provider = new ethers.providers.Web3Provider(wallet.provider);
+
+  const blockNumber = await provider.getBlockNumber();
+  const block = await provider.getBlock(blockNumber);
+  console.log({
+    block,
+    now: Math.floor(new Date().getTime() / 1000),
+    to: MulticallContract.address,
+    data: MulticallInterface.encodeFunctionData('aggregate3Value', [[priceUpdateTxn, getCollateralPriceTxn]]),
+    value: priceUpdateTxn.value,
+  });
+
   const response = await provider.call({
     to: MulticallContract.address,
-    data: MulticallInterface.encodeFunctionData('aggregate3Value', [
-      [priceUpdateTxn, getCollateralPriceTxn],
-    ]),
+    data: MulticallInterface.encodeFunctionData('aggregate3Value', [[priceUpdateTxn, getCollateralPriceTxn]]),
     value: priceUpdateTxn.value,
   });
   console.timeEnd('fetchCollateralPriceWithPriceUpdate');
@@ -49,17 +58,12 @@ export async function fetchCollateralPriceWithPriceUpdate({
     if (decodedMulticall?.returnData?.[1]?.returnData) {
       const getCollateralPriceTxnData = decodedMulticall.returnData[1].returnData;
       console.log({ getCollateralPriceTxnData });
-      const collateralPrice = CoreProxyInterface.decodeFunctionResult(
-        'getCollateralPrice',
-        getCollateralPriceTxnData
-      );
-      console.log(`>>>>> collateralPrice`, collateralPrice);
+      const collateralPrice = CoreProxyInterface.decodeFunctionResult('getCollateralPrice', getCollateralPriceTxnData);
+      console.log('>>>>> collateralPrice', collateralPrice);
       return collateralPrice[0];
-    } else {
-      console.error({ decodedMulticall });
-      throw new Error('Unexpected multicall response');
     }
-  } else {
-    throw new Error('Empty multicall response');
+    console.error({ decodedMulticall });
+    throw new Error('Unexpected multicall response');
   }
+  throw new Error('Empty multicall response');
 }

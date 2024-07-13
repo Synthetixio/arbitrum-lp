@@ -1,14 +1,5 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  MenuItemOption,
-  MenuList,
-  MenuOptionGroup,
-} from '@chakra-ui/react';
+import { Button, Menu, MenuButton, MenuDivider, MenuItem, MenuItemOption, MenuList, MenuOptionGroup } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import React from 'react';
@@ -54,9 +45,7 @@ export function UserMenu() {
             {wallet.accounts[0].address.slice(0, 5)} ... {wallet.accounts[0].address.slice(-3)}
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={() => navigator.clipboard.writeText(wallet.accounts[0].address)}>
-              Copy address
-            </MenuItem>
+            <MenuItem onClick={() => navigator.clipboard.writeText(wallet.accounts[0].address)}>Copy address</MenuItem>
 
             {accounts && accounts.length > 0 ? (
               <>

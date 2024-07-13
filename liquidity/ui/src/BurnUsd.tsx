@@ -11,6 +11,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { useImportSystemToken } from '@synthetixio/react-sdk';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
@@ -20,7 +21,6 @@ import { usePositionDebt } from './usePositionDebt';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
-import { useSystemToken } from './useSystemToken';
 
 export function BurnUsd() {
   const accountId = useSelectedAccountId();
@@ -33,7 +33,7 @@ export function BurnUsd() {
     tokenAddress: collateralType?.address,
   });
 
-  const { data: systemToken } = useSystemToken();
+  const { data: systemToken } = useImportSystemToken();
 
   const { data: accountAvailableUsd } = useAccountAvailableCollateral({
     accountId,
@@ -86,9 +86,7 @@ export function BurnUsd() {
           <Button
             type="submit"
             isLoading={burnUsd.isPending}
-            isDisabled={
-              !(parsedAmount.gt(0) && accountAvailableUsd && accountAvailableUsd.gte(parsedAmount))
-            }
+            isDisabled={!(parsedAmount.gt(0) && accountAvailableUsd && accountAvailableUsd.gte(parsedAmount))}
           >
             Burn {systemToken ? systemToken.symbol : null}
             {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, systemToken)}` : null}

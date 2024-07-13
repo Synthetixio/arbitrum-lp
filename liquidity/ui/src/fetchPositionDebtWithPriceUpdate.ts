@@ -11,8 +11,8 @@ export async function fetchPositionDebtWithPriceUpdate({
   priceUpdateTxn,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
-  MulticallContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
+  MulticallContract: { address: string; abi: string[] };
   accountId: ethers.BigNumber;
   poolId: ethers.BigNumber;
   tokenAddress: string;
@@ -31,11 +31,7 @@ export async function fetchPositionDebtWithPriceUpdate({
 
   const getPositionDebtTxn = {
     target: CoreProxyContract.address,
-    callData: CoreProxyInterface.encodeFunctionData('getPositionDebt', [
-      accountId,
-      poolId,
-      tokenAddress,
-    ]),
+    callData: CoreProxyInterface.encodeFunctionData('getPositionDebt', [accountId, poolId, tokenAddress]),
     value: 0,
     requireSuccess: true,
   };
@@ -45,9 +41,7 @@ export async function fetchPositionDebtWithPriceUpdate({
   const provider = new ethers.providers.Web3Provider(wallet.provider);
   const response = await provider.call({
     to: MulticallContract.address,
-    data: MulticallInterface.encodeFunctionData('aggregate3Value', [
-      [priceUpdateTxn, getPositionDebtTxn],
-    ]),
+    data: MulticallInterface.encodeFunctionData('aggregate3Value', [[priceUpdateTxn, getPositionDebtTxn]]),
     value: priceUpdateTxn.value,
   });
   console.timeEnd('fetchPositionDebtWithPriceUpdate');
@@ -59,16 +53,11 @@ export async function fetchPositionDebtWithPriceUpdate({
     if (decodedMulticall?.returnData?.[1]?.returnData) {
       const getPositionDebtTxnData = decodedMulticall.returnData[1].returnData;
       console.log({ getPositionDebtTxnData });
-      const positionDebt = CoreProxyInterface.decodeFunctionResult(
-        'getPositionDebt',
-        getPositionDebtTxnData
-      );
+      const positionDebt = CoreProxyInterface.decodeFunctionResult('getPositionDebt', getPositionDebtTxnData);
       return positionDebt.debt;
-    } else {
-      console.error({ decodedMulticall });
-      throw new Error('Unexpected multicall response');
     }
-  } else {
-    throw new Error('Empty multicall response');
+    console.error({ decodedMulticall });
+    throw new Error('Unexpected multicall response');
   }
+  throw new Error('Empty multicall response');
 }

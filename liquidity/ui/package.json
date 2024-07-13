@@ -16,12 +16,12 @@
     "@pythnetwork/pyth-evm-js": "^1.56.1",
     "@safe-global/safe-apps-provider": "^0.18.3",
     "@safe-global/safe-apps-sdk": "^9.1.0",
-    "@snx-v3/contracts": "workspace:*",
     "@snx-v3/useParams": "workspace:*",
+    "@synthetixio/react-sdk": "../../../react-sdk",
     "@synthetixio/safe-import": "workspace:*",
-    "@tanstack/query-sync-storage-persister": "^5.48.0",
-    "@tanstack/react-query-devtools": "^5.48.0",
-    "@tanstack/react-query-persist-client": "^5.48.0",
+    "@tanstack/query-sync-storage-persister": "^5.50.1",
+    "@tanstack/react-query-devtools": "^5.50.1",
+    "@tanstack/react-query-persist-client": "^5.50.1",
     "@web3-onboard/coinbase": "^2.4.1",
     "@web3-onboard/core": "^2.22.2",
     "@web3-onboard/gnosis": "^2.3.1",
@@ -31,11 +31,11 @@
     "@web3-onboard/trezor": "^2.4.6",
     "@web3-onboard/walletconnect": "^2.6.1",
     "ethers": "^5.7.2",
-    "framer-motion": "^11.2.12",
+    "framer-motion": "^11.2.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
-    "react-router-dom": "^6.24.0"
+    "react-router-dom": "^6.24.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
@@ -45,12 +45,13 @@
     "@babel/preset-typescript": "^7.24.7",
     "@babel/runtime-corejs3": "^7.24.7",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
-    "@tanstack/react-query": "^5.48.0",
+    "@tanstack/react-query": "^5.50.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/react-helmet": "^6.1.11",
     "babel-loader": "^9.1.3",
     "bn.js": "^5.2.1",
+    "buffer": "^6.0.3",
     "copy-webpack-plugin": "^12.0.2",
     "core-js": "^3.37.1",
     "crypto-browserify": "^3.12.0",
@@ -81,7 +82,8 @@
       "dist"
     ],
     "ignoreMatches": [
-      "process"
+      "process",
+      "buffer"
     ]
   }
 }

@@ -12,8 +12,8 @@ export async function fetchBurnUsdWithPriceUpdate({
   priceUpdateTxn,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
-  MulticallContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
+  MulticallContract: { address: string; abi: string[] };
   accountId: ethers.BigNumber;
   poolId: ethers.BigNumber;
   tokenAddress: string;
@@ -35,7 +35,7 @@ export async function fetchBurnUsdWithPriceUpdate({
     tokenAddress,
     burnUsdAmount,
   ];
-  console.log(`burnUsdTxnArgs`, burnUsdTxnArgs);
+  console.log('burnUsdTxnArgs', burnUsdTxnArgs);
 
   const burnUsdTxn = {
     target: CoreProxyContract.address,
@@ -46,7 +46,7 @@ export async function fetchBurnUsdWithPriceUpdate({
     value: 0,
     requireSuccess: true,
   };
-  console.log(`burnUsdTxn`, burnUsdTxn);
+  console.log('burnUsdTxn', burnUsdTxn);
 
   const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = new ethers.providers.Web3Provider(wallet.provider);

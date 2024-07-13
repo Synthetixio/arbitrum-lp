@@ -1,16 +1,15 @@
 import { ethers } from 'ethers';
 
-export function renderAmount(
-  amount?: ethers.BigNumber,
-  token?: { symbol: string; decimals: number }
-) {
+export function renderAmount(amount?: ethers.BigNumber, token?: { symbol: string; decimals: number }) {
+  console.log({ amount, token });
   if (!(amount && token)) {
     return '';
   }
   if (amount.eq(0)) {
     return `0.00 ${token.symbol}`;
   }
-  const float = parseFloat(ethers.utils.formatUnits(amount, token.decimals));
+  const float = Number.parseFloat(ethers.utils.formatUnits(amount, token.decimals));
+  console.log('float', float);
   if (Math.abs(float) >= 1) {
     return `${float.toFixed(2)} ${token.symbol}`;
   }

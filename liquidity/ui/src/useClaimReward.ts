@@ -1,15 +1,12 @@
+import { fetchPriceUpdateTxn, useErrorParser, useImportContract } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
-import { ethers } from 'ethers';
+import type { ethers } from 'ethers';
 import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
-import { fetchPriceUpdateTxn } from './fetchPriceUpdateTxn';
 import { fetchWithdrawCollateral } from './fetchWithdrawCollateral';
 import { fetchWithdrawCollateralWithPriceUpdate } from './fetchWithdrawCollateralWithPriceUpdate';
-import { useErrorParser } from './parseError';
 import { useAllPriceFeeds } from './useAllPriceFeeds';
-import { useCoreProxy } from './useCoreProxy';
-import { useMulticall } from './useMulticall';
-import { usePythERC7412Wrapper } from './usePythERC7412Wrapper';
+import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 
 export function useClaimReward({
@@ -19,18 +16,20 @@ export function useClaimReward({
   tokenAddress?: string;
   onSuccess: () => void;
 }) {
+  const provider = useProvider();
+  const errorParser = useErrorParser();
+
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const accountId = useSelectedAccountId();
 
-  const { data: CoreProxyContract } = useCoreProxy();
+  const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
-  const errorParser = useErrorParser();
   const { data: priceIds } = useAllPriceFeeds();
-  const { data: MulticallContract } = useMulticall();
-  const { data: PythERC7412WrapperContract } = usePythERC7412Wrapper();
+  const { data: MulticallContract } = useImportContract('Multicall');
+  const { data: PythERC7412WrapperContract } = useImportContract('PythERC7412Wrapper');
 
   const queryClient = useQueryClient();
   return useMutation({
@@ -44,7 +43,7 @@ export function useClaimReward({
           priceIds &&
           connectedChain?.id &&
           walletAddress &&
-          wallet?.provider &&
+          provider &&
           accountId &&
           tokenAddress
         )
@@ -57,12 +56,12 @@ export function useClaimReward({
       }
 
       const freshPriceUpdateTxn = await fetchPriceUpdateTxn({
-        wallet,
+        provider,
         MulticallContract,
         PythERC7412WrapperContract,
         priceIds,
       });
-      console.log(`freshPriceUpdateTxn`, freshPriceUpdateTxn);
+      console.log('freshPriceUpdateTxn', freshPriceUpdateTxn);
 
       const freshAccountAvailableCollateral = await fetchAccountAvailableCollateral({
         wallet,
@@ -70,7 +69,7 @@ export function useClaimReward({
         accountId,
         tokenAddress,
       });
-      console.log(`freshAccountAvailableCollateral`, freshAccountAvailableCollateral);
+      console.log('freshAccountAvailableCollateral', freshAccountAvailableCollateral);
 
       const hasEnoughDeposit = freshAccountAvailableCollateral.gte(withdrawAmount);
       if (!hasEnoughDeposit) {
@@ -108,11 +107,7 @@ export function useClaimReward({
     onSuccess: async ({ priceUpdated }) => {
       if (priceUpdated) {
         await queryClient.invalidateQueries({
-          queryKey: [
-            connectedChain?.id,
-            'PriceUpdateTxn',
-            { priceIds: priceIds?.map((p) => p.slice(0, 8)) },
-          ],
+          queryKey: [connectedChain?.id, 'PriceUpdateTxn', { priceIds: priceIds?.map((p) => p.slice(0, 8)) }],
         });
       }
 

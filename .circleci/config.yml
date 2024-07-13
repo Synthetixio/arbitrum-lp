@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   node-version:
     type: string
-    default: '20.11.0'
+    default: "20.11.0"
 
 commands:
   yarn-install:
@@ -35,7 +35,7 @@ commands:
         type: string
     steps:
       - run:
-          name: 'Install IPFS'
+          name: "Install IPFS"
           command: |
             LATEST_VERSION=$(curl -sSL https://dist.ipfs.tech/go-ipfs/versions | tail -n 1)
             LATEST_VERSION_NUMBER=${LATEST_VERSION#*v}
@@ -50,26 +50,26 @@ commands:
           command: ipfs daemon
           background: true
       - run:
-          name: 'Wait for IPFS daemon to start'
+          name: "Wait for IPFS daemon to start"
           command: wget --retry-connrefused --waitretry=20 --read-timeout=20 --timeout=15 -t 10 --post-data '' "http://localhost:5001/api/v0/version"
 
       - run: ipfs add --progress=true --pin=true --recursive "<< parameters.source-dir >>"
       - run:
-          name: 'Save IPFS_CID'
+          name: "Save IPFS_CID"
           command: |
             export IPFS_CID=$(ipfs add --progress=false --pin=true --recursive --quieter "<< parameters.source-dir >>")
             echo $IPFS_CID
             echo "export IPFS_CID=$IPFS_CID" >> $BASH_ENV
       - run:
-          name: 'Pin to the remote IPFS node'
+          name: "Pin to the remote IPFS node"
           command: curl --silent --request POST --user "$IPFS_USER:$IPFS_PASS" "<< parameters.ipfs-api >>/pin/add?recursive=true&progress=true&arg=$IPFS_CID"
       - run:
-          name: 'Publish IPFS_CID to IPNS key << parameters.ipns-key >>'
+          name: "Publish IPFS_CID to IPNS key << parameters.ipns-key >>"
           command: |
             curl --silent --request POST --user "$IPFS_USER:$IPFS_PASS" "<< parameters.ipfs-api >>/name/publish?key=<< parameters.ipns-key >>&arg=$IPFS_CID" | tee /tmp/name-publish-$IPFS_CID.log
             cat /tmp/name-publish-$IPFS_CID.log | jq
       - run:
-          name: 'Pin to Synthetix IPFS cluster'
+          name: "Pin to Synthetix IPFS cluster"
           command: |
             curl --silent --request POST --user "$IPFS_USER:$IPFS_PASS" "<< parameters.ipfs-cluster-api >>/pin/add?arg=$IPFS_CID" | tee /tmp/pin-add-$IPFS_CID.log
             cat /tmp/pin-add-$IPFS_CID.log | jq
@@ -87,7 +87,6 @@ jobs:
       - run: yarn deps
       - run: yarn deps:mismatched
       - run: yarn deps:circular
-      - run: yarn pretty
       - run: yarn lint
       - run: yarn typecheck
 
@@ -101,23 +100,23 @@ jobs:
       - yarn-install
       - run: yarn workspace @snx-v3/liquidity build
       - ipfs-deploy:
-          source-dir: './liquidity/ui/dist'
-          ipfs-api: 'https://ipfs.synthetix.io:5001/api/v0'
-          ipfs-cluster-api: 'https://ipfs.synthetix.io/api/v0'
-          ipns-key: 'arbitrum-lp.synthetix.eth'
+          source-dir: "./liquidity/ui/dist"
+          ipfs-api: "https://ipfs.synthetix.io:5001/api/v0"
+          ipfs-cluster-api: "https://ipfs.synthetix.io/api/v0"
+          ipns-key: "arbitrum-lp.synthetix.eth"
 
 workflows:
   checks:
     unless:
       or:
-        - equal: ['master', << pipeline.git.branch >>]
+        - equal: ["master", << pipeline.git.branch >>]
     jobs:
       - checks
 
   deploy:
     when:
       or:
-        - equal: ['master', << pipeline.git.branch >>]
+        - equal: ["master", << pipeline.git.branch >>]
     jobs:
       - checks
       - liquidity-ipfs:

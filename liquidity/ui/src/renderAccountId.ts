@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import type { ethers } from 'ethers';
 
 export function renderAccountId(accountId?: ethers.BigNumber) {
   if (!accountId) {

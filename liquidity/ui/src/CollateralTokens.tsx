@@ -6,7 +6,7 @@ import { useSelectedCollateralType } from './useSelectedCollateralType';
 
 export function CollateralTokens() {
   const [params, setParams] = useParams();
-  const { data: collateralTokens } = useCollateralTokens();
+  const collateralTokens = useCollateralTokens();
   const selectedCollateralType = useSelectedCollateralType();
 
   return (
@@ -15,17 +15,16 @@ export function CollateralTokens() {
         Vaults
       </Heading>
       <Stack flexDirection="row" gap={3}>
-        {collateralTokens &&
-          collateralTokens.map((token: { address: string; symbol: string }) => (
-            <Button
-              key={token.address}
-              type="button"
-              variant={selectedCollateralType?.address === token.address ? undefined : 'outline'}
-              onClick={() => setParams({ ...params, collateralType: token.address })}
-            >
-              {token.symbol}
-            </Button>
-          ))}
+        {collateralTokens?.map((token: { address: string; symbol: string }) => (
+          <Button
+            key={token.address}
+            type="button"
+            variant={selectedCollateralType?.address === token.address ? undefined : 'outline'}
+            onClick={() => setParams({ ...params, collateralType: token.address })}
+          >
+            {token.symbol}
+          </Button>
+        ))}
       </Stack>
     </Stack>
   );

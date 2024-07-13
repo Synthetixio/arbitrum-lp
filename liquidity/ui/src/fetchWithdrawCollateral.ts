@@ -9,7 +9,7 @@ export async function fetchWithdrawCollateral({
   withdrawAmount,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
   accountId: ethers.BigNumber;
   tokenAddress: string;
   withdrawAmount: ethers.BigNumber;

@@ -4,7 +4,7 @@ import { useCollateralTokens } from './useCollateralTokens';
 
 export function useSelectedCollateralType() {
   const [params] = useParams();
-  const { data: collateralTokens } = useCollateralTokens();
+  const collateralTokens = useCollateralTokens();
   return React.useMemo(
     () => collateralTokens?.find((token) => params.collateralType === token.address),
     [collateralTokens, params.collateralType]

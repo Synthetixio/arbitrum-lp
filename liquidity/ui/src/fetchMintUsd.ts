@@ -10,7 +10,7 @@ export async function fetchMintUsd({
   mintUsdAmount,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
   accountId: ethers.BigNumber;
   poolId: ethers.BigNumber;
   tokenAddress: string;
@@ -28,7 +28,7 @@ export async function fetchMintUsd({
     tokenAddress,
     mintUsdAmount,
   ];
-  console.log(`mintUsdTxnArgs`, mintUsdTxnArgs);
+  console.log('mintUsdTxnArgs', mintUsdTxnArgs);
 
   console.time('mintUsd');
   const tx: ethers.ContractTransaction = await CoreProxy.mintUsd(...mintUsdTxnArgs);

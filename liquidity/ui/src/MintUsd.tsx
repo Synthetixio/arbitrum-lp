@@ -11,6 +11,8 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { useImportSystemToken } from '@synthetixio/react-sdk';
+import { ethers } from 'ethers';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
@@ -21,7 +23,6 @@ import { usePositionDebt } from './usePositionDebt';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
-import { useSystemToken } from './useSystemToken';
 
 export function MintUsd() {
   const accountId = useSelectedAccountId();
@@ -43,21 +44,15 @@ export function MintUsd() {
     poolId,
     tokenAddress: collateralType?.address,
   });
-  const readableDebt =
-    positionDebt && positionDebt.abs().gte(ethers.utils.parseUnits('0.1', 18))
-      ? positionDebt
-      : ethers.BigNumber.from(0);
+  const readableDebt = positionDebt?.abs().gte(ethers.utils.parseUnits('0.1', 18)) ? positionDebt : ethers.BigNumber.from(0);
 
   const maxDebt = React.useMemo(() => {
     if (positionCollateral && collateralPrice && collateralType && positionDebt) {
-      return positionCollateral
-        .mul(collateralPrice)
-        .div(collateralType.issuanceRatioD18)
-        .sub(positionDebt);
+      return positionCollateral.mul(collateralPrice).div(collateralType.issuanceRatioD18).sub(positionDebt);
     }
   }, [positionCollateral, collateralPrice, collateralType, positionDebt]);
 
-  const { data: systemToken } = useSystemToken();
+  const { data: systemToken } = useImportSystemToken();
 
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, collateralType?.decimals);
@@ -102,11 +97,7 @@ export function MintUsd() {
             }}
             maxWidth="10rem"
           />
-          <Button
-            type="submit"
-            isLoading={mintUsd.isPending}
-            isDisabled={!(parsedAmount.gt(0) && maxDebt && maxDebt.gte(parsedAmount))}
-          >
+          <Button type="submit" isLoading={mintUsd.isPending} isDisabled={!(parsedAmount.gt(0) && maxDebt && maxDebt.gte(parsedAmount))}>
             Mint {systemToken ? systemToken.symbol : null}
             {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, systemToken)}` : null}
           </Button>

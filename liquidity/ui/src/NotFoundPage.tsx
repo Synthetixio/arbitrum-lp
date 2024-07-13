@@ -8,14 +8,7 @@ export const NotFoundPage = () => {
       <Head>
         <title>Not Found</title>
       </Head>
-      <Flex
-        height="100%"
-        direction="column"
-        position="relative"
-        alignItems="center"
-        justifyContent="center"
-        flex="1"
-      >
+      <Flex height="100%" direction="column" position="relative" alignItems="center" justifyContent="center" flex="1">
         <Heading fontSize="5xl">Not found</Heading>
 
         <Link as={NavLink} to="/" color="cyan.500">

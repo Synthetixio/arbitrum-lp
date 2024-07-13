@@ -1,8 +1,8 @@
 import { useParams } from '@snx-v3/useParams';
+import { useImportContract } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
-import { useCoreProxy } from './useCoreProxy';
 
 export function useCreateAccount() {
   const [params, setParams] = useParams();
@@ -10,19 +10,14 @@ export function useCreateAccount() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
   const queryClient = useQueryClient();
-  const { data: CoreProxyContract } = useCoreProxy();
+  const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
   return useMutation({
     mutationFn: async () => {
-      if (!(connectedChain?.id && CoreProxyContract && walletAddress && wallet?.provider))
-        throw 'OMFG';
+      if (!(connectedChain?.id && CoreProxyContract && walletAddress && wallet?.provider)) throw 'OMFG';
       const provider = new ethers.providers.Web3Provider(wallet.provider);
       const signer = provider.getSigner(walletAddress);
-      const CoreProxy = new ethers.Contract(
-        CoreProxyContract.address,
-        CoreProxyContract.abi,
-        signer
-      );
+      const CoreProxy = new ethers.Contract(CoreProxyContract.address, CoreProxyContract.abi, signer);
       const tx: ethers.ContractTransaction = await CoreProxy['createAccount()']();
       console.log({ tx });
       if (window.$tx) {
@@ -42,9 +37,8 @@ export function useCreateAccount() {
       if (event) {
         const accountId = event?.args?.accountId?.toString();
         if (accountId) {
-          queryClient.setQueryData(
-            [connectedChain.id, 'Accounts', { ownerAddress: walletAddress }],
-            (oldData: string[]) => oldData.concat([accountId])
+          queryClient.setQueryData([connectedChain.id, 'Accounts', { ownerAddress: walletAddress }], (oldData: string[]) =>
+            oldData.concat([accountId])
           );
           setParams({ ...params, accountId: accountId.toHexString() });
         }

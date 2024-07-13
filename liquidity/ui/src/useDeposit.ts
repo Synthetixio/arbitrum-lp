@@ -1,12 +1,11 @@
+import { useErrorParser, useImportContract } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
-import { ethers } from 'ethers';
+import type { ethers } from 'ethers';
 import { approveToken } from './approveToken';
 import { depositCollateral } from './depositCollateral';
 import { fetchTokenAllowance } from './fetchTokenAllowance';
 import { fetchTokenBalance } from './fetchTokenBalance';
-import { useErrorParser } from './parseError';
-import { useCoreProxy } from './useCoreProxy';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
@@ -20,22 +19,13 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
 
-  const { data: CoreProxyContract } = useCoreProxy();
+  const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
   const errorParser = useErrorParser();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (depositAmount: ethers.BigNumber) => {
-      if (
-        !(
-          wallet &&
-          walletAddress &&
-          CoreProxyContract &&
-          connectedChain?.id &&
-          accountId &&
-          collateralType
-        )
-      ) {
+      if (!(wallet && walletAddress && CoreProxyContract && connectedChain?.id && accountId && collateralType)) {
         throw 'OMFG';
       }
 
@@ -48,7 +38,7 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
         ownerAddress: walletAddress,
         tokenAddress: collateralType?.address,
       });
-      console.log(`freshBalance`, freshBalance);
+      console.log('freshBalance', freshBalance);
 
       if (freshBalance.lt(depositAmount)) {
         throw new Error('Not enough balance');
@@ -60,7 +50,7 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
         tokenAddress: collateralType?.address,
         spenderAddress: CoreProxyContract?.address,
       });
-      console.log(`freshAllowance`, freshAllowance);
+      console.log('freshAllowance', freshAllowance);
 
       if (freshAllowance.lt(depositAmount)) {
         await approveToken({

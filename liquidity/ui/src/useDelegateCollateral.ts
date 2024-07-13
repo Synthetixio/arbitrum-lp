@@ -1,21 +1,25 @@
+import { fetchPriceUpdateTxn, useErrorParser, useImportContract } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
-import { ethers } from 'ethers';
+import type { ethers } from 'ethers';
 import { delegateCollateral } from './delegateCollateral';
 import { delegateCollateralWithPriceUpdate } from './delegateCollateralWithPriceUpdate';
 import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
 import { fetchPositionCollateral } from './fetchPositionCollateral';
-import { fetchPriceUpdateTxn } from './fetchPriceUpdateTxn';
-import { useErrorParser } from './parseError';
 import { useAllPriceFeeds } from './useAllPriceFeeds';
-import { useCoreProxy } from './useCoreProxy';
-import { useMulticall } from './useMulticall';
-import { usePythERC7412Wrapper } from './usePythERC7412Wrapper';
+import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
-export function useDelegateCollateral({ onSuccess }: { onSuccess: () => void }) {
+export function useDelegateCollateral({
+  onSuccess,
+}: {
+  onSuccess: () => void;
+}) {
+  const provider = useProvider();
+  const errorParser = useErrorParser();
+
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
@@ -24,12 +28,11 @@ export function useDelegateCollateral({ onSuccess }: { onSuccess: () => void }) 
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
 
-  const { data: CoreProxyContract } = useCoreProxy();
+  const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
-  const errorParser = useErrorParser();
   const { data: priceIds } = useAllPriceFeeds();
-  const { data: MulticallContract } = useMulticall();
-  const { data: PythERC7412WrapperContract } = usePythERC7412Wrapper();
+  const { data: MulticallContract } = useImportContract('Multicall');
+  const { data: PythERC7412WrapperContract } = useImportContract('PythERC7412Wrapper');
 
   const queryClient = useQueryClient();
   return useMutation({
@@ -43,7 +46,7 @@ export function useDelegateCollateral({ onSuccess }: { onSuccess: () => void }) 
           priceIds &&
           connectedChain?.id &&
           walletAddress &&
-          wallet?.provider &&
+          provider &&
           accountId &&
           poolId &&
           collateralType
@@ -57,12 +60,12 @@ export function useDelegateCollateral({ onSuccess }: { onSuccess: () => void }) 
       }
 
       const freshPriceUpdateTxn = await fetchPriceUpdateTxn({
-        wallet,
+        provider,
         MulticallContract,
         PythERC7412WrapperContract,
         priceIds,
       });
-      console.log(`freshPriceUpdateTxn`, freshPriceUpdateTxn);
+      console.log('freshPriceUpdateTxn', freshPriceUpdateTxn);
 
       const freshAccountAvailableCollateral = await fetchAccountAvailableCollateral({
         wallet,
@@ -70,7 +73,7 @@ export function useDelegateCollateral({ onSuccess }: { onSuccess: () => void }) 
         accountId,
         tokenAddress: collateralType.address,
       });
-      console.log(`freshAccountAvailableCollateral`, freshAccountAvailableCollateral);
+      console.log('freshAccountAvailableCollateral', freshAccountAvailableCollateral);
 
       const hasEnoughDeposit = freshAccountAvailableCollateral.gte(delegateAmountDelta);
       if (!hasEnoughDeposit) {
@@ -84,10 +87,10 @@ export function useDelegateCollateral({ onSuccess }: { onSuccess: () => void }) 
         poolId,
         tokenAddress: collateralType.address,
       });
-      console.log(`freshPositionCollateral`, freshPositionCollateral);
+      console.log('freshPositionCollateral', freshPositionCollateral);
 
       const delegateAmount = freshPositionCollateral.add(delegateAmountDelta);
-      console.log(`delegateAmount`, delegateAmount);
+      console.log('delegateAmount', delegateAmount);
 
       if (freshPriceUpdateTxn.value) {
         console.log('-> delegateCollateralWithPriceUpdate');
@@ -122,11 +125,7 @@ export function useDelegateCollateral({ onSuccess }: { onSuccess: () => void }) 
     onSuccess: async ({ priceUpdated }) => {
       if (priceUpdated) {
         await queryClient.invalidateQueries({
-          queryKey: [
-            connectedChain?.id,
-            'PriceUpdateTxn',
-            { priceIds: priceIds?.map((p) => p.slice(0, 8)) },
-          ],
+          queryKey: [connectedChain?.id, 'PriceUpdateTxn', { priceIds: priceIds?.map((p) => p.slice(0, 8)) }],
         });
       }
 
@@ -166,7 +165,10 @@ export function useDelegateCollateral({ onSuccess }: { onSuccess: () => void }) 
         queryKey: [
           connectedChain?.id,
           'PositionDebt',
-          { accountId: accountId?.toHexString(), tokenAddress: collateralType?.address },
+          {
+            accountId: accountId?.toHexString(),
+            tokenAddress: collateralType?.address,
+          },
         ],
       });
 

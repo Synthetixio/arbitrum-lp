@@ -10,7 +10,7 @@ export async function delegateCollateral({
   delegateAmount,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
   accountId: ethers.BigNumber;
   poolId: ethers.BigNumber;
   tokenAddress: string;
@@ -29,12 +29,10 @@ export async function delegateCollateral({
     delegateAmount,
     ethers.utils.parseEther('1'), // Leverage
   ];
-  console.log(`delegateCollateralTxnArgs`, delegateCollateralTxnArgs);
+  console.log('delegateCollateralTxnArgs', delegateCollateralTxnArgs);
 
   console.time('delegateCollateral');
-  const tx: ethers.ContractTransaction = await CoreProxy.delegateCollateral(
-    ...delegateCollateralTxnArgs
-  );
+  const tx: ethers.ContractTransaction = await CoreProxy.delegateCollateral(...delegateCollateralTxnArgs);
   console.timeEnd('delegateCollateral');
 
   console.log({ tx });

@@ -7,7 +7,7 @@ export async function fetchCollateralPrice({
   tokenAddress,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
   tokenAddress: string;
 }) {
   const provider = new ethers.providers.Web3Provider(wallet.provider);

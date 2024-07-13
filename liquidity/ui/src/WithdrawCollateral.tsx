@@ -104,9 +104,7 @@ export function WithdrawCollateral() {
                 ? ` ${renderAmount(parsedAmount, collateralType)}`
                 : null
               : null}
-            {withdrawTimer.h === 0 && withdrawTimer.m === 0 && withdrawTimer.s > 0
-              ? ` in ${withdrawTimer.s}s`
-              : null}
+            {withdrawTimer.h === 0 && withdrawTimer.m === 0 && withdrawTimer.s > 0 ? ` in ${withdrawTimer.s}s` : null}
             {withdrawTimer.h === 0 && withdrawTimer.m > 0 ? ` in ${withdrawTimer.m}m` : null}
             {withdrawTimer.h > 0 ? ` in ${withdrawTimer.h}h` : null}
           </Button>

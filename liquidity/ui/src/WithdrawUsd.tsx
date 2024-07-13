@@ -11,13 +11,13 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { useImportSystemToken } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSystemToken } from './useSystemToken';
 import { useTokenBalance } from './useTokenBalance';
 import { useWithdraw } from './useWithdraw';
 import { useWithdrawTimer } from './useWithdrawTimer';
@@ -27,7 +27,7 @@ export function WithdrawUsd() {
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const accountId = useSelectedAccountId();
-  const { data: systemToken } = useSystemToken();
+  const { data: systemToken } = useImportSystemToken();
 
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
     accountId,
@@ -104,9 +104,7 @@ export function WithdrawUsd() {
                 ? ` ${renderAmount(parsedAmount, systemToken)}`
                 : null
               : null}
-            {withdrawTimer.h === 0 && withdrawTimer.m === 0 && withdrawTimer.s > 0
-              ? ` in ${withdrawTimer.s}s`
-              : null}
+            {withdrawTimer.h === 0 && withdrawTimer.m === 0 && withdrawTimer.s > 0 ? ` in ${withdrawTimer.s}s` : null}
             {withdrawTimer.h === 0 && withdrawTimer.m > 0 ? ` in ${withdrawTimer.m}m` : null}
             {withdrawTimer.h > 0 ? ` in ${withdrawTimer.h}h` : null}
           </Button>

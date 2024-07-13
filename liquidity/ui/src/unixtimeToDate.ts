@@ -1,6 +1,6 @@
-import { ethers } from 'ethers';
+import type { ethers } from 'ethers';
 
-export function unixtimeToDate(unixtime?: ethers.BigNumber): Date | void {
+export function unixtimeToDate(unixtime?: ethers.BigNumber): Date | undefined {
   if (!unixtime) {
     return;
   }

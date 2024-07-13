@@ -1,5 +1,4 @@
 import type { WalletState } from '@web3-onboard/core';
-import { importCoreProxy } from '@snx-v3/contracts';
 import { ethers } from 'ethers';
 
 export async function depositCollateral({
@@ -10,7 +9,7 @@ export async function depositCollateral({
   depositAmount,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
   accountId: ethers.BigNumber;
   tokenAddress: string;
   depositAmount: ethers.BigNumber;

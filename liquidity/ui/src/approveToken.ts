@@ -15,11 +15,7 @@ export async function approveToken({
   const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = new ethers.providers.Web3Provider(wallet.provider);
   const signer = provider.getSigner(walletAddress);
-  const Token = new ethers.Contract(
-    tokenAddress,
-    ['function approve(address spender, uint256 amount) returns (bool)'],
-    signer
-  );
+  const Token = new ethers.Contract(tokenAddress, ['function approve(address spender, uint256 amount) returns (bool)'], signer);
   const tx: ethers.ContractTransaction = await Token.approve(spenderAddress, allowance);
   console.log({ tx });
   if (window.$tx) {

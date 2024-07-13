@@ -10,8 +10,8 @@ export async function fetchAccountCollateralWithPriceUpdate({
   priceUpdateTxn,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
-  MulticallContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
+  MulticallContract: { address: string; abi: string[] };
   accountId: ethers.BigNumber;
   tokenAddress: string;
   priceUpdateTxn: {
@@ -28,10 +28,7 @@ export async function fetchAccountCollateralWithPriceUpdate({
 
   const getAccountCollateralTxn = {
     target: CoreProxyContract.address,
-    callData: CoreProxyInterface.encodeFunctionData('getAccountCollateral', [
-      accountId,
-      tokenAddress,
-    ]),
+    callData: CoreProxyInterface.encodeFunctionData('getAccountCollateral', [accountId, tokenAddress]),
     value: 0,
     requireSuccess: true,
   };
@@ -40,9 +37,7 @@ export async function fetchAccountCollateralWithPriceUpdate({
   const provider = new ethers.providers.Web3Provider(wallet.provider);
   const response = await provider.call({
     to: MulticallContract.address,
-    data: MulticallInterface.encodeFunctionData('aggregate3Value', [
-      [priceUpdateTxn, getAccountCollateralTxn],
-    ]),
+    data: MulticallInterface.encodeFunctionData('aggregate3Value', [[priceUpdateTxn, getAccountCollateralTxn]]),
     value: priceUpdateTxn.value,
   });
   console.timeEnd('fetchAccountCollateralWithPriceUpdate');
@@ -54,20 +49,15 @@ export async function fetchAccountCollateralWithPriceUpdate({
     if (decodedMulticall?.returnData?.[1]?.returnData) {
       const getAccountCollateralTxnData = decodedMulticall.returnData[1].returnData;
       console.log({ getAccountCollateralTxnData });
-      const accountCollateral = CoreProxyInterface.decodeFunctionResult(
-        'getAccountCollateral',
-        getAccountCollateralTxnData
-      );
+      const accountCollateral = CoreProxyInterface.decodeFunctionResult('getAccountCollateral', getAccountCollateralTxnData);
       return {
         totalAssigned: accountCollateral.totalAssigned,
         totalDeposited: accountCollateral.totalDeposited,
         totalLocked: accountCollateral.totalLocked,
       };
-    } else {
-      console.error({ decodedMulticall });
-      throw new Error('Unexpected multicall response');
     }
-  } else {
-    throw new Error('Empty multicall response');
+    console.error({ decodedMulticall });
+    throw new Error('Unexpected multicall response');
   }
+  throw new Error('Empty multicall response');
 }

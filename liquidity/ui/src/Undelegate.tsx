@@ -77,13 +77,7 @@ export function Undelegate() {
           <Button
             type="submit"
             isLoading={undelegate.isPending}
-            isDisabled={
-              !(
-                parsedAmount.gt(0) &&
-                positionCollateral &&
-                positionCollateral.sub(parsedAmount).gte(0)
-              )
-            }
+            isDisabled={!(parsedAmount.gt(0) && positionCollateral && positionCollateral.sub(parsedAmount).gte(0))}
           >
             Undelegate
             {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, collateralType)}` : null}

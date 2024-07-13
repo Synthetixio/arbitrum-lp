@@ -6,11 +6,11 @@ import { useSelectedAccountId } from './useSelectedAccountId';
 export function useWithdrawTimer() {
   const accountId = useSelectedAccountId();
   const { data: accountTimeoutWithdraw } = useAccountTimeoutWithdraw();
-  const { data: accountLastInteraction } = useAccountLastInteraction({ accountId });
+  const { data: accountLastInteraction } = useAccountLastInteraction({
+    accountId,
+  });
   const unlockUnixtime =
-    accountLastInteraction && accountTimeoutWithdraw
-      ? accountLastInteraction.add(accountTimeoutWithdraw).toNumber()
-      : 0;
+    accountLastInteraction && accountTimeoutWithdraw ? accountLastInteraction.add(accountTimeoutWithdraw).toNumber() : 0;
   const [h, setH] = React.useState(0);
   const [m, setM] = React.useState(0);
   const [s, setS] = React.useState(0);

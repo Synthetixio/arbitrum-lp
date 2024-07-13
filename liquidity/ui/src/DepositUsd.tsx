@@ -11,15 +11,15 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { useImportContract } from '@synthetixio/react-sdk';
+import { useImportSystemToken } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
-import { useCoreProxy } from './useCoreProxy';
 import { useDeposit } from './useDeposit';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSystemToken } from './useSystemToken';
 import { useTokenAllowance } from './useTokenAllowance';
 import { useTokenBalance } from './useTokenBalance';
 
@@ -28,9 +28,9 @@ export function DepositUsd() {
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const accountId = useSelectedAccountId();
-  const { data: systemToken } = useSystemToken();
+  const { data: systemToken } = useImportSystemToken();
 
-  const { data: CoreProxyContract } = useCoreProxy();
+  const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
   const { data: currentBalance } = useTokenBalance({
     ownerAddress: walletAddress,
@@ -93,13 +93,9 @@ export function DepositUsd() {
           <Button
             type="submit"
             isLoading={deposit.isPending}
-            isDisabled={
-              !(parsedAmount.gt(0) && currentBalance && currentBalance.sub(parsedAmount).gte(0))
-            }
+            isDisabled={!(parsedAmount.gt(0) && currentBalance && currentBalance.sub(parsedAmount).gte(0))}
           >
-            {currentAllowance && currentAllowance.gte(parsedAmount)
-              ? 'Deposit'
-              : 'Approve and Deposit'}
+            {currentAllowance?.gte(parsedAmount) ? 'Deposit' : 'Approve and Deposit'}
             {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, systemToken)}` : null}
           </Button>
         </InputGroup>

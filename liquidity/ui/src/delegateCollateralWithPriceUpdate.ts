@@ -12,8 +12,8 @@ export async function delegateCollateralWithPriceUpdate({
   priceUpdateTxn,
 }: {
   wallet: WalletState;
-  CoreProxyContract: { address: string; abi: string };
-  MulticallContract: { address: string; abi: string };
+  CoreProxyContract: { address: string; abi: string[] };
+  MulticallContract: { address: string; abi: string[] };
   accountId: ethers.BigNumber;
   poolId: ethers.BigNumber;
   tokenAddress: string;
@@ -36,7 +36,7 @@ export async function delegateCollateralWithPriceUpdate({
     delegateAmount,
     ethers.utils.parseEther('1'), // Leverage
   ];
-  console.log(`delegateCollateralTxnArgs`, delegateCollateralTxnArgs);
+  console.log('delegateCollateralTxnArgs', delegateCollateralTxnArgs);
 
   const delegateCollateralTxn = {
     target: CoreProxyContract.address,
@@ -56,9 +56,7 @@ export async function delegateCollateralWithPriceUpdate({
   const multicallTxn = {
     from: walletAddress,
     to: MulticallContract.address,
-    data: MulticallInterface.encodeFunctionData('aggregate3Value', [
-      [priceUpdateTxn, delegateCollateralTxn],
-    ]),
+    data: MulticallInterface.encodeFunctionData('aggregate3Value', [[priceUpdateTxn, delegateCollateralTxn]]),
     value: priceUpdateTxn.value,
   };
   console.log({ multicallTxn });

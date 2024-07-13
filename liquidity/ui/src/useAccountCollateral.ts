@@ -1,13 +1,11 @@
+import { useErrorParser, useImportContract, usePriceUpdateTxn } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { fetchAccountCollateral } from './fetchAccountCollateral';
 import { fetchAccountCollateralWithPriceUpdate } from './fetchAccountCollateralWithPriceUpdate';
-import { useErrorParser } from './parseError';
 import { useAllPriceFeeds } from './useAllPriceFeeds';
-import { useCoreProxy } from './useCoreProxy';
-import { useMulticall } from './useMulticall';
-import { usePriceUpdateTxn } from './usePriceUpdateTxn';
+import { useProvider } from './useProvider';
 
 export function useAccountCollateral({
   accountId,
@@ -16,41 +14,25 @@ export function useAccountCollateral({
   accountId?: ethers.BigNumber;
   tokenAddress?: string;
 }) {
+  const provider = useProvider();
   const errorParser = useErrorParser();
-  const { data: allPriceFeeds } = useAllPriceFeeds();
-  const { data: priceUpdateTxn } = usePriceUpdateTxn(allPriceFeeds);
 
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
-  const { data: CoreProxyContract } = useCoreProxy();
-  const { data: MulticallContract } = useMulticall();
+  const { data: CoreProxyContract } = useImportContract('CoreProxy');
+  const { data: MulticallContract } = useImportContract('Multicall');
+
+  const { data: priceIds } = useAllPriceFeeds();
+  const { data: priceUpdateTxn } = usePriceUpdateTxn({ provider, priceIds });
 
   return useQuery({
     enabled: Boolean(
-      connectedChain?.id &&
-        wallet?.provider &&
-        CoreProxyContract &&
-        MulticallContract &&
-        accountId &&
-        tokenAddress &&
-        priceUpdateTxn
+      connectedChain?.id && wallet?.provider && CoreProxyContract && MulticallContract && accountId && tokenAddress && priceUpdateTxn
     ),
-    queryKey: [
-      connectedChain?.id,
-      'AccountCollateral',
-      { accountId: accountId?.toHexString(), tokenAddress },
-    ],
+    queryKey: [connectedChain?.id, 'AccountCollateral', { accountId: accountId?.toHexString(), tokenAddress }],
     queryFn: async () => {
       if (
-        !(
-          connectedChain?.id &&
-          wallet?.provider &&
-          CoreProxyContract &&
-          MulticallContract &&
-          accountId &&
-          tokenAddress &&
-          priceUpdateTxn
-        )
+        !(connectedChain?.id && wallet?.provider && CoreProxyContract && MulticallContract && accountId && tokenAddress && priceUpdateTxn)
       ) {
         throw 'OMFG';
       }
@@ -73,15 +55,14 @@ export function useAccountCollateral({
           tokenAddress,
           priceUpdateTxn,
         });
-      } else {
-        console.log('-> fetchAccountCollateral');
-        return fetchAccountCollateral({
-          wallet,
-          CoreProxyContract,
-          accountId,
-          tokenAddress,
-        });
       }
+      console.log('-> fetchAccountCollateral');
+      return fetchAccountCollateral({
+        wallet,
+        CoreProxyContract,
+        accountId,
+        tokenAddress,
+      });
     },
     throwOnError: (error) => {
       // TODO: show toast

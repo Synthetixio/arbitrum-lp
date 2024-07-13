@@ -1,6 +1,6 @@
 import { useParams } from '@snx-v3/useParams';
-import React from 'react';
 import { ethers } from 'ethers';
+import React from 'react';
 
 const pools = [ethers.BigNumber.from('1')];
 
@@ -13,5 +13,5 @@ export function useSelectedPoolId() {
     }
     const poolId = ethers.BigNumber.from(params.poolId);
     return pools.find((id) => poolId.eq(id));
-  }, [pools, params.poolId]);
+  }, [params.poolId]);
 }
