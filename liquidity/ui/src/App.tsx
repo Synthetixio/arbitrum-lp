@@ -28,6 +28,7 @@ import SynthetixIcon from './SynthetixIcon.svg';
 import SynthetixLogo from './SynthetixLogo.svg';
 import { TermsModal } from './TermsModal';
 import { UserMenu } from './UserMenu';
+import { Perps } from './Perps';
 import DiscordIcon from './discord.svg';
 import GithubIcon from './github.svg';
 import LogoIcon from './logo-icon.svg';
@@ -165,6 +166,16 @@ function Layout() {
           >
             <img src={Logo} alt="Synthetix" />
           </Link>
+          <Link
+            to={{
+              pathname: '/perps',
+              search: location.search,
+            }}
+            as={RouterLink}
+            py={4}
+          >
+            Perps 
+          </Link>
           <Flex gap={3} flexWrap="wrap-reverse" justifyContent="center" alignItems="center">
             <UserMenu />
             <ChainMenu />
@@ -262,6 +273,7 @@ function Router() {
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/perps" element={<Perps />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
