@@ -91,6 +91,20 @@ export const onboard = init({
       rpcUrl: `wss://arbitrum-sepolia.infura.io/ws/v3/${process.env.INFURA_KEY}`,
       publicRpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
     },
+    {
+      id: 8453,
+      token: 'ETH',
+      label: 'Base',
+      rpcUrl: `wss://base.infura.io/ws/v3/${process.env.INFURA_KEY}`,
+      publicRpcUrl: 'https://mainnet.base.org',
+    },
+    {
+      id: 84532,
+      token: 'ETH',
+      label: 'Base Sepolia',
+      rpcUrl: `wss://base-sepolia.infura.io/ws/v3/${process.env.INFURA_KEY}`,
+      publicRpcUrl: 'https://sepolia.base.org',
+    },
   ],
   appMetadata,
   accountCenter: {
