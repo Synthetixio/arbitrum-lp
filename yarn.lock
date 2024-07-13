@@ -4473,7 +4473,7 @@ __metadata:
     "@safe-global/safe-apps-provider": "npm:^0.18.3"
     "@safe-global/safe-apps-sdk": "npm:^9.1.0"
     "@snx-v3/useParams": "workspace:*"
-    "@synthetixio/react-sdk": ../../../react-sdk
+    "@synthetixio/react-sdk": "npm:*"
     "@synthetixio/safe-import": "workspace:*"
     "@tanstack/query-sync-storage-persister": "npm:^5.50.1"
     "@tanstack/react-query": "npm:^5.50.1"
@@ -4507,6 +4507,7 @@ __metadata:
     react-helmet: "npm:^6.1.0"
     react-refresh: "npm:^0.14.2"
     react-router-dom: "npm:^6.24.1"
+    react-ts-tradingview-widgets: "npm:^1.2.5"
     stream-browserify: "npm:^3.0.0"
     style-loader: "npm:^4.0.0"
     terser-webpack-plugin: "npm:^5.3.10"
@@ -4753,18 +4754,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@synthetixio/react-sdk@file:../../../react-sdk::locator=%40snx-v3%2Fliquidity%40workspace%3Aliquidity%2Fui":
-  version: 0.0.5
-  resolution: "@synthetixio/react-sdk@file:../../../react-sdk#../../../react-sdk::hash=4e512f&locator=%40snx-v3%2Fliquidity%40workspace%3Aliquidity%2Fui"
+"@synthetixio/react-sdk@npm:*":
+  version: 0.0.7
+  resolution: "@synthetixio/react-sdk@npm:0.0.7"
   dependencies:
     "@pythnetwork/pyth-evm-js": "npm:^1.56.1"
-    "@synthetixio/v3-contracts": "synthetixio/v3-contracts#master"
+    "@synthetixio/v3-contracts": "github:synthetixio/v3-contracts#master"
     "@tanstack/react-query": "npm:^5.50.1"
     debug: "npm:^4.3.5"
     ethers: "npm:^5.7.2"
     react: "npm:^18.3.1"
     viem: "npm:^2.17.1"
-  checksum: 10/509853913a2b306711dbd0210fb27f0cd8247626c0d5c0c1edbee71b78d2b6a679bfdcade53852bf3f46b1c7d26719ca9aef6893e363221f3549266e815ae440
+  checksum: 10/79add147fb15460e32f19e5f233dbcbdee436035ed2ee64bae36c3e24c35c148baa3220b7909a97b3c8fa2ed0441649933fe55d1ffa7a84db95ea5b2be81c61a
   languageName: node
   linkType: hard
 
@@ -4776,10 +4777,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@synthetixio/v3-contracts@synthetixio/v3-contracts#master":
+"@synthetixio/v3-contracts@github:synthetixio/v3-contracts#master":
   version: 6.4.0
-  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=db7981e1eb88d4907f045be0b4d280748df8ea25"
-  checksum: 10/553aa29505e8a924739ed114f8548e0c3f42b64ba7c3732d125e8c60d371fc870fb81e3e60f5084f71673073632059fe0bf01e434ee34a27bb1624a9859129e2
+  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=9387a952b564e4f227de600db197adf864073b4e"
+  checksum: 10/34c1ca2d21f3e9d7189dfeb1713259b6eff484b712cb4bdc813515b2187ef3fa4f7b09b1c8118494afca2fab88ba4c78e80ddaf73a0187b049f47a83f4f55de8
   languageName: node
   linkType: hard
 
@@ -12648,6 +12649,16 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10/80c58fd6aac3594e351e2e7b048d8a5b09508adb21031a38b3c40911fe58295572eddc640d4b20a7be364842c8ed1120fe30097e22ea055316b375b88d4ff02a
+  languageName: node
+  linkType: hard
+
+"react-ts-tradingview-widgets@npm:^1.2.5":
+  version: 1.2.5
+  resolution: "react-ts-tradingview-widgets@npm:1.2.5"
+  peerDependencies:
+    react: ^17.0.2 || ^18.1.0
+    react-dom: ^17.0.2 || ^18.1.0
+  checksum: 10/074e0c6d47c477a93526bab36fb89dea100b34ed015af8647083dd5ec145f34e1ff43c2c4e1f73d79d857e98406ef02e721b6b976017bbaf01dd4da7eaab4d58
   languageName: node
   linkType: hard
 
