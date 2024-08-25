@@ -5,8 +5,11 @@ import {
   Flex,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuItem,
+  MenuItemOption,
   MenuList,
+  MenuOptionGroup,
   Stack,
   Text,
   useBreakpointValue,
@@ -14,9 +17,14 @@ import {
 } from '@chakra-ui/react';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import React, { useEffect, useState } from 'react';
+import { renderAccountId } from './renderAccountId';
 import './i18n/config';
+import { useParams } from '@snx-v3/useParams';
 import { useTranslation } from 'react-i18next';
 import { ChainMenu } from './ChainMenu';
+import { useCreatePerpsAccount } from './useCreatePerpsAccount';
+import { usePerpsAccounts } from './usePerpsAccounts';
+import { useSelectedPerpsAccountId } from './useSelectedPerpsAccountId';
 
 interface Account {
   address: string;
@@ -55,6 +63,46 @@ function LanguageSwitcher() {
   );
 }
 
+const AccountHandler = () => {
+  const { data: accounts } = usePerpsAccounts();
+  const accountId = useSelectedPerpsAccountId();
+  const [params, setParams] = useParams();
+  const { t } = useTranslation();
+
+  return (
+    <>
+      {accounts && accounts.length > 0 ? (
+        <>
+          <MenuDivider />
+          <MenuOptionGroup
+            title={t('Accounts')}
+            type="radio"
+            defaultValue={accountId?.toHexString() ?? ''}
+            value={accountId?.toHexString() ?? ''}
+            onChange={(value) => setParams({ ...params, accountId: `${value}` })}
+          >
+            {accounts.map((id) => (
+              <MenuItemOption key={id.toHexString()} value={id.toHexString()}>
+                {renderAccountId(id)}
+              </MenuItemOption>
+            ))}
+          </MenuOptionGroup>
+        </>
+      ) : null}
+
+      {accounts && !accounts.length ? (
+        <>
+          <MenuDivider />
+          <MenuOptionGroup title={t('Accounts')} type="radio" defaultValue="0">
+            <MenuItemOption value="0">{t('No accounts')}</MenuItemOption>
+          </MenuOptionGroup>
+        </>
+      ) : null}
+      <MenuDivider />
+    </>
+  );
+};
+
 function WalletConnector() {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const [account, setAccount] = useState<Account | null>(null);
@@ -76,6 +124,7 @@ function WalletConnector() {
         </MenuButton>
         <MenuList>
           <MenuItem onClick={() => navigator.clipboard.writeText(account?.address)}>{t('Copy address')}</MenuItem>
+          <AccountHandler />
           <MenuItem onClick={() => disconnect({ label: wallet.label })}>{t('Disconnect')}</MenuItem>
         </MenuList>
       </Menu>
@@ -88,6 +137,22 @@ function WalletConnector() {
     </Button>
   ) : null;
 }
+
+const CreateAccount = () => {
+  const { data: accounts } = usePerpsAccounts();
+  const createAccount = useCreatePerpsAccount();
+  const { t } = useTranslation();
+
+  if (accounts && !accounts.length) {
+    return (
+      <Button type="button" onClick={() => createAccount.mutate()}>
+        {t('Create account')}
+      </Button>
+    );
+  }
+
+  return null;
+};
 
 const ChainHandler = () => {
   const [{ wallet }] = useConnectWallet();
@@ -128,6 +193,7 @@ export function PerpsAppNavbar() {
         <Stack flex={{ base: 1, md: 0 }} justify={'flex-end'} direction={'row'} spacing={6}>
           <ChainHandler />
           <WalletConnector />
+          <CreateAccount />
           <ChainMenu />
           <LanguageSwitcher />
         </Stack>
