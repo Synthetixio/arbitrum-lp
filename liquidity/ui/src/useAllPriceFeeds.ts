@@ -1,15 +1,19 @@
-import { useImportExtras } from '@synthetixio/react-sdk';
+import { useImportExtras, useSynthetix } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useSetChain } from '@web3-onboard/react';
 
 export function useAllPriceFeeds() {
+  const { chainId } = useSynthetix();
   const [{ connectedChain }] = useSetChain();
   const { data: extras } = useImportExtras();
+
+  const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
+
   return useQuery({
-    enabled: Boolean(connectedChain?.id),
-    queryKey: [connectedChain?.id, 'AllPriceFeeds'],
+    enabled: Boolean(isChainReady && extras),
+    queryKey: [chainId, 'AllPriceFeeds'],
     queryFn: async () => {
-      if (!(connectedChain?.id && extras)) {
+      if (!(isChainReady && extras)) {
         throw 'OMFG';
       }
       return Object.entries(extras)

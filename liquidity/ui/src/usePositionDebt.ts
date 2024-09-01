@@ -1,4 +1,4 @@
-import { useErrorParser, useImportContract, usePriceUpdateTxn } from '@synthetixio/react-sdk';
+import { useErrorParser, useImportContract, usePriceUpdateTxn, useSynthetix } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
@@ -16,6 +16,7 @@ export function usePositionDebt({
   poolId?: ethers.BigNumber;
   tokenAddress?: string;
 }) {
+  const { chainId } = useSynthetix();
   const provider = useProvider();
   const errorParser = useErrorParser();
 
@@ -27,25 +28,32 @@ export function usePositionDebt({
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
   const { data: MulticallContract } = useImportContract('Multicall');
 
+  const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
+
   return useQuery({
     enabled: Boolean(
-      connectedChain?.id &&
+      isChainReady &&
+        CoreProxyContract?.address &&
+        MulticallContract?.address &&
         wallet?.provider &&
-        CoreProxyContract &&
-        MulticallContract &&
         accountId &&
         poolId &&
         tokenAddress &&
         priceUpdateTxn
     ),
-    queryKey: [connectedChain?.id, 'PositionDebt', { accountId: accountId?.toHexString(), tokenAddress }],
+    queryKey: [
+      chainId,
+      { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
+      'PositionDebt',
+      { accountId: accountId?.toHexString(), tokenAddress },
+    ],
     queryFn: async () => {
       if (
         !(
-          connectedChain?.id &&
+          isChainReady &&
+          CoreProxyContract?.address &&
+          MulticallContract?.address &&
           wallet?.provider &&
-          CoreProxyContract &&
-          MulticallContract &&
           accountId &&
           poolId &&
           tokenAddress &&

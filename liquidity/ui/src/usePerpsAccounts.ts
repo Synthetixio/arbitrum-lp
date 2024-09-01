@@ -1,19 +1,22 @@
-import { useImportContract } from '@synthetixio/react-sdk';
+import { useImportContract, useSynthetix } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 
 export function usePerpsAccounts() {
+  const { chainId } = useSynthetix();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
   const { data: PerpsAccountProxyContract } = useImportContract('PerpsAccountProxy');
 
+  const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
+
   return useQuery({
-    enabled: Boolean(connectedChain?.id && walletAddress && wallet?.provider && PerpsAccountProxyContract),
-    queryKey: [connectedChain?.id, 'PerpsAccounts', { ownerAddress: walletAddress }],
+    enabled: Boolean(isChainReady && PerpsAccountProxyContract?.address && walletAddress && wallet?.provider),
+    queryKey: [chainId, { PerpsAccountProxy: PerpsAccountProxyContract?.address }, 'PerpsAccounts', { ownerAddress: walletAddress }],
     queryFn: async () => {
-      if (!(connectedChain?.id && walletAddress && wallet?.provider && PerpsAccountProxyContract)) throw 'OMFG';
+      if (!(isChainReady && PerpsAccountProxyContract?.address && walletAddress && wallet?.provider)) throw 'OMFG';
       const provider = new ethers.providers.Web3Provider(wallet.provider);
       const PerpsAccountProxy = new ethers.Contract(PerpsAccountProxyContract.address, PerpsAccountProxyContract.abi, provider);
       const numberOfAccountTokens = await PerpsAccountProxy.balanceOf(walletAddress);

@@ -1,5 +1,4 @@
-import { fetchPriceUpdateTxn, useErrorParser, useImportContract } from '@synthetixio/react-sdk';
-import { useImportSystemToken } from '@synthetixio/react-sdk';
+import { fetchPriceUpdateTxn, useErrorParser, useImportContract, useImportSystemToken, useSynthetix } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
@@ -13,6 +12,7 @@ import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function useBurnUsd({ onSuccess }: { onSuccess: () => void }) {
+  const { chainId } = useSynthetix();
   const provider = useProvider();
   const errorParser = useErrorParser();
 
@@ -33,16 +33,17 @@ export function useBurnUsd({ onSuccess }: { onSuccess: () => void }) {
   const { data: PythERC7412WrapperContract } = useImportContract('PythERC7412Wrapper');
 
   const queryClient = useQueryClient();
+  const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
   return useMutation({
     retry: false,
     mutationFn: async (burnUsdAmount: ethers.BigNumber) => {
       if (
         !(
+          isChainReady &&
           CoreProxyContract &&
           MulticallContract &&
           PythERC7412WrapperContract &&
           priceIds &&
-          connectedChain?.id &&
           walletAddress &&
           provider &&
           accountId &&
@@ -112,14 +113,15 @@ export function useBurnUsd({ onSuccess }: { onSuccess: () => void }) {
     onSuccess: async ({ priceUpdated }) => {
       if (priceUpdated) {
         await queryClient.invalidateQueries({
-          queryKey: [connectedChain?.id, 'PriceUpdateTxn', { priceIds: priceIds?.map((p) => p.slice(0, 8)) }],
+          queryKey: [chainId, 'PriceUpdateTxn', { priceIds: priceIds?.map((p) => p.slice(0, 8)) }],
         });
       }
 
       // Intentionally do not await
       queryClient.invalidateQueries({
         queryKey: [
-          connectedChain?.id,
+          chainId,
+          { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
           'PositionDebt',
           {
             accountId: accountId?.toHexString(),
@@ -129,7 +131,8 @@ export function useBurnUsd({ onSuccess }: { onSuccess: () => void }) {
       });
       queryClient.invalidateQueries({
         queryKey: [
-          connectedChain?.id,
+          chainId,
+          { CoreProxy: CoreProxyContract?.address },
           'AccountAvailableCollateral',
           {
             accountId: accountId?.toHexString(),
@@ -138,7 +141,7 @@ export function useBurnUsd({ onSuccess }: { onSuccess: () => void }) {
         ],
       });
       queryClient.invalidateQueries({
-        queryKey: [connectedChain?.id, 'AccountLastInteraction', { accountId: accountId?.toHexString() }],
+        queryKey: [chainId, { CoreProxy: CoreProxyContract?.address }, 'AccountLastInteraction', { accountId: accountId?.toHexString() }],
       });
 
       onSuccess();

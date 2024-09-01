@@ -1,4 +1,4 @@
-import { useErrorParser, useImportContract } from '@synthetixio/react-sdk';
+import { useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
@@ -11,15 +11,24 @@ export function useAccountAvailableCollateral({
   accountId?: ethers.BigNumber;
   tokenAddress?: string;
 }) {
+  const { chainId } = useSynthetix();
   const errorParser = useErrorParser();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
+
+  const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
+
   return useQuery({
-    enabled: Boolean(connectedChain?.id && wallet?.provider && CoreProxyContract && accountId && tokenAddress),
-    queryKey: [connectedChain?.id, 'AccountAvailableCollateral', { accountId: accountId?.toHexString(), tokenAddress }],
+    enabled: Boolean(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && tokenAddress),
+    queryKey: [
+      chainId,
+      { CoreProxy: CoreProxyContract?.address },
+      'AccountAvailableCollateral',
+      { accountId: accountId?.toHexString(), tokenAddress },
+    ],
     queryFn: async () => {
-      if (!(connectedChain?.id && wallet?.provider && CoreProxyContract && accountId && tokenAddress)) {
+      if (!(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && tokenAddress)) {
         throw 'OMFG';
       }
 
