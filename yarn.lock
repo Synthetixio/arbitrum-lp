@@ -5055,10 +5055,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@synthetixio/v3-contracts@synthetixio/v3-contracts#master":
-  version: 6.4.0
-  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=db7981e1eb88d4907f045be0b4d280748df8ea25"
-  checksum: 10/553aa29505e8a924739ed114f8548e0c3f42b64ba7c3732d125e8c60d371fc870fb81e3e60f5084f71673073632059fe0bf01e434ee34a27bb1624a9859129e2
+"@synthetixio/v3-contracts@synthetixio/v3-contracts":
+  version: 6.6.1
+  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=e2f2f3e2807290b47ebfba9ee6d87f73f282b0f5"
+  checksum: 10/0797c186a7b6a257b2cd833af18cfcfd6c7d9cf0d8d9202d7c357694a9b01eae2d89b36ee4ba01dac98365fe92ec6d97041434b7a69c804f5fb4f4f81d47192b
   languageName: node
   linkType: hard
 

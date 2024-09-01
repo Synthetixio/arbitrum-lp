@@ -22,6 +22,7 @@ import './i18n/config';
 import { useParams } from '@snx-v3/useParams';
 import { useTranslation } from 'react-i18next';
 import { ChainMenu } from './ChainMenu';
+import { PerpsMarkets } from './PerpsMarkets';
 import { useCreatePerpsAccount } from './useCreatePerpsAccount';
 import { usePerpsAccounts } from './usePerpsAccounts';
 import { useSelectedPerpsAccountId } from './useSelectedPerpsAccountId';
@@ -191,6 +192,7 @@ export function PerpsAppNavbar() {
           </Text>
         </Flex>
         <Stack flex={{ base: 1, md: 0 }} justify={'flex-end'} direction={'row'} spacing={6}>
+          <PerpsMarkets />
           <ChainHandler />
           <WalletConnector />
           <CreateAccount />

@@ -175,6 +175,7 @@ export function Rewards() {
       <InputGroup gap={3}>
         {collateralType && rewardsDistributors && poolId && accountId ? (
           rewardsDistributors
+            .filter((rd) => rd.collateralType)
             .filter((rd) => rd.collateralType.address.toLowerCase() === collateralType.address.toLowerCase() && poolId.eq(rd.poolId))
             .map((rd) => <ClaimRewards key={rd.address} rewardsDistributor={rd} accountId={accountId} />)
         ) : (
