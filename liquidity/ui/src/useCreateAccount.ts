@@ -42,7 +42,7 @@ export function useCreateAccount() {
         const accountId = event?.args?.accountId?.toString();
         if (accountId) {
           queryClient.setQueryData(
-            [chainId, { AccountProxy: AccountProxyContract?.address }, 'Accounts', { ownerAddress: walletAddress }],
+            [chainId, { AccountProxy: AccountProxyContract?.address }, { ownerAddress: walletAddress }, 'Accounts'],
             (oldData: string[]) => oldData.concat([accountId])
           );
           setParams({ ...params, accountId: accountId.toHexString() });

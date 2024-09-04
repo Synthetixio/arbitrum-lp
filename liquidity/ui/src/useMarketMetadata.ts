@@ -13,22 +13,15 @@ export function useMarketMetadata(marketId: number) {
   const { chainId } = useSynthetix();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
-  const walletAddress = wallet?.accounts?.[0]?.address;
   const { data: PerpsMarketProxyContract } = useImportContract('PerpsMarketProxy');
 
   const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
 
   return useQuery<MarketMetadata>({
-    enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && walletAddress && wallet?.provider && marketId),
-    queryKey: [
-      chainId,
-      { PerpsMarketProxy: PerpsMarketProxyContract?.address },
-      'MarketMetadata',
-      { ownerAddress: walletAddress },
-      marketId,
-    ],
+    enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId),
+    queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, marketId, 'MarketMetadata'],
     queryFn: async () => {
-      if (!(isChainReady && PerpsMarketProxyContract?.address && walletAddress && wallet?.provider && marketId)) {
+      if (!(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId)) {
         throw 'OMFG';
       }
 

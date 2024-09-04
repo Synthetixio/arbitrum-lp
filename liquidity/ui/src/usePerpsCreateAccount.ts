@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 
-export function useCreatePerpsAccount() {
+export function usePerpsCreateAccount() {
   const { chainId } = useSynthetix();
   const [params, setParams] = useParams();
   const [{ connectedChain }] = useSetChain();
@@ -42,10 +42,10 @@ export function useCreatePerpsAccount() {
         const accountId = event?.args?.accountId?.toString();
         if (accountId) {
           queryClient.setQueryData(
-            [chainId, { PerpsAccountProxy: PerpsAccountProxyContract?.address }, 'PerpsAccounts', { ownerAddress: walletAddress }],
+            [chainId, { PerpsAccountProxy: PerpsAccountProxyContract?.address }, { ownerAddress: walletAddress }, 'PerpsAccounts'],
             (oldData: string[]) => oldData.concat([accountId])
           );
-          setParams({ ...params, accountId: accountId.toHexString() });
+          setParams({ ...params, perpsAccountId: accountId.toHexString() });
         }
       }
 

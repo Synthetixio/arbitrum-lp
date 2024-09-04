@@ -33,8 +33,8 @@ export function useCollateralPrice({
     queryKey: [
       chainId,
       { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
-      'CollateralPrice',
       { tokenAddress },
+      'CollateralPrice',
     ],
     queryFn: async () => {
       if (

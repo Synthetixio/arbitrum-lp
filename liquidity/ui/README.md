@@ -61,3 +61,9 @@ your technical proficiency and preferences:
   ```sh
   yarn workspace "@snx-v3/liquidity" start
   ```
+
+## 5. How It Works
+
+- [ETH_TO_SYNTHETICS](./ETH_TO_SYNTHETICS.MD)
+- [SETUP](./SETUP.MD)
+- [MARKETS](./MARKETS.md)

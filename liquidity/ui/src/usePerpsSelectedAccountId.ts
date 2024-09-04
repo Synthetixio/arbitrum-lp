@@ -3,18 +3,18 @@ import { ethers } from 'ethers';
 import React from 'react';
 import { usePerpsAccounts } from './usePerpsAccounts';
 
-export function useSelectedPerpsAccountId() {
+export function usePerpsSelectedAccountId() {
   const { data: accounts } = usePerpsAccounts();
   const [params] = useParams();
 
   return React.useMemo(() => {
-    if (!params.accountId) {
+    if (!params.perpsAccountId) {
       return;
     }
     if (!accounts) {
       return;
     }
-    const accountId = ethers.BigNumber.from(params.accountId);
-    return accounts.find((id) => accountId.eq(id));
-  }, [accounts, params.accountId]);
+    const perpsAccountId = ethers.BigNumber.from(params.perpsAccountId);
+    return accounts.find((id) => perpsAccountId.eq(id));
+  }, [accounts, params.perpsAccountId]);
 }

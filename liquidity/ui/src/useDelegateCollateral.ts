@@ -23,7 +23,6 @@ export function useDelegateCollateral({
 
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
-  const walletAddress = wallet?.accounts?.[0]?.address;
 
   const accountId = useSelectedAccountId();
   const collateralType = useSelectedCollateralType();
@@ -47,7 +46,7 @@ export function useDelegateCollateral({
           MulticallContract &&
           PythERC7412WrapperContract &&
           priceIds &&
-          walletAddress &&
+          wallet &&
           provider &&
           accountId &&
           poolId &&
@@ -136,45 +135,45 @@ export function useDelegateCollateral({
         queryKey: [
           chainId,
           { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
+          {
+            accountId: accountId?.toHexString(),
+            tokenAddress: collateralType?.address,
+          },
           'AccountCollateral',
-          {
-            accountId: accountId?.toHexString(),
-            tokenAddress: collateralType?.address,
-          },
         ],
       });
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
           { CoreProxy: CoreProxyContract?.address },
+          {
+            accountId: accountId?.toHexString(),
+            tokenAddress: collateralType?.address,
+          },
           'AccountAvailableCollateral',
-          {
-            accountId: accountId?.toHexString(),
-            tokenAddress: collateralType?.address,
-          },
         ],
       });
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
           { CoreProxy: CoreProxyContract?.address },
-          'PositionCollateral',
           {
             accountId: accountId?.toHexString(),
             poolId: poolId?.toHexString(),
             tokenAddress: collateralType?.address,
           },
+          'PositionCollateral',
         ],
       });
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
           { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
-          'PositionDebt',
           {
             accountId: accountId?.toHexString(),
             tokenAddress: collateralType?.address,
           },
+          'PositionDebt',
         ],
       });
 

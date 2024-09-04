@@ -53,12 +53,12 @@ function ClaimRewards({
     queryKey: [
       chainId,
       { CoreProxy: CoreProxyContract?.address },
-      'AvailableRewards',
       {
         accountId: accountId?.toHexString(),
         rewardsDistributor: rewardsDistributor?.address,
         collateralType: rewardsDistributor?.collateralType?.address,
       },
+      'AvailableRewards',
     ],
     queryFn: async () => {
       if (!(isChainReady && CoreProxyContract?.address && wallet?.provider && walletAddress && accountId && rewardsDistributor)) {
@@ -131,22 +131,22 @@ function ClaimRewards({
         queryKey: [
           chainId,
           { CoreProxy: CoreProxyContract?.address },
-          'AvailableRewards',
           {
             accountId: accountId?.toHexString(),
             rewardsDistributor: rewardsDistributor?.address,
             collateralType: rewardsDistributor?.collateralType?.address,
           },
+          'AvailableRewards',
         ],
       });
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
-          'Balance',
           {
             tokenAddress: rewardsDistributor?.collateralType?.address,
             ownerAddress: walletAddress,
           },
+          'Balance',
         ],
       });
     },

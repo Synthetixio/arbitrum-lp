@@ -17,7 +17,6 @@ export function useMintUsd({ onSuccess }: { onSuccess: () => void }) {
 
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
-  const walletAddress = wallet?.accounts?.[0]?.address;
 
   const accountId = useSelectedAccountId();
   const collateralType = useSelectedCollateralType();
@@ -45,7 +44,6 @@ export function useMintUsd({ onSuccess }: { onSuccess: () => void }) {
           PythERC7412WrapperContract &&
           priceIds &&
           wallet &&
-          walletAddress &&
           provider &&
           accountId &&
           poolId &&
@@ -109,26 +107,26 @@ export function useMintUsd({ onSuccess }: { onSuccess: () => void }) {
         queryKey: [
           chainId,
           { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
-          'PositionDebt',
           {
             accountId: accountId?.toHexString(),
             tokenAddress: collateralType?.address,
           },
+          'PositionDebt',
         ],
       });
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
           { CoreProxy: CoreProxyContract?.address },
-          'AccountAvailableCollateral',
           {
             accountId: accountId?.toHexString(),
             tokenAddress: systemToken?.address,
           },
+          'AccountAvailableCollateral',
         ],
       });
       queryClient.invalidateQueries({
-        queryKey: [chainId, { CoreProxy: CoreProxyContract?.address }, 'AccountLastInteraction', { accountId: accountId?.toHexString() }],
+        queryKey: [chainId, { CoreProxy: CoreProxyContract?.address }, { accountId: accountId?.toHexString() }, 'AccountLastInteraction'],
       });
 
       onSuccess();

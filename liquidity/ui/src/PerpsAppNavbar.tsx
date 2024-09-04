@@ -23,9 +23,9 @@ import { useParams } from '@snx-v3/useParams';
 import { useTranslation } from 'react-i18next';
 import { ChainMenu } from './ChainMenu';
 import { PerpsMarkets } from './PerpsMarkets';
-import { useCreatePerpsAccount } from './useCreatePerpsAccount';
 import { usePerpsAccounts } from './usePerpsAccounts';
-import { useSelectedPerpsAccountId } from './useSelectedPerpsAccountId';
+import { usePerpsCreateAccount } from './usePerpsCreateAccount';
+import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 
 interface Account {
   address: string;
@@ -66,7 +66,7 @@ function LanguageSwitcher() {
 
 const AccountHandler = () => {
   const { data: accounts } = usePerpsAccounts();
-  const accountId = useSelectedPerpsAccountId();
+  const perpsAccountId = usePerpsSelectedAccountId();
   const [params, setParams] = useParams();
   const { t } = useTranslation();
 
@@ -78,9 +78,9 @@ const AccountHandler = () => {
           <MenuOptionGroup
             title={t('Accounts')}
             type="radio"
-            defaultValue={accountId?.toHexString() ?? ''}
-            value={accountId?.toHexString() ?? ''}
-            onChange={(value) => setParams({ ...params, accountId: `${value}` })}
+            defaultValue={perpsAccountId?.toHexString() ?? ''}
+            value={perpsAccountId?.toHexString() ?? ''}
+            onChange={(value) => setParams({ ...params, perpsAccountId: `${value}` })}
           >
             {accounts.map((id) => (
               <MenuItemOption key={id.toHexString()} value={id.toHexString()}>
@@ -141,7 +141,7 @@ function WalletConnector() {
 
 const CreateAccount = () => {
   const { data: accounts } = usePerpsAccounts();
-  const createAccount = useCreatePerpsAccount();
+  const createAccount = usePerpsCreateAccount();
   const { t } = useTranslation();
 
   if (accounts && !accounts.length) {

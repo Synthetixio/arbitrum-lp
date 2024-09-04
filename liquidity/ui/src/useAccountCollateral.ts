@@ -41,8 +41,8 @@ export function useAccountCollateral({
     queryKey: [
       chainId,
       { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
-      'AccountCollateral',
       { accountId: accountId?.toHexString(), tokenAddress },
+      'AccountCollateral',
     ],
     queryFn: async () => {
       if (

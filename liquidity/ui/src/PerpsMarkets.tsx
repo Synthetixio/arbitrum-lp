@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
 import { ethers } from 'ethers';
-import type React from 'react';
+import React from 'react';
 import { useMarketMetadata } from './useMarketMetadata';
 import { useMarketSummary } from './useMarketSummary';
 import { useMarkets } from './useMarkets';
@@ -25,7 +25,7 @@ function MarketRow({
   onMarketSelect,
 }: {
   marketId: number;
-  onMarketSelect: (symbol: string) => void;
+  onMarketSelect: (marketId: number, symbol?: string) => void;
 }) {
   const { data: summary } = useMarketSummary(marketId);
   const { data: metadata } = useMarketMetadata(marketId);
@@ -36,7 +36,7 @@ function MarketRow({
         cursor: 'pointer',
         color: 'teal.500',
       }}
-      onClick={() => metadata && onMarketSelect(metadata.symbol)}
+      onClick={() => metadata && onMarketSelect(marketId, metadata.symbol)}
     >
       <Td>{metadata?.symbol ?? ''}</Td>
       <Td isNumeric>{summary ? ethers.utils.commify(ethers.utils.formatUnits(summary.maxOpenInterest)) : ''}</Td>
@@ -48,11 +48,12 @@ function MarketRow({
 export function PerpsMarkets() {
   const { data: marketIds } = useMarkets();
   const [params, setParams] = useParams();
+  const [selectedMarket, setSelectedMarket] = React.useState('Market');
 
   return (
     <Popover>
       <PopoverTrigger>
-        <Button variant="text">{params.market ? `${params.market}-PERP` : 'Market'}</Button>
+        <Button variant="text">{selectedMarket}</Button>
       </PopoverTrigger>
       <PopoverContent bg="navy.900">
         <PopoverArrow />
@@ -72,8 +73,9 @@ export function PerpsMarkets() {
                       <MarketRow
                         key={marketId}
                         marketId={marketId}
-                        onMarketSelect={(symbol: string) => {
-                          setParams({ ...params, market: symbol });
+                        onMarketSelect={(marketId: number, symbol?: string) => {
+                          setParams({ ...params, market: String(marketId) });
+                          setSelectedMarket(symbol ? `${symbol}-PERP` : 'Market');
                         }}
                       />
                     ))

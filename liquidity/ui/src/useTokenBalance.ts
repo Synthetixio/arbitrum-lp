@@ -20,7 +20,7 @@ export function useTokenBalance({
 
   return useQuery({
     enabled: Boolean(isChainReady && wallet?.provider && tokenAddress && ownerAddress),
-    queryKey: [chainId, 'Balance', { tokenAddress, ownerAddress }],
+    queryKey: [chainId, { tokenAddress, ownerAddress }, 'Balance'],
     queryFn: async () => {
       if (!(isChainReady && wallet?.provider && tokenAddress && ownerAddress)) {
         throw 'OMFG';
