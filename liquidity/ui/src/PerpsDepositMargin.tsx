@@ -43,9 +43,9 @@ export function PerpsDepositMargin() {
         }}
       >
         <FormControl isInvalid={modifyCollateral.isError}>
-          <FormLabel>Deposit margin</FormLabel>
-          <Text as="span" ml={4} fontSize="1rem" fontWeight="normal">
-            Deposited margin:
+          <FormLabel fontSize="3xl">Deposit margin</FormLabel>
+          <Text ml={4} mb={2} fontSize="1rem" fontWeight="normal">
+            Deposited margin:{' '}
             {systemToken ? renderAmount(collateralAmount, { symbol: systemToken.symbol, decimals: systemToken.decimals }) : null}
           </Text>
           <Input required placeholder="Enter amount" value={value} onChange={(e) => setValue(e.target.value)} />
