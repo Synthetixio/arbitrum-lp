@@ -5056,9 +5056,9 @@ __metadata:
   linkType: soft
 
 "@synthetixio/v3-contracts@synthetixio/v3-contracts":
-  version: 6.6.1
-  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=e2f2f3e2807290b47ebfba9ee6d87f73f282b0f5"
-  checksum: 10/0797c186a7b6a257b2cd833af18cfcfd6c7d9cf0d8d9202d7c357694a9b01eae2d89b36ee4ba01dac98365fe92ec6d97041434b7a69c804f5fb4f4f81d47192b
+  version: 6.8.0
+  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=f3a7b3edf180d43991c43be3d5e48e100fb59252"
+  checksum: 10/5e1fa94e227d823e00f9a9a7369cb8310315ba55125221141d817f49c638d7e574a2f877ac1d05f12dd78d3e599e6c81611260fa6934cd6c402179d4979fb954
   languageName: node
   linkType: hard
 

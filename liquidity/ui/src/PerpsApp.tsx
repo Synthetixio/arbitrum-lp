@@ -2,6 +2,7 @@ import { Box, Container, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra
 import WebApp from '@twa-dev/sdk';
 import React from 'react';
 import { PerpsAppNavbar } from './PerpsAppNavbar';
+import { PerpsCommitOrder } from './PerpsCommitOrder';
 import { PerpsDepositMargin } from './PerpsDepositMargin';
 import { PerpsSellSETHToUSDX } from './PerpsSellSETHToUSDX';
 import { PerpsSetWETHTokenBalance } from './PerpsSetWETHTokenBalance';
@@ -32,6 +33,7 @@ export function PerpsApp() {
             <TabList>
               <Tab>Deposit margin (USDx)</Tab>
               <Tab>ETH to Synthetic</Tab>
+              <Tab>Commit Order</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
@@ -41,6 +43,9 @@ export function PerpsApp() {
                 <PerpsSetWETHTokenBalance />
                 <PerpsWrapWETHCollateral />
                 <PerpsSellSETHToUSDX />
+              </TabPanel>
+              <TabPanel>
+                <PerpsCommitOrder />
               </TabPanel>
             </TabPanels>
           </Tabs>
