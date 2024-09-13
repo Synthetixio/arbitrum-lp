@@ -11,7 +11,7 @@ export function useMarkets() {
 
   const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
 
-  return useQuery<number[]>({
+  return useQuery<ethers.BigNumber[]>({
     enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider),
     queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, 'Markets'],
     queryFn: async () => {
@@ -23,7 +23,8 @@ export function useMarkets() {
       const PerpsMarketProxy = new ethers.Contract(PerpsMarketProxyContract.address, PerpsMarketProxyContract.abi, provider);
 
       const markets = await PerpsMarketProxy.getMarkets();
-      return markets.map((bigNumber: ethers.BigNumber) => bigNumber.toNumber());
+
+      return markets;
     },
   });
 }

@@ -1,10 +1,10 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Text } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
 import { useImportSystemToken } from '@synthetixio/react-sdk';
+import { ethers } from 'ethers';
 import React from 'react';
 import { PerpsOpenPosition } from './PerpsOpenPosition';
 import { PerpsOrder } from './PerpsOrder';
-import { PerpsPriceUpdateTimer } from './PerpsPriceUpdateTimer';
 import { PerpsRequiredMargins } from './PerpsRequiredMargins';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
@@ -18,8 +18,7 @@ export function PerpsCommitOrder() {
 
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, 18);
-
-  const market = useMarketMetadata(Number(params.market));
+  const market = useMarketMetadata(params.market ? ethers.BigNumber.from(params.market) : undefined);
   const availableMargin = usePerpsGetAvailableMargin();
   const commitOrder = usePerpsCommitOrder({
     onSuccess: () => setValue(''),
@@ -68,7 +67,6 @@ export function PerpsCommitOrder() {
           {parsedAmount.gt(0) ? ` ${renderAmount(parsedAmount, token)}` : null}
         </Button>
       </Box>
-      {commitOrder.data?.commitmentTime ? <PerpsPriceUpdateTimer commitmentTime={commitOrder.data?.commitmentTime} /> : null}
       <PerpsOrder />
     </Box>
   );

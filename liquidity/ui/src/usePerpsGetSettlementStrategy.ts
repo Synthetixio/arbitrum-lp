@@ -29,7 +29,7 @@ export function usePerpsGetSettlementStrategy() {
       perpsAccountId,
       { walletAddress },
       { market: params.market },
-      'PerpsGetOpenPosition',
+      'PerpsGetSettlementStrategy',
     ],
     queryFn: async () => {
       if (

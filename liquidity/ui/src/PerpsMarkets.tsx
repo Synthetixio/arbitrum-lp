@@ -24,8 +24,8 @@ function MarketRow({
   marketId,
   onMarketSelect,
 }: {
-  marketId: number;
-  onMarketSelect: (marketId: number, symbol?: string) => void;
+  marketId: ethers.BigNumber;
+  onMarketSelect: (marketId: ethers.BigNumber, symbol?: string) => void;
 }) {
   const { data: summary } = useMarketSummary(marketId);
   const { data: metadata } = useMarketMetadata(marketId);
@@ -71,10 +71,10 @@ export function PerpsMarkets() {
                 {marketIds && marketIds.length > 0
                   ? marketIds.map((marketId) => (
                       <MarketRow
-                        key={marketId}
+                        key={marketId.toString()}
                         marketId={marketId}
-                        onMarketSelect={(marketId: number, symbol?: string) => {
-                          setParams({ ...params, market: String(marketId) });
+                        onMarketSelect={(marketId: ethers.BigNumber, symbol?: string) => {
+                          setParams({ ...params, market: marketId.toString() });
                           setSelectedMarket(symbol ? `${symbol}-PERP` : 'Market');
                         }}
                       />

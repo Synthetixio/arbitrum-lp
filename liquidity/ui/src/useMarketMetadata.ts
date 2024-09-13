@@ -9,7 +9,7 @@ interface MarketMetadata {
   [key: number]: string;
 }
 
-export function useMarketMetadata(marketId: number) {
+export function useMarketMetadata(marketId?: ethers.BigNumber) {
   const { chainId } = useSynthetix();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
@@ -19,7 +19,7 @@ export function useMarketMetadata(marketId: number) {
 
   return useQuery<MarketMetadata>({
     enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId),
-    queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, marketId, 'MarketMetadata'],
+    queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, { marketId: marketId?.toString() }, 'MarketMetadata'],
     queryFn: async () => {
       if (!(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId)) {
         throw 'OMFG';

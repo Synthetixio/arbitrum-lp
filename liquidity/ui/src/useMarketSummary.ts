@@ -13,7 +13,7 @@ interface MarketSummary {
   [key: number]: ethers.BigNumber;
 }
 
-export function useMarketSummary(marketId: number) {
+export function useMarketSummary(marketId: ethers.BigNumber) {
   const { chainId } = useSynthetix();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
@@ -24,7 +24,7 @@ export function useMarketSummary(marketId: number) {
 
   return useQuery<MarketSummary>({
     enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId),
-    queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, marketId, 'MarketSummary'],
+    queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, { marketId: marketId.toString() }, 'MarketSummary'],
     queryFn: async () => {
       if (!(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId)) {
         throw 'OMFG';

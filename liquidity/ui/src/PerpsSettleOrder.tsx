@@ -1,9 +1,12 @@
 import { Alert, AlertIcon, Box, Button, Spinner, Text } from '@chakra-ui/react';
+import type { ethers } from 'ethers';
 import React from 'react';
 import { usePerpsSettleOrder } from './usePerpsSettleOrder';
+import { usePriceUpdateTimer } from './usePriceUpdateTimer';
 
-export function PerpsSettleOrder() {
+export function PerpsSettleOrder({ commitmentTime }: { commitmentTime: ethers.BigNumber }) {
   const settleOrder = usePerpsSettleOrder();
+  const { h, m, s } = usePriceUpdateTimer({ commitmentTime: settleOrder.isError ? undefined : commitmentTime });
 
   if (settleOrder.isPending) {
     return (
@@ -14,18 +17,27 @@ export function PerpsSettleOrder() {
     );
   }
 
-  if (settleOrder.isPending) {
+  if (settleOrder.isError) {
     return (
       <Alert status="error">
         <AlertIcon />
-        Failed to settle the order.
+        {settleOrder.error.message}
       </Alert>
     );
   }
 
+  const timerExpired = h === 0 && m === 0 && s === 0;
+
   return (
-    <Button type="button" mt="5%" onClick={() => settleOrder.mutate()}>
-      Settle Order
+    <Button
+      type="button"
+      mt="5%"
+      onClick={() => settleOrder.mutate()}
+      isDisabled={timerExpired}
+      colorScheme={timerExpired ? 'red' : undefined}
+    >
+      {timerExpired ? 'Timer expired' : 'Settle Order'}{' '}
+      {`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`}
     </Button>
   );
 }

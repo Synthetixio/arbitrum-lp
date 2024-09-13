@@ -5,10 +5,12 @@ import React from 'react';
 import { PerpsSettleOrder } from './PerpsSettleOrder';
 import { renderAmount } from './renderAmount';
 import { usePerpsGetOrder } from './usePerpsGetOrder';
+import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
 
 export function PerpsOrder() {
   const order = usePerpsGetOrder();
   const { data: systemToken } = useImportSystemToken();
+  const { data: settlementStrategy } = usePerpsGetSettlementStrategy();
 
   if (order.isPending) {
     return (
@@ -23,13 +25,24 @@ export function PerpsOrder() {
     return (
       <Alert status="error">
         <AlertIcon />
-        Failed to load order details.
+        {order.error.message}
       </Alert>
     );
   }
 
   const { commitmentTime, request } = order.data;
-  const commitmentDate = new Date(commitmentTime.toNumber() * 1000).toLocaleString('en-GB');
+  const commitmentDate = new Date(commitmentTime.mul(1000).toNumber()).toLocaleString('en-GB');
+
+  const settlementWindowDuration = settlementStrategy?.settlementWindowDuration ?? ethers.BigNumber.from(0);
+  const settlementDeadline = commitmentTime ? commitmentTime.add(settlementWindowDuration) : ethers.BigNumber.from(0);
+
+  if (settlementDeadline.lt(Math.floor(Date.now() / 1000))) {
+    return null;
+  }
+
+  if (!request.sizeDelta || request.sizeDelta.isZero()) {
+    return null;
+  }
 
   return (
     <Box p={5} shadow="md" borderWidth="1px" mt="5%">
@@ -51,7 +64,7 @@ export function PerpsOrder() {
         <Text>Tracking Code: {ethers.utils.parseBytes32String(request.trackingCode)}</Text>
         <Text>Referrer: {request.referrer}</Text>
       </VStack>
-      <PerpsSettleOrder />
+      <PerpsSettleOrder commitmentTime={commitmentTime} />
     </Box>
   );
 }
