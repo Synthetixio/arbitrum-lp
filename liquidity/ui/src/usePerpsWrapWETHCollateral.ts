@@ -84,15 +84,15 @@ export function usePerpsWrapWETHCollateral({ onSuccess }: { onSuccess: () => voi
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
-          { tokenAddress: tokenWETH?.address, ownerAddress: walletAddress, spenderAddress: SpotMarketProxyContract?.address },
           'Allowance',
+          { tokenAddress: tokenWETH?.address, ownerAddress: walletAddress, spenderAddress: SpotMarketProxyContract?.address },
         ],
       });
       queryClient.invalidateQueries({
-        queryKey: [chainId, { tokenAddress: extras?.synth_eth_token_address, ownerAddress: walletAddress }, 'Balance'],
+        queryKey: [chainId, 'Balance', { tokenAddress: extras?.synth_eth_token_address, ownerAddress: walletAddress }],
       });
       queryClient.invalidateQueries({
-        queryKey: [chainId, { tokenAddress: tokenWETH?.address, ownerAddress: walletAddress }, 'Balance'],
+        queryKey: [chainId, 'Balance', { tokenAddress: tokenWETH?.address, ownerAddress: walletAddress }],
       });
 
       onSuccess();

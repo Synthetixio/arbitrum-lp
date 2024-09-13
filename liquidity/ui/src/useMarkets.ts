@@ -13,7 +13,7 @@ export function useMarkets() {
 
   return useQuery<ethers.BigNumber[]>({
     enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider),
-    queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, 'Markets'],
+    queryKey: [chainId, 'Markets', { PerpsMarketProxy: PerpsMarketProxyContract?.address }],
     queryFn: async () => {
       if (!(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider)) {
         throw new Error('OMFG');

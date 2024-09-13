@@ -5,8 +5,6 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 
-// "function getSettlementStrategy(uint128 marketId, uint256 strategyId) view returns (tuple(uint8 strategyType, uint256 settlementDelay, uint256 settlementWindowDuration, address priceVerificationContract, bytes32 feedId, uint256 settlementReward, bool disabled, uint256 commitmentPriceDelay) settlementStrategy)",
-
 export function usePerpsGetSettlementStrategy() {
   const { chainId } = useSynthetix();
   const [{ connectedChain }] = useSetChain();
@@ -25,11 +23,11 @@ export function usePerpsGetSettlementStrategy() {
     ),
     queryKey: [
       chainId,
+      'PerpsGetSettlementStrategy',
       { PerpsMarketProxy: PerpsMarketProxyContract?.address },
       perpsAccountId,
       { walletAddress },
       { market: params.market },
-      'PerpsGetSettlementStrategy',
     ],
     queryFn: async () => {
       if (

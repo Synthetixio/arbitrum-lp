@@ -78,18 +78,18 @@ export function usePerpsModifyCollateral() {
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
+          'GetPerpsCollateralAmount',
           { PerpsMarketProxy: PerpsMarketProxyContract?.address },
           { collateral: USDx_MARKET_ID },
           perpsAccountId,
-          'GetPerpsCollateralAmount',
         ],
       });
 
       queryClient.invalidateQueries({
-        queryKey: [chainId, { tokenAddress: systemToken?.address, ownerAddress: walletAddress }, 'Balance'],
+        queryKey: [chainId, 'Balance', { tokenAddress: systemToken?.address, ownerAddress: walletAddress }],
       });
       queryClient.invalidateQueries({
-        queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, perpsAccountId, 'PerpsGetAvailableMargin'],
+        queryKey: [chainId, 'PerpsGetAvailableMargin', { PerpsMarketProxy: PerpsMarketProxyContract?.address }, perpsAccountId],
       });
     },
   });

@@ -25,13 +25,13 @@ export function usePositionCollateral({
     enabled: Boolean(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && poolId && tokenAddress),
     queryKey: [
       chainId,
+      'PositionCollateral',
       { CoreProxy: CoreProxyContract?.address },
       {
         accountId: accountId?.toHexString(),
         poolId: poolId?.toHexString(),
         tokenAddress,
       },
-      'PositionCollateral',
     ],
     queryFn: async () => {
       if (!(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && poolId && tokenAddress)) {

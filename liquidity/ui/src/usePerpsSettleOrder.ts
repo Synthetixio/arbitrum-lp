@@ -96,18 +96,18 @@ export function usePerpsSettleOrder() {
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
+          'PerpsGetOpenPosition',
           { market: params.market },
           { PerpsMarketProxy: PerpsMarketProxyContract?.address },
           perpsAccountId,
           { walletAddress },
-          'PerpsGetOpenPosition',
         ],
       });
       queryClient.invalidateQueries({
-        queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, perpsAccountId, 'PerpsGetOrder'],
+        queryKey: [chainId, 'PerpsGetOrder', { PerpsMarketProxy: PerpsMarketProxyContract?.address }, perpsAccountId],
       });
       queryClient.invalidateQueries({
-        queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, perpsAccountId, 'PerpsGetAvailableMargin'],
+        queryKey: [chainId, 'PerpsGetAvailableMargin', { PerpsMarketProxy: PerpsMarketProxyContract?.address }, perpsAccountId],
       });
     },
   });

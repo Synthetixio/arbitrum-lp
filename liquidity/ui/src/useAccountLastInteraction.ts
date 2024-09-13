@@ -18,7 +18,7 @@ export function useAccountLastInteraction({
 
   return useQuery({
     enabled: Boolean(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId),
-    queryKey: [chainId, { CoreProxy: CoreProxyContract?.address }, { accountId: accountId?.toHexString() }, 'AccountLastInteraction'],
+    queryKey: [chainId, 'AccountLastInteraction', { CoreProxy: CoreProxyContract?.address }, { accountId: accountId?.toHexString() }],
     queryFn: async () => {
       if (!(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId)) {
         throw 'OMFG';

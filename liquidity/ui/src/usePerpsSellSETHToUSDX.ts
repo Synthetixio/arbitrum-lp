@@ -94,11 +94,11 @@ export function usePerpsSellSETHToUSDX({ onSuccess }: { onSuccess: () => void })
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: [chainId, { tokenAddress: systemToken?.address, ownerAddress: walletAddress }, 'Balance'],
+        queryKey: [chainId, 'Balance', { tokenAddress: systemToken?.address, ownerAddress: walletAddress }],
       });
 
       queryClient.invalidateQueries({
-        queryKey: [chainId, { tokenAddress: extras?.synth_eth_token_address, ownerAddress: walletAddress }, 'Balance'],
+        queryKey: [chainId, 'Balance', { tokenAddress: extras?.synth_eth_token_address, ownerAddress: walletAddress }],
       });
 
       onSuccess();

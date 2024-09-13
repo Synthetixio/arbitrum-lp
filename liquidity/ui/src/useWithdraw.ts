@@ -117,33 +117,33 @@ export function useWithdraw({
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
+          'AccountCollateral',
           { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
           {
             accountId: accountId?.toHexString(),
             tokenAddress,
           },
-          'AccountCollateral',
         ],
       });
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
+          'AccountAvailableCollateral',
           { CoreProxy: CoreProxyContract?.address },
           {
             accountId: accountId?.toHexString(),
             tokenAddress,
           },
-          'AccountAvailableCollateral',
         ],
       });
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
+          'Balance',
           {
             tokenAddress,
             ownerAddress: walletAddress,
           },
-          'Balance',
         ],
       });
 

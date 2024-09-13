@@ -42,7 +42,7 @@ export function usePerpsCreateAccount() {
         const accountId = event?.args?.accountId?.toString();
         if (accountId) {
           queryClient.setQueryData(
-            [chainId, { PerpsAccountProxy: PerpsAccountProxyContract?.address }, { ownerAddress: walletAddress }, 'PerpsAccounts'],
+            [chainId, 'PerpsAccounts', { PerpsAccountProxy: PerpsAccountProxyContract?.address }, { ownerAddress: walletAddress }],
             (oldData: string[]) => oldData.concat([accountId])
           );
           setParams({ ...params, perpsAccountId: accountId.toHexString() });

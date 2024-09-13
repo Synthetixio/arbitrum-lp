@@ -13,7 +13,7 @@ export function useEthBalance() {
 
   return useQuery({
     enabled: Boolean(isChainReady && wallet?.provider),
-    queryKey: [chainId, { walletAddress }, 'EthBalance'],
+    queryKey: [chainId, 'EthBalance', { ownerAddress: walletAddress }],
     queryFn: async () => {
       if (!(isChainReady && wallet?.provider)) {
         throw 'OMFG';

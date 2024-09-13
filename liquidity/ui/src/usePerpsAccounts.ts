@@ -14,7 +14,7 @@ export function usePerpsAccounts() {
 
   return useQuery({
     enabled: Boolean(isChainReady && PerpsAccountProxyContract?.address && walletAddress && wallet?.provider),
-    queryKey: [chainId, { PerpsAccountProxy: PerpsAccountProxyContract?.address }, { ownerAddress: walletAddress }, 'PerpsAccounts'],
+    queryKey: [chainId, 'PerpsAccounts', { PerpsAccountProxy: PerpsAccountProxyContract?.address }, { ownerAddress: walletAddress }],
     queryFn: async () => {
       if (!(isChainReady && PerpsAccountProxyContract?.address && walletAddress && wallet?.provider)) throw 'OMFG';
       const provider = new ethers.providers.Web3Provider(wallet.provider);

@@ -82,24 +82,24 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
+          'AccountAvailableCollateral',
           { CoreProxy: CoreProxyContract?.address },
           {
             accountId: accountId?.toHexString(),
             tokenAddress: collateralType?.address,
           },
-          'AccountAvailableCollateral',
         ],
       });
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
+          'PositionCollateral',
           { CoreProxy: CoreProxyContract?.address },
           {
             accountId: accountId?.toHexString(),
             poolId: poolId?.toHexString(),
             tokenAddress: collateralType?.address,
           },
-          'PositionCollateral',
         ],
       });
 

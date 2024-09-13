@@ -43,9 +43,9 @@ export function usePositionDebt({
     ),
     queryKey: [
       chainId,
+      'PositionDebt',
       { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
       { accountId: accountId?.toHexString(), tokenAddress },
-      'PositionDebt',
     ],
     queryFn: async () => {
       if (

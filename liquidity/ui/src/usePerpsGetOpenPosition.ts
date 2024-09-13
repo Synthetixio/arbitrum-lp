@@ -29,11 +29,11 @@ export function usePerpsGetOpenPosition() {
     ),
     queryKey: [
       chainId,
+      'PerpsGetOpenPosition',
       { market: params.market },
       { PerpsMarketProxy: PerpsMarketProxyContract?.address },
       perpsAccountId,
       { walletAddress },
-      'PerpsGetOpenPosition',
     ],
     queryFn: async () => {
       if (!(isChainReady && params.market && PerpsMarketProxyContract?.address && wallet?.provider && walletAddress && perpsAccountId)) {

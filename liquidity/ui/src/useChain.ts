@@ -10,7 +10,7 @@ export function useChain() {
 
   return useQuery({
     enabled: Boolean(isChainReady),
-    queryKey: ['chain', chainId],
+    queryKey: [chainId, 'chain'],
     queryFn: () => {
       if (isChainReady) {
         return chains.find((chain) => Number.parseInt(chain.id, 16) === chainId) || chains[0];

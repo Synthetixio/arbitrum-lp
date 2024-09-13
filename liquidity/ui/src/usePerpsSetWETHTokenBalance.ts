@@ -43,11 +43,11 @@ export function usePerpsSetWETHTokenBalance({ onSuccess }: { onSuccess: () => vo
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: [chainId, { tokenAddress: tokenWETH?.address, ownerAddress: walletAddress }, 'Balance'],
+        queryKey: [chainId, 'Balance', { tokenAddress: tokenWETH?.address, ownerAddress: walletAddress }],
       });
 
       queryClient.invalidateQueries({
-        queryKey: [chainId, 'EthBalance'],
+        queryKey: [chainId, 'EthBalance', { ownerAddress: walletAddress }],
       });
 
       onSuccess();

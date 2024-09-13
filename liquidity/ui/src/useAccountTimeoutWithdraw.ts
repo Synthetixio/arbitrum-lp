@@ -14,7 +14,7 @@ export function useAccountTimeoutWithdraw() {
 
   return useQuery({
     enabled: Boolean(isChainReady && CoreProxyContract?.address && wallet?.provider),
-    queryKey: [chainId, { CoreProxy: CoreProxyContract?.address }, 'ConfigUint accountTimeoutWithdraw'],
+    queryKey: [chainId, 'ConfigUint accountTimeoutWithdraw', { CoreProxy: CoreProxyContract?.address }],
     queryFn: async () => {
       if (!(isChainReady && CoreProxyContract?.address && wallet?.provider)) {
         throw 'OMFG';

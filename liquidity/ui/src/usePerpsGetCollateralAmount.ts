@@ -19,10 +19,10 @@ export function usePerpsGetCollateralAmount() {
     enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && perpsAccountId),
     queryKey: [
       chainId,
+      'GetPerpsCollateralAmount',
       { PerpsMarketProxy: PerpsMarketProxyContract?.address },
       { collateral: USDx_MARKET_ID },
       perpsAccountId,
-      'GetPerpsCollateralAmount',
     ],
     queryFn: async () => {
       if (!(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && perpsAccountId)) {

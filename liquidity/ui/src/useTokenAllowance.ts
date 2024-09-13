@@ -22,7 +22,7 @@ export function useTokenAllowance({
 
   return useQuery({
     enabled: Boolean(isChainReady && wallet?.provider && tokenAddress && ownerAddress && spenderAddress),
-    queryKey: [chainId, { tokenAddress, ownerAddress, spenderAddress }, 'Allowance'],
+    queryKey: [chainId, 'Allowance', { tokenAddress, ownerAddress, spenderAddress }],
     queryFn: async () => {
       if (!(isChainReady && wallet?.provider && tokenAddress && ownerAddress && spenderAddress)) {
         throw 'OMFG';

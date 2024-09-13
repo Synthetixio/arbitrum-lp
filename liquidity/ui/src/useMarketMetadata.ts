@@ -19,7 +19,7 @@ export function useMarketMetadata(marketId?: ethers.BigNumber) {
 
   return useQuery<MarketMetadata>({
     enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId),
-    queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, { marketId: marketId?.toString() }, 'MarketMetadata'],
+    queryKey: [chainId, 'MarketMetadata', { PerpsMarketProxy: PerpsMarketProxyContract?.address }, { marketId: marketId?.toString() }],
     queryFn: async () => {
       if (!(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId)) {
         throw 'OMFG';

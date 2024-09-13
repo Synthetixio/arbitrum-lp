@@ -23,9 +23,9 @@ export function useAccountAvailableCollateral({
     enabled: Boolean(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && tokenAddress),
     queryKey: [
       chainId,
+      'AccountAvailableCollateral',
       { CoreProxy: CoreProxyContract?.address },
       { accountId: accountId?.toHexString(), tokenAddress },
-      'AccountAvailableCollateral',
     ],
     queryFn: async () => {
       if (!(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && tokenAddress)) {

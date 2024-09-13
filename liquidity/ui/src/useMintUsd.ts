@@ -106,27 +106,27 @@ export function useMintUsd({ onSuccess }: { onSuccess: () => void }) {
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
+          'PositionDebt',
           { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
           {
             accountId: accountId?.toHexString(),
             tokenAddress: collateralType?.address,
           },
-          'PositionDebt',
         ],
       });
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
+          'AccountAvailableCollateral',
           { CoreProxy: CoreProxyContract?.address },
           {
             accountId: accountId?.toHexString(),
             tokenAddress: systemToken?.address,
           },
-          'AccountAvailableCollateral',
         ],
       });
       queryClient.invalidateQueries({
-        queryKey: [chainId, { CoreProxy: CoreProxyContract?.address }, { accountId: accountId?.toHexString() }, 'AccountLastInteraction'],
+        queryKey: [chainId, 'AccountLastInteraction', { CoreProxy: CoreProxyContract?.address }, { accountId: accountId?.toHexString() }],
       });
 
       onSuccess();

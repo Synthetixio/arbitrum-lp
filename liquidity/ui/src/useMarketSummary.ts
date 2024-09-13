@@ -24,7 +24,7 @@ export function useMarketSummary(marketId: ethers.BigNumber) {
 
   return useQuery<MarketSummary>({
     enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId),
-    queryKey: [chainId, { PerpsMarketProxy: PerpsMarketProxyContract?.address }, { marketId: marketId.toString() }, 'MarketSummary'],
+    queryKey: [chainId, 'MarketSummary', { PerpsMarketProxy: PerpsMarketProxyContract?.address }, { marketId: marketId.toString() }],
     queryFn: async () => {
       if (!(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId)) {
         throw 'OMFG';
