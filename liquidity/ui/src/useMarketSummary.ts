@@ -1,7 +1,11 @@
-import { useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
+import { useErrorParser, useImportContract, usePriceUpdateTxn, useSynthetix } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
-import { ethers } from 'ethers';
+import type { ethers } from 'ethers';
+import { fetchMarketSummary } from './fetchMarketSummary';
+import { fetchMarketSummaryWithPriceUpdate } from './fetchMarketSummaryWithPriceUpdate';
+import { useAllPriceFeeds } from './useAllPriceFeeds';
+import { useProvider } from './useProvider';
 
 interface MarketSummary {
   skew: ethers.BigNumber;
@@ -10,29 +14,44 @@ interface MarketSummary {
   currentFundingRate: ethers.BigNumber;
   currentFundingVelocity: ethers.BigNumber;
   indexPrice: ethers.BigNumber;
-  [key: number]: ethers.BigNumber;
 }
 
 export function useMarketSummary(marketId: ethers.BigNumber) {
   const { chainId } = useSynthetix();
+  const provider = useProvider();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const errorParser = useErrorParser();
   const { data: PerpsMarketProxyContract } = useImportContract('PerpsMarketProxy');
+  const { data: MulticallContract } = useImportContract('Multicall');
+  const { data: priceIds } = useAllPriceFeeds();
+  const { data: priceUpdateTxn } = usePriceUpdateTxn({ provider, priceIds });
 
   const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
 
   return useQuery<MarketSummary>({
-    enabled: Boolean(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId),
-    queryKey: [chainId, 'MarketSummary', { PerpsMarketProxy: PerpsMarketProxyContract?.address }, { marketId: marketId.toString() }],
+    enabled: Boolean(
+      isChainReady && PerpsMarketProxyContract?.address && MulticallContract?.address && wallet?.provider && marketId && priceUpdateTxn
+    ),
+    queryKey: [
+      chainId,
+      'MarketSummary',
+      { PerpsMarketProxy: PerpsMarketProxyContract?.address, Multicall: MulticallContract?.address },
+      { marketId: marketId.toString() },
+    ],
     queryFn: async () => {
-      if (!(isChainReady && PerpsMarketProxyContract?.address && wallet?.provider && marketId)) {
+      if (
+        !(isChainReady && PerpsMarketProxyContract?.address && MulticallContract?.address && wallet?.provider && marketId && priceUpdateTxn)
+      ) {
         throw 'OMFG';
       }
 
-      const provider = new ethers.providers.Web3Provider(wallet.provider);
-      const PerpsMarketProxy = new ethers.Contract(PerpsMarketProxyContract.address, PerpsMarketProxyContract.abi, provider);
-      return PerpsMarketProxy.getMarketSummary(marketId);
+      if (priceUpdateTxn.value) {
+        console.log('-> fetchMarketSummaryWithPriceUpdate');
+        return await fetchMarketSummaryWithPriceUpdate({ wallet, PerpsMarketProxyContract, MulticallContract, marketId, priceUpdateTxn });
+      }
+      console.log('-> fetchMarketSummary');
+      return await fetchMarketSummary({ wallet, PerpsMarketProxyContract, marketId });
     },
     throwOnError: (error) => {
       // TODO: show toast
