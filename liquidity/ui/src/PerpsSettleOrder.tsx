@@ -1,12 +1,17 @@
 import { Alert, AlertIcon, Box, Button, Spinner, Text } from '@chakra-ui/react';
+import { useImportExtras } from '@synthetixio/react-sdk';
 import type { ethers } from 'ethers';
 import React from 'react';
 import { usePerpsSettleOrder } from './usePerpsSettleOrder';
 import { usePriceUpdateTimer } from './usePriceUpdateTimer';
 
 export function PerpsSettleOrder({ commitmentTime }: { commitmentTime: ethers.BigNumber }) {
-  const settleOrder = usePerpsSettleOrder();
-  const { h, m, s } = usePriceUpdateTimer({ commitmentTime: settleOrder.isError ? undefined : commitmentTime });
+  const { data: extras } = useImportExtras();
+  const settleOrder = usePerpsSettleOrder({ settlementStrategyId: extras?.eth_pyth_settlement_strategy });
+  const { h, m, s } = usePriceUpdateTimer({
+    commitmentTime: settleOrder.isError ? undefined : commitmentTime,
+    settlementStrategyId: extras?.eth_pyth_settlement_strategy,
+  });
 
   if (settleOrder.isPending) {
     return (

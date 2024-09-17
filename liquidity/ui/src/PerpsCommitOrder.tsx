@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Text } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useImportSystemToken } from '@synthetixio/react-sdk';
+import { useImportExtras, useImportSystemToken } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
 import { PerpsOpenPosition } from './PerpsOpenPosition';
@@ -20,8 +20,10 @@ export function PerpsCommitOrder() {
   const parsedAmount = parseAmount(value, 18);
   const market = useMarketMetadata(params.market ? ethers.BigNumber.from(params.market) : undefined);
   const availableMargin = usePerpsGetAvailableMargin();
+  const { data: extras } = useImportExtras();
   const commitOrder = usePerpsCommitOrder({
     onSuccess: () => setValue(''),
+    settlementStrategyId: extras?.eth_pyth_settlement_strategy,
   });
 
   const token = market?.data && { symbol: market.data.symbol, decimals: 18 };

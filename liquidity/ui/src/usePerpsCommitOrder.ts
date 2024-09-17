@@ -1,5 +1,5 @@
 import { useParams } from '@snx-v3/useParams';
-import { fetchPriceUpdateTxn, useErrorParser, useImportContract, useImportExtras, useSynthetix } from '@synthetixio/react-sdk';
+import { fetchPriceUpdateTxn, useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
@@ -13,20 +13,19 @@ import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
 import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 import { useProvider } from './useProvider';
 
-export function usePerpsCommitOrder({ onSuccess }: { onSuccess: () => void }) {
+export function usePerpsCommitOrder({ onSuccess, settlementStrategyId }: { onSuccess: () => void; settlementStrategyId?: string }) {
   const [params] = useParams();
   const { chainId } = useSynthetix();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const perpsAccountId = usePerpsSelectedAccountId();
-  const { data: settlementStrategy } = usePerpsGetSettlementStrategy();
+  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ settlementStrategyId });
   const { data: priceIds } = useAllPriceFeeds();
 
   const { data: PerpsMarketProxyContract } = useImportContract('PerpsMarketProxy');
   const { data: MulticallContract } = useImportContract('Multicall');
   const { data: PythERC7412WrapperContract } = useImportContract('PythERC7412Wrapper');
-  const { data: extras } = useImportExtras();
 
   const [{ connectedChain }] = useSetChain();
   const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
@@ -43,11 +42,11 @@ export function usePerpsCommitOrder({ onSuccess }: { onSuccess: () => void }) {
           isChainReady &&
           perpsAccountId &&
           settlementStrategy &&
+          settlementStrategyId &&
           priceIds &&
           PerpsMarketProxyContract?.address &&
           MulticallContract?.address &&
           PythERC7412WrapperContract?.address &&
-          extras &&
           walletAddress &&
           wallet?.provider &&
           provider
@@ -86,7 +85,7 @@ export function usePerpsCommitOrder({ onSuccess }: { onSuccess: () => void }) {
         marketId: params.market,
         accountId: perpsAccountId,
         sizeDelta,
-        settlementStrategyId: extras.eth_pyth_settlement_strategy,
+        settlementStrategyId,
         acceptablePrice: ethers.utils.parseEther(Math.floor(pythPrice * (sizeDelta.gt(0) ? 1.05 : 0.95)).toString()),
         referrer: ethers.constants.AddressZero,
         trackingCode: ethers.utils.formatBytes32String('VD'),

@@ -4,14 +4,19 @@ import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { usePerpsSellSETHToUSDX } from './usePerpsSellSETHToUSDX';
+import { useSpotSell } from './useSpotSell';
 import { useTokenBalance } from './useTokenBalance';
 
 export function PerpsSellSETHToUSDX() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-  const sell = usePerpsSellSETHToUSDX({
+  const { data: extras } = useImportExtras();
+
+  const sell = useSpotSell({
     onSuccess: () => setValue(''),
+    synthMarketId: extras?.synth_eth_market_id,
+    settlementStrategyId: extras?.eth_pyth_settlement_strategy,
+    synthTokenAddress: extras?.synth_eth_token_address,
   });
 
   const { data: systemToken } = useImportSystemToken();
@@ -20,7 +25,6 @@ export function PerpsSellSETHToUSDX() {
     tokenAddress: systemToken?.address,
   });
 
-  const { data: extras } = useImportExtras();
   const { data: currentSynthBalance } = useTokenBalance({
     ownerAddress: walletAddress,
     tokenAddress: extras?.synth_eth_token_address,

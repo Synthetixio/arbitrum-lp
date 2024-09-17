@@ -64,6 +64,9 @@ your technical proficiency and preferences:
 
 ## 5. How It Works
 
-- [ETH_TO_SYNTHETICS](./ETH_TO_SYNTHETICS.MD)
-- [SETUP](./SETUP.MD)
+- [ETH_TO_SYNTHETICS](./ETH_TO_SYNTHETICS)
+- [SETUP](./SETUP)
 - [MARKETS](./MARKETS.md)
+- [DEPOSIT_MARGIN](./DEPOSIT_MARGIN.md)
+- [COMMIT_ORDER](./COMMIT_ORDER.md)
+- [SETTLE_ORDER](./SETTLE_ORDER.md)

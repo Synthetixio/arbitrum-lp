@@ -4,10 +4,12 @@ import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
 
 export function usePriceUpdateTimer({
   commitmentTime,
+  settlementStrategyId,
 }: {
   commitmentTime?: ethers.BigNumber;
+  settlementStrategyId?: string;
 }) {
-  const { data: settlementStrategy } = usePerpsGetSettlementStrategy();
+  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ settlementStrategyId });
 
   const settlementWindowDuration = settlementStrategy?.settlementWindowDuration ?? ethers.BigNumber.from(0);
   const unlockUnixtime = commitmentTime ? commitmentTime.add(settlementWindowDuration) : ethers.BigNumber.from(0);

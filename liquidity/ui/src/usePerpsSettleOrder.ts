@@ -11,11 +11,11 @@ import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
 import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 import { useProvider } from './useProvider';
 
-export function usePerpsSettleOrder() {
+export function usePerpsSettleOrder({ settlementStrategyId }: { settlementStrategyId?: string }) {
   const [params] = useParams();
   const perpsAccountId = usePerpsSelectedAccountId();
   const { data: priceIds } = useAllPriceFeeds();
-  const { data: settlementStrategy } = usePerpsGetSettlementStrategy();
+  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ settlementStrategyId });
   const { data: order } = usePerpsGetOrder();
 
   const [{ wallet }] = useConnectWallet();

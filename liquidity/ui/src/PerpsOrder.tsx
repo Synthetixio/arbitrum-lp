@@ -1,5 +1,5 @@
 import { Alert, AlertIcon, Box, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
-import { useImportSystemToken } from '@synthetixio/react-sdk';
+import { useImportExtras, useImportSystemToken } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
 import { PerpsSettleOrder } from './PerpsSettleOrder';
@@ -10,7 +10,8 @@ import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
 export function PerpsOrder() {
   const order = usePerpsGetOrder();
   const { data: systemToken } = useImportSystemToken();
-  const { data: settlementStrategy } = usePerpsGetSettlementStrategy();
+  const { data: extras } = useImportExtras();
+  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ settlementStrategyId: extras?.eth_pyth_settlement_strategy });
 
   if (order.isPending) {
     return (
