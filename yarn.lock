@@ -4722,12 +4722,10 @@ __metadata:
     "@safe-global/safe-apps-provider": "npm:^0.18.3"
     "@safe-global/safe-apps-sdk": "npm:^9.1.0"
     "@snx-v3/useParams": "workspace:*"
-    "@synthetixio/react-sdk": "npm:^0.0.8"
+    "@synthetixio/react-sdk": "npm:^0.0.9"
     "@synthetixio/safe-import": "workspace:*"
-    "@tanstack/query-sync-storage-persister": "npm:^5.50.1"
     "@tanstack/react-query": "npm:^5.50.1"
     "@tanstack/react-query-devtools": "npm:^5.50.1"
-    "@tanstack/react-query-persist-client": "npm:^5.50.1"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-helmet": "npm:^6.1.11"
@@ -5013,9 +5011,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@synthetixio/react-sdk@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "@synthetixio/react-sdk@npm:0.0.8"
+"@synthetixio/react-sdk@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "@synthetixio/react-sdk@npm:0.0.9"
   dependencies:
     "@pythnetwork/pyth-evm-js": "npm:^1.56.1"
     "@synthetixio/v3-contracts": "github:synthetixio/v3-contracts#master"
@@ -5024,7 +5022,7 @@ __metadata:
     ethers: "npm:^5.7.2"
     react: "npm:^18.3.1"
     viem: "npm:^2.17.1"
-  checksum: 10/7dfef87c46949c60a222cc4ad1ee110ea68c6b71e68bd504bdd4b6f3930875883296710a3f8752e228803fb8f1717b31da6976e9e9f86d7b409412049405706a
+  checksum: 10/f13f0693256875040a7a4d504a207a1fbcc8bf690f3dd4b39f90dcec9eab2dfcc1f97d2cd98cfe4fb615de10c6ae1dab7fdf142bc3e77560ccc1837f0904c1db
   languageName: node
   linkType: hard
 
@@ -5050,36 +5048,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:5.52.0":
-  version: 5.52.0
-  resolution: "@tanstack/query-core@npm:5.52.0"
-  checksum: 10/cd21e87ad7a0bbb262dea21704352eb1bbaafc26776ae1602b4be9a2d0d1f16a89cc4b5951f69083e26f970d75386431240d5a573ed9bce5a37ba2dc862e376a
-  languageName: node
-  linkType: hard
-
 "@tanstack/query-devtools@npm:5.50.1":
   version: 5.50.1
   resolution: "@tanstack/query-devtools@npm:5.50.1"
   checksum: 10/56e4909e981650d25b149662587b4d7ae91201823572425c1c35830e578cd52c1361d93e15eba43d5a9f6d5000b42e22a6edced2e8b2484ebdcf96b5f98bd128
-  languageName: node
-  linkType: hard
-
-"@tanstack/query-persist-client-core@npm:5.52.0":
-  version: 5.52.0
-  resolution: "@tanstack/query-persist-client-core@npm:5.52.0"
-  dependencies:
-    "@tanstack/query-core": "npm:5.52.0"
-  checksum: 10/b1a308f62d33757b80663dc20c27b14b70772a003f7c98eafa4bb8592c98d82a83e93e8a08cd0f168d0363f4985f6d98c73757f1588c6910aceb81cd39812f22
-  languageName: node
-  linkType: hard
-
-"@tanstack/query-sync-storage-persister@npm:^5.50.1":
-  version: 5.52.0
-  resolution: "@tanstack/query-sync-storage-persister@npm:5.52.0"
-  dependencies:
-    "@tanstack/query-core": "npm:5.52.0"
-    "@tanstack/query-persist-client-core": "npm:5.52.0"
-  checksum: 10/f678b9eaa6b4877f49a7128d8456e6e0bafd177df78ff7f247b3fa8ec44db27dd220b38a6b6f6fd50f9b90bd5a3fbe6f4a923a8422291c467c31128665d42b00
   languageName: node
   linkType: hard
 
@@ -5092,18 +5064,6 @@ __metadata:
     "@tanstack/react-query": ^5.50.1
     react: ^18 || ^19
   checksum: 10/395049e2186516d063029eeddf49f79b86eb6c66c1cf926d0e705e90907dfeee3933701eda009cb848e9c4c77a285280db30ab891485baf796892c43f6fea85b
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query-persist-client@npm:^5.50.1":
-  version: 5.52.1
-  resolution: "@tanstack/react-query-persist-client@npm:5.52.1"
-  dependencies:
-    "@tanstack/query-persist-client-core": "npm:5.52.0"
-  peerDependencies:
-    "@tanstack/react-query": ^5.52.1
-    react: ^18 || ^19
-  checksum: 10/c78b50f0bd1a822a944468522dbb6fbaebe9daefc293a1024e6c9d67ef9493a62a84845be59373c43ccfabff49a0a1b3f014ff893a402a678601959ee73c4cba
   languageName: node
   linkType: hard
 
