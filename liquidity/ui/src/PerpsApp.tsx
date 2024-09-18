@@ -25,9 +25,6 @@ export function PerpsApp() {
     <Box>
       <PerpsAppNavbar />
       <Container maxW={'3xl'}>
-        <button type="button" onClick={() => WebApp.showAlert('Hello World!')}>
-          Show Alert
-        </button>
         <Box>
           <Tabs index={tabIndex} onChange={handleTabsChange}>
             <TabList>

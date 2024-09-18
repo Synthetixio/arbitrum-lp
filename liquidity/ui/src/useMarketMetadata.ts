@@ -6,7 +6,6 @@ import { ethers } from 'ethers';
 interface MarketMetadata {
   name: string;
   symbol: string;
-  [key: number]: string;
 }
 
 export function useMarketMetadata(marketId?: ethers.BigNumber) {

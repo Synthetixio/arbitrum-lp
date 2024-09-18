@@ -1,11 +1,10 @@
-import { useErrorParser, useImportExtras, useSynthetix } from '@synthetixio/react-sdk';
+import { useErrorParser, useSynthetix } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
-import { useCollateralTokens } from './useCollateralTokens';
 import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 
-export function usePerpsSetWETHTokenBalance({ onSuccess }: { onSuccess: () => void }) {
+export function usePerpsSetWETHTokenBalance({ onSuccess, tokenAddress }: { onSuccess: () => void; tokenAddress?: string }) {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
@@ -17,19 +16,15 @@ export function usePerpsSetWETHTokenBalance({ onSuccess }: { onSuccess: () => vo
   const queryClient = useQueryClient();
   const errorParser = useErrorParser();
 
-  const { data: extras } = useImportExtras();
-  const collateralTokens = useCollateralTokens();
-  const tokenWETH = extras && collateralTokens?.find((token) => token.address === extras.weth_address);
-
   return useMutation({
     mutationFn: async (amount: ethers.BigNumber) => {
-      if (!(isChainReady && walletAddress && wallet?.provider && perpsAccountId && tokenWETH)) {
+      if (!(isChainReady && walletAddress && wallet?.provider && perpsAccountId && tokenAddress)) {
         throw 'OMFG';
       }
 
       const provider = new ethers.providers.Web3Provider(wallet.provider);
       const signer = provider.getSigner(walletAddress);
-      const Token = new ethers.Contract(tokenWETH?.address, ['function deposit() payable'], signer);
+      const Token = new ethers.Contract(tokenAddress, ['function deposit() payable'], signer);
       const tx = await Token.deposit({
         value: amount,
       });
@@ -43,7 +38,7 @@ export function usePerpsSetWETHTokenBalance({ onSuccess }: { onSuccess: () => vo
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: [chainId, 'Balance', { tokenAddress: tokenWETH?.address, ownerAddress: walletAddress }],
+        queryKey: [chainId, 'Balance', { tokenAddress, ownerAddress: walletAddress }],
       });
 
       queryClient.invalidateQueries({

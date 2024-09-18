@@ -28,6 +28,7 @@ export function PerpsSetWETHTokenBalance() {
 
   const perpsSetWETHTokenBalance = usePerpsSetWETHTokenBalance({
     onSuccess: () => setValue(''),
+    tokenAddress: tokenWETH?.address,
   });
 
   return (
