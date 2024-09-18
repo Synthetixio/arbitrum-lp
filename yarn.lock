@@ -4722,7 +4722,7 @@ __metadata:
     "@safe-global/safe-apps-provider": "npm:^0.18.3"
     "@safe-global/safe-apps-sdk": "npm:^9.1.0"
     "@snx-v3/useParams": "workspace:*"
-    "@synthetixio/react-sdk": ../../../react-sdk
+    "@synthetixio/react-sdk": "npm:^0.0.8"
     "@synthetixio/safe-import": "workspace:*"
     "@tanstack/query-sync-storage-persister": "npm:^5.50.1"
     "@tanstack/react-query": "npm:^5.50.1"
@@ -5013,18 +5013,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@synthetixio/react-sdk@file:../../../react-sdk::locator=%40snx-v3%2Fliquidity%40workspace%3Aliquidity%2Fui":
+"@synthetixio/react-sdk@npm:^0.0.8":
   version: 0.0.8
-  resolution: "@synthetixio/react-sdk@file:../../../react-sdk#../../../react-sdk::hash=30656d&locator=%40snx-v3%2Fliquidity%40workspace%3Aliquidity%2Fui"
+  resolution: "@synthetixio/react-sdk@npm:0.0.8"
   dependencies:
     "@pythnetwork/pyth-evm-js": "npm:^1.56.1"
-    "@synthetixio/v3-contracts": "synthetixio/v3-contracts#master"
+    "@synthetixio/v3-contracts": "github:synthetixio/v3-contracts#master"
     "@tanstack/react-query": "npm:^5.50.1"
     debug: "npm:^4.3.5"
     ethers: "npm:^5.7.2"
     react: "npm:^18.3.1"
     viem: "npm:^2.17.1"
-  checksum: 10/8cabbeb1b67d2b5c3dabb597b93130b025075d414ec71b808e09c73e61beef71be2321f6fc559c000fdc66793c8af97b29cb8441d30118cafa81b2a2c3984233
+  checksum: 10/7dfef87c46949c60a222cc4ad1ee110ea68c6b71e68bd504bdd4b6f3930875883296710a3f8752e228803fb8f1717b31da6976e9e9f86d7b409412049405706a
   languageName: node
   linkType: hard
 
