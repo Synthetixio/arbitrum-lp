@@ -21,7 +21,8 @@
     "deps:version": "deps-version",
     "svg": "yarn svg:fix && git diff --exit-code **/*.svg",
     "svg:fix": "svgo --config svgo.config.js --recursive ./liquidity/ui",
-    "upgrade-browsers": "yarn up browserslist caniuse-lite --recursive"
+    "upgrade-browsers": "yarn up browserslist caniuse-lite --recursive",
+    "upgrade-contracts": "yarn up @synthetixio/v3-contracts --recursive"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
@@ -44,7 +45,8 @@
     "browserslist": "^4",
     "caniuse-lite": "^1",
     "ethers": "^5.7.2",
-    "classnames": "^2.3.2"
+    "classnames": "^2.3.2",
+    "@synthetixio/v3-contracts": "synthetixio/v3-contracts"
   },
   "browserslist": [
     "last 1 Chrome version",

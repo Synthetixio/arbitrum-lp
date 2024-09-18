@@ -1,4 +1,4 @@
-import { useErrorParser, useImportContract, usePriceUpdateTxn } from '@synthetixio/react-sdk';
+import { useErrorParser, useImportContract, usePriceUpdateTxn, useSynthetix } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
@@ -14,6 +14,7 @@ export function useAccountCollateral({
   accountId?: ethers.BigNumber;
   tokenAddress?: string;
 }) {
+  const { chainId } = useSynthetix();
   const provider = useProvider();
   const errorParser = useErrorParser();
 
@@ -25,14 +26,35 @@ export function useAccountCollateral({
   const { data: priceIds } = useAllPriceFeeds();
   const { data: priceUpdateTxn } = usePriceUpdateTxn({ provider, priceIds });
 
+  const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
+
   return useQuery({
     enabled: Boolean(
-      connectedChain?.id && wallet?.provider && CoreProxyContract && MulticallContract && accountId && tokenAddress && priceUpdateTxn
+      isChainReady &&
+        CoreProxyContract?.address &&
+        MulticallContract?.address &&
+        wallet?.provider &&
+        accountId &&
+        tokenAddress &&
+        priceUpdateTxn
     ),
-    queryKey: [connectedChain?.id, 'AccountCollateral', { accountId: accountId?.toHexString(), tokenAddress }],
+    queryKey: [
+      chainId,
+      'AccountCollateral',
+      { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
+      { accountId: accountId?.toHexString(), tokenAddress },
+    ],
     queryFn: async () => {
       if (
-        !(connectedChain?.id && wallet?.provider && CoreProxyContract && MulticallContract && accountId && tokenAddress && priceUpdateTxn)
+        !(
+          isChainReady &&
+          CoreProxyContract?.address &&
+          MulticallContract?.address &&
+          wallet?.provider &&
+          accountId &&
+          tokenAddress &&
+          priceUpdateTxn
+        )
       ) {
         throw 'OMFG';
       }

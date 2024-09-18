@@ -1,5 +1,5 @@
 import { Button, Heading, InputGroup, Stack } from '@chakra-ui/react';
-import { useErrorParser, useImportContract, useImportRewardsDistributors } from '@synthetixio/react-sdk';
+import { useErrorParser, useImportContract, useImportRewardsDistributors, useSynthetix } from '@synthetixio/react-sdk';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
@@ -39,17 +39,21 @@ function ClaimRewards({
     onSuccess: () => {},
   });
 
+  const { chainId } = useSynthetix();
   const errorParser = useErrorParser();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
+  const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
+
   const { data: rewardsAmount } = useQuery({
-    enabled: Boolean(connectedChain?.id && wallet?.provider && walletAddress && CoreProxyContract && accountId && rewardsDistributor),
+    enabled: Boolean(isChainReady && CoreProxyContract?.address && wallet?.provider && walletAddress && accountId && rewardsDistributor),
     queryKey: [
-      connectedChain?.id,
+      chainId,
       'AvailableRewards',
+      { CoreProxy: CoreProxyContract?.address },
       {
         accountId: accountId?.toHexString(),
         rewardsDistributor: rewardsDistributor?.address,
@@ -57,7 +61,7 @@ function ClaimRewards({
       },
     ],
     queryFn: async () => {
-      if (!(connectedChain?.id && wallet?.provider && walletAddress && CoreProxyContract && accountId && rewardsDistributor)) {
+      if (!(isChainReady && CoreProxyContract?.address && wallet?.provider && walletAddress && accountId && rewardsDistributor)) {
         throw 'OMFG';
       }
       const provider = new ethers.providers.Web3Provider(wallet.provider);
@@ -81,7 +85,7 @@ function ClaimRewards({
   const claimRewards = useMutation({
     retry: false,
     mutationFn: async () => {
-      if (!(CoreProxyContract && connectedChain?.id && walletAddress && wallet?.provider && accountId && rewardsDistributor)) {
+      if (!(isChainReady && CoreProxyContract && walletAddress && wallet?.provider && accountId && rewardsDistributor)) {
         throw 'OMFG';
       }
 
@@ -125,8 +129,9 @@ function ClaimRewards({
       // Intentionally do not await
       queryClient.invalidateQueries({
         queryKey: [
-          connectedChain?.id,
+          chainId,
           'AvailableRewards',
+          { CoreProxy: CoreProxyContract?.address },
           {
             accountId: accountId?.toHexString(),
             rewardsDistributor: rewardsDistributor?.address,
@@ -136,7 +141,7 @@ function ClaimRewards({
       });
       queryClient.invalidateQueries({
         queryKey: [
-          connectedChain?.id,
+          chainId,
           'Balance',
           {
             tokenAddress: rewardsDistributor?.collateralType?.address,
@@ -170,6 +175,7 @@ export function Rewards() {
       <InputGroup gap={3}>
         {collateralType && rewardsDistributors && poolId && accountId ? (
           rewardsDistributors
+            .filter((rd) => rd.collateralType)
             .filter((rd) => rd.collateralType.address.toLowerCase() === collateralType.address.toLowerCase() && poolId.eq(rd.poolId))
             .map((rd) => <ClaimRewards key={rd.address} rewardsDistributor={rd} accountId={accountId} />)
         ) : (

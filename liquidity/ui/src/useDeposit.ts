@@ -1,4 +1,4 @@
-import { useErrorParser, useImportContract } from '@synthetixio/react-sdk';
+import { useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
@@ -11,6 +11,7 @@ import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
+  const { chainId } = useSynthetix();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
@@ -23,9 +24,10 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
 
   const errorParser = useErrorParser();
   const queryClient = useQueryClient();
+  const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
   return useMutation({
     mutationFn: async (depositAmount: ethers.BigNumber) => {
-      if (!(wallet && walletAddress && CoreProxyContract && connectedChain?.id && accountId && collateralType)) {
+      if (!(isChainReady && CoreProxyContract && wallet && walletAddress && accountId && collateralType)) {
         throw 'OMFG';
       }
 
@@ -79,8 +81,9 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
       // Intentionally do not await
       queryClient.invalidateQueries({
         queryKey: [
-          connectedChain?.id,
+          chainId,
           'AccountAvailableCollateral',
+          { CoreProxy: CoreProxyContract?.address },
           {
             accountId: accountId?.toHexString(),
             tokenAddress: collateralType?.address,
@@ -89,8 +92,9 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
       });
       queryClient.invalidateQueries({
         queryKey: [
-          connectedChain?.id,
+          chainId,
           'PositionCollateral',
+          { CoreProxy: CoreProxyContract?.address },
           {
             accountId: accountId?.toHexString(),
             poolId: poolId?.toHexString(),

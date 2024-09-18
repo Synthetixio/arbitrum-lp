@@ -14,7 +14,8 @@ import coinbaseModule from '@web3-onboard/coinbase';
 import gnosisModule from '@web3-onboard/gnosis';
 import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
 import ledgerModule from '@web3-onboard/ledger';
-import { Web3OnboardProvider, init, useConnectWallet } from '@web3-onboard/react';
+import metamaskSDK from '@web3-onboard/metamask';
+import { Web3OnboardProvider, init, useConnectWallet, useSetChain } from '@web3-onboard/react';
 import trezorModule from '@web3-onboard/trezor';
 import walletConnectModule from '@web3-onboard/walletconnect';
 import { ethers } from 'ethers';
@@ -24,6 +25,7 @@ import { ChainMenu } from './ChainMenu';
 import { Fonts } from './Fonts';
 import { HomePage } from './HomePage';
 import { NotFoundPage } from './NotFoundPage';
+import { PerpsApp } from './PerpsApp';
 import SynthetixIcon from './SynthetixIcon.svg';
 import SynthetixLogo from './SynthetixLogo.svg';
 import { TermsModal } from './TermsModal';
@@ -37,6 +39,15 @@ import { useAccounts } from './useAccounts';
 import WarpcastIcon from './warpcast.svg';
 import XIcon from './x.svg';
 import YoutubeIcon from './youtube.svg';
+
+const metamaskSDKWallet = metamaskSDK({
+  options: {
+    extensionOnly: true,
+    dappMetadata: {
+      name: 'Example Web3-Onboard Dapp',
+    },
+  },
+});
 
 export const appMetadata = {
   name: 'Synthetix Liquidity',
@@ -56,6 +67,7 @@ export const onboard = init({
     autoConnectAllPreviousWallet: true,
   },
   wallets: [
+    metamaskSDKWallet,
     coinbaseModule(),
     injectedModule({
       displayUnavailable: [ProviderLabel.MetaMask, ProviderLabel.Trust],
@@ -165,6 +177,16 @@ function Layout() {
           >
             <img src={Logo} alt="Synthetix" />
           </Link>
+          <Link
+            to={{
+              pathname: '/perps-app',
+              search: location.search,
+            }}
+            as={RouterLink}
+            py={4}
+          >
+            Perps App
+          </Link>
           <Flex gap={3} flexWrap="wrap-reverse" justifyContent="center" alignItems="center">
             <UserMenu />
             <ChainMenu />
@@ -260,6 +282,7 @@ function Router() {
 
   return (
     <Routes>
+      <Route path="/perps-app" element={<PerpsApp />} />
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="*" element={<NotFoundPage />} />
@@ -287,5 +310,3 @@ export function App() {
     </QueryClientProvider>
   );
 }
-import { useSetChain } from '@web3-onboard/react';
-import { useChain } from './useChain';

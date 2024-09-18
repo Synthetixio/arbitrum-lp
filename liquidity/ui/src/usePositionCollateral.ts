@@ -1,4 +1,4 @@
-import { useErrorParser, useImportContract } from '@synthetixio/react-sdk';
+import { useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
@@ -13,15 +13,20 @@ export function usePositionCollateral({
   poolId?: ethers.BigNumber;
   tokenAddress?: string;
 }) {
+  const { chainId } = useSynthetix();
   const errorParser = useErrorParser();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
+
+  const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
+
   return useQuery({
-    enabled: Boolean(connectedChain?.id && wallet?.provider && CoreProxyContract && accountId && poolId && tokenAddress),
+    enabled: Boolean(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && poolId && tokenAddress),
     queryKey: [
-      connectedChain?.id,
+      chainId,
       'PositionCollateral',
+      { CoreProxy: CoreProxyContract?.address },
       {
         accountId: accountId?.toHexString(),
         poolId: poolId?.toHexString(),
@@ -29,7 +34,7 @@ export function usePositionCollateral({
       },
     ],
     queryFn: async () => {
-      if (!(connectedChain?.id && wallet?.provider && CoreProxyContract && accountId && poolId && tokenAddress)) {
+      if (!(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && poolId && tokenAddress)) {
         throw 'OMFG';
       }
       return fetchPositionCollateral({
