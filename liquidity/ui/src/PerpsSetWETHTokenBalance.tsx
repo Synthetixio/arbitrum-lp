@@ -6,7 +6,7 @@ import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useCollateralTokens } from './useCollateralTokens';
 import { useEthBalance } from './useEthBalance';
-import { usePerpsSetWETHTokenBalance } from './usePerpsSetWETHTokenBalance';
+import { usePerpsDeposit } from './usePerpsDeposit';
 import { useTokenBalance } from './useTokenBalance';
 
 export function PerpsSetWETHTokenBalance() {
@@ -26,7 +26,7 @@ export function PerpsSetWETHTokenBalance() {
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, 18);
 
-  const perpsSetWETHTokenBalance = usePerpsSetWETHTokenBalance({
+  const perpsDeposit = usePerpsDeposit({
     onSuccess: () => setValue(''),
     tokenAddress: tokenWETH?.address,
   });
@@ -42,10 +42,10 @@ export function PerpsSetWETHTokenBalance() {
         as="form"
         onSubmit={(e) => {
           e.preventDefault();
-          perpsSetWETHTokenBalance.mutate(parsedAmount);
+          perpsDeposit.mutate(parsedAmount);
         }}
       >
-        <FormControl isInvalid={perpsSetWETHTokenBalance.isError}>
+        <FormControl isInvalid={perpsDeposit.isError}>
           <FormLabel fontSize="3xl">Convert ETH to WETH (Wrapped ETH)</FormLabel>
           <Text mb="2">
             Current WETH Balance:{' '}
@@ -55,15 +55,15 @@ export function PerpsSetWETHTokenBalance() {
             Current ETH Balance: <b>{renderAmount(currentEthBalance.data, { symbol: 'ETH', decimals: 18 })}</b>
           </Text>
           <Input required placeholder="Enter amount" value={value} onChange={(e) => setValue(e.target.value)} />
-          {perpsSetWETHTokenBalance.isError ? (
-            <FormErrorMessage>{perpsSetWETHTokenBalance.error?.message}</FormErrorMessage>
+          {perpsDeposit.isError ? (
+            <FormErrorMessage>{perpsDeposit.error?.message}</FormErrorMessage>
           ) : (
             <FormHelperText>
               Max: <b>{currentEthBalance ? renderAmount(currentEthBalance.data, { symbol: 'ETH', decimals: 18 }) : null}</b>
             </FormHelperText>
           )}
         </FormControl>
-        <Button type="submit" mt="5%" isLoading={perpsSetWETHTokenBalance.isPending}>
+        <Button type="submit" mt="5%" isLoading={perpsDeposit.isPending}>
           Convert ETH to WETH
         </Button>
       </Box>

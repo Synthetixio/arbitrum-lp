@@ -4,7 +4,7 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 
-export function usePerpsSetWETHTokenBalance({ onSuccess, tokenAddress }: { onSuccess: () => void; tokenAddress?: string }) {
+export function usePerpsDeposit({ onSuccess, tokenAddress }: { onSuccess: () => void; tokenAddress?: string }) {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 

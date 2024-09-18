@@ -23,7 +23,6 @@
     "@tanstack/query-sync-storage-persister": "^5.50.1",
     "@tanstack/react-query-devtools": "^5.50.1",
     "@tanstack/react-query-persist-client": "^5.50.1",
-    "@twa-dev/sdk": "^7.8.0",
     "@web3-onboard/coinbase": "^2.4.1",
     "@web3-onboard/core": "^2.22.2",
     "@web3-onboard/gnosis": "^2.3.1",

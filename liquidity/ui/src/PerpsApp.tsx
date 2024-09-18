@@ -1,5 +1,4 @@
 import { Box, Container, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
-import WebApp from '@twa-dev/sdk';
 import React from 'react';
 import { PerpsAppNavbar } from './PerpsAppNavbar';
 import { PerpsCommitOrder } from './PerpsCommitOrder';
@@ -7,8 +6,6 @@ import { PerpsDepositMargin } from './PerpsDepositMargin';
 import { PerpsSellSETHToUSDX } from './PerpsSellSETHToUSDX';
 import { PerpsSetWETHTokenBalance } from './PerpsSetWETHTokenBalance';
 import { PerpsWrapWETHCollateral } from './PerpsWrapWETHCollateral';
-
-WebApp.ready();
 
 export function PerpsApp() {
   const [tabIndex, setTabIndex] = React.useState<number>(() => {
