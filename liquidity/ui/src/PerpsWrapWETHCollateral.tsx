@@ -5,7 +5,7 @@ import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useCollateralTokens } from './useCollateralTokens';
-import { usePerpsWrapWETHCollateral } from './usePerpsWrapWETHCollateral';
+import { useSpotWrap } from './useSpotWrap';
 import { useTokenAllowance } from './useTokenAllowance';
 import { useTokenBalance } from './useTokenBalance';
 
@@ -38,8 +38,12 @@ export function PerpsWrapWETHCollateral() {
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, 18);
 
-  const perpsWrapCollateral = usePerpsWrapWETHCollateral({
+  const wrap = useSpotWrap({
     onSuccess: () => setValue(''),
+    tokenAddress: tokenWETH?.address,
+    synthTokenAddress: extras?.synth_eth_token_address,
+    synthMarketId: extras?.synth_eth_market_id,
+    settlementStrategyId: extras?.eth_pyth_settlement_strategy,
   });
 
   return (
@@ -53,10 +57,10 @@ export function PerpsWrapWETHCollateral() {
         as="form"
         onSubmit={(e) => {
           e.preventDefault();
-          perpsWrapCollateral.mutate(parsedAmount);
+          wrap.mutate(parsedAmount);
         }}
       >
-        <FormControl isInvalid={perpsWrapCollateral.isError}>
+        <FormControl isInvalid={wrap.isError}>
           <FormLabel fontSize="3xl">Wrap WETH into sETH (Synthetic ETH)</FormLabel>
           <Text mb="2">
             Current WETH Allowance:{' '}
@@ -70,15 +74,15 @@ export function PerpsWrapWETHCollateral() {
             Current Synth (sETH) Balance: <b>{renderAmount(currentSynthBalance, { symbol: 'sETH', decimals: 18 })}</b>
           </Text>
           <Input required placeholder="Enter amount" value={value} onChange={(e) => setValue(e.target.value)} />
-          {perpsWrapCollateral.isError ? (
-            <FormErrorMessage>{perpsWrapCollateral.error?.message}</FormErrorMessage>
+          {wrap.isError ? (
+            <FormErrorMessage>{wrap.error?.message}</FormErrorMessage>
           ) : (
             <FormHelperText>
               Max: <b>{renderAmount(currentBalance, tokenWETH && { symbol: tokenWETH.symbol, decimals: tokenWETH.decimals })}</b>
             </FormHelperText>
           )}
         </FormControl>
-        <Button type="submit" mt="5%" isLoading={perpsWrapCollateral.isPending}>
+        <Button type="submit" mt="5%" isLoading={wrap.isPending}>
           {currentAllowance?.gte(parsedAmount) ? 'Wrap' : 'Approve and Wrap'}
           {parsedAmount.gt(0)
             ? ` ${renderAmount(parsedAmount, tokenWETH && { symbol: tokenWETH.symbol, decimals: tokenWETH.decimals })}`

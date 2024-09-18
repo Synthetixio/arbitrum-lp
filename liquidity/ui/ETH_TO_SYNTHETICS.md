@@ -35,6 +35,10 @@ Once WETH is received, it can be wrapped into sETH (Synthetic ETH), a synthetic 
 - **Why wrap WETH to sETH?**  
   sETH is a synthetic representation of ETH that can be used in various derivative trading strategies. It allows users to speculate, hedge, or provide liquidity in synthetic markets.
 
+**Note:** Before executing the `SpotMarketProxy.wrap()`, the price validity must be verified to ensure the prices are up-to-date. If the prices are stale, an Oracle (Pyth) update will be required.
+
+The same logic described in Step 4 section: **Fetch Updated Prices** is executed.
+
 **Code Example:**
 ```sh
 function wrap(
