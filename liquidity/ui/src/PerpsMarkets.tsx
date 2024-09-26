@@ -14,22 +14,24 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { usePerpsGetMarkets } from '@synthetixio/react-sdk';
+import { usePerpsGetMarketSummary, usePerpsGetMarkets } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
+import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useMarketMetadata } from './useMarketMetadata';
-import { useMarketSummary } from './useMarketSummary';
 import { useProvider } from './useProvider';
 
 function MarketRow({
-  marketId,
+  perpsMarketId,
   onMarketSelect,
 }: {
-  marketId: ethers.BigNumber;
+  perpsMarketId: ethers.BigNumber;
   onMarketSelect: (marketId: ethers.BigNumber, symbol?: string) => void;
 }) {
-  const { data: summary } = useMarketSummary(marketId);
-  const { data: metadata } = useMarketMetadata(marketId);
+  const provider = useProvider();
+  const { data: priceIds } = useAllPriceFeeds();
+  const { data: summary } = usePerpsGetMarketSummary({ provider, priceIds, perpsMarketId });
+  const { data: metadata } = useMarketMetadata(perpsMarketId);
 
   return (
     <Tr
@@ -37,7 +39,7 @@ function MarketRow({
         cursor: 'pointer',
         color: 'teal.500',
       }}
-      onClick={() => metadata && onMarketSelect(marketId, metadata.symbol)}
+      onClick={() => metadata && onMarketSelect(perpsMarketId, metadata.symbol)}
     >
       <Td>{metadata?.symbol ?? ''}</Td>
       <Td isNumeric>{summary ? ethers.utils.commify(ethers.utils.formatUnits(summary.maxOpenInterest)) : ''}</Td>
@@ -74,7 +76,7 @@ export function PerpsMarkets() {
                   ? marketIds.map((marketId) => (
                       <MarketRow
                         key={marketId.toString()}
-                        marketId={marketId}
+                        perpsMarketId={marketId}
                         onMarketSelect={(marketId: ethers.BigNumber, symbol?: string) => {
                           setParams({ ...params, market: marketId.toString() });
                           setSelectedMarket(symbol ? `${symbol}-PERP` : 'Market');
