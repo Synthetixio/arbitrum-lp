@@ -1,15 +1,16 @@
 import { Alert, AlertIcon, Box, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useImportSystemToken } from '@synthetixio/react-sdk';
+import { useImportSystemToken, usePerpsMetadata } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
 import { renderAmount } from './renderAmount';
-import { useMarketMetadata } from './useMarketMetadata';
 import { usePerpsGetOpenPosition } from './usePerpsGetOpenPosition';
+import { useProvider } from './useProvider';
 
 export function PerpsOpenPosition() {
   const [params] = useParams();
-  const market = useMarketMetadata(params.market ? ethers.BigNumber.from(params.market) : undefined);
+  const provider = useProvider();
+  const market = usePerpsMetadata({ provider, perpsMarketId: params.market ? ethers.BigNumber.from(params.market) : undefined });
   const openPosition = usePerpsGetOpenPosition();
   const { data: systemToken } = useImportSystemToken();
 

@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Text } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useImportExtras, useImportSystemToken } from '@synthetixio/react-sdk';
+import { useImportExtras, useImportSystemToken, usePerpsMetadata } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
 import { PerpsOpenPosition } from './PerpsOpenPosition';
@@ -8,9 +8,9 @@ import { PerpsOrder } from './PerpsOrder';
 import { PerpsRequiredMargins } from './PerpsRequiredMargins';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useMarketMetadata } from './useMarketMetadata';
 import { usePerpsCommitOrder } from './usePerpsCommitOrder';
 import { usePerpsGetAvailableMargin } from './usePerpsGetAvailableMargin';
+import { useProvider } from './useProvider';
 
 export function PerpsCommitOrder() {
   const { data: systemToken } = useImportSystemToken();
@@ -18,7 +18,8 @@ export function PerpsCommitOrder() {
 
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, 18);
-  const market = useMarketMetadata(params.market ? ethers.BigNumber.from(params.market) : undefined);
+  const provider = useProvider();
+  const market = usePerpsMetadata({ provider, perpsMarketId: params.market ? ethers.BigNumber.from(params.market) : undefined });
   const availableMargin = usePerpsGetAvailableMargin();
   const { data: extras } = useImportExtras();
   const commitOrder = usePerpsCommitOrder({

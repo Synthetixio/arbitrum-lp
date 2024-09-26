@@ -14,11 +14,10 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { usePerpsGetMarketSummary, usePerpsGetMarkets } from '@synthetixio/react-sdk';
+import { usePerpsGetMarketSummary, usePerpsGetMarkets, usePerpsMetadata } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
 import { useAllPriceFeeds } from './useAllPriceFeeds';
-import { useMarketMetadata } from './useMarketMetadata';
 import { useProvider } from './useProvider';
 
 function MarketRow({
@@ -26,12 +25,12 @@ function MarketRow({
   onMarketSelect,
 }: {
   perpsMarketId: ethers.BigNumber;
-  onMarketSelect: (marketId: ethers.BigNumber, symbol?: string) => void;
+  onMarketSelect: (perpsMarketId: ethers.BigNumber, symbol?: string) => void;
 }) {
   const provider = useProvider();
   const { data: priceIds } = useAllPriceFeeds();
   const { data: summary } = usePerpsGetMarketSummary({ provider, priceIds, perpsMarketId });
-  const { data: metadata } = useMarketMetadata(perpsMarketId);
+  const { data: metadata } = usePerpsMetadata({ provider, perpsMarketId });
 
   return (
     <Tr
