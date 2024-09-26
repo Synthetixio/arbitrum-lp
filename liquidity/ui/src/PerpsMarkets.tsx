@@ -14,11 +14,12 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
+import { usePerpsGetMarkets } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
 import { useMarketMetadata } from './useMarketMetadata';
 import { useMarketSummary } from './useMarketSummary';
-import { useMarkets } from './useMarkets';
+import { useProvider } from './useProvider';
 
 function MarketRow({
   marketId,
@@ -46,7 +47,8 @@ function MarketRow({
 }
 
 export function PerpsMarkets() {
-  const { data: marketIds } = useMarkets();
+  const provider = useProvider();
+  const { data: marketIds } = usePerpsGetMarkets({ provider });
   const [params, setParams] = useParams();
   const [selectedMarket, setSelectedMarket] = React.useState('Market');
 
