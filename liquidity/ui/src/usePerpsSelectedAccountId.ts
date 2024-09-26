@@ -1,10 +1,15 @@
 import { useParams } from '@snx-v3/useParams';
+import { usePerpsAccounts } from '@synthetixio/react-sdk';
+import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
-import { usePerpsAccounts } from './usePerpsAccounts';
+import { useProvider } from './useProvider';
 
 export function usePerpsSelectedAccountId() {
-  const { data: accounts } = usePerpsAccounts();
+  const [{ wallet }] = useConnectWallet();
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const provider = useProvider();
+  const { data: accounts } = usePerpsAccounts({ provider, walletAddress });
   const [params] = useParams();
 
   return React.useMemo(() => {
