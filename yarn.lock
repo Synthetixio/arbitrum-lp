@@ -1478,18 +1478,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biomejs/biome@npm:^1.9.1":
-  version: 1.9.1
-  resolution: "@biomejs/biome@npm:1.9.1"
+"@biomejs/biome@npm:^1.9.2":
+  version: 1.9.2
+  resolution: "@biomejs/biome@npm:1.9.2"
   dependencies:
-    "@biomejs/cli-darwin-arm64": "npm:1.9.1"
-    "@biomejs/cli-darwin-x64": "npm:1.9.1"
-    "@biomejs/cli-linux-arm64": "npm:1.9.1"
-    "@biomejs/cli-linux-arm64-musl": "npm:1.9.1"
-    "@biomejs/cli-linux-x64": "npm:1.9.1"
-    "@biomejs/cli-linux-x64-musl": "npm:1.9.1"
-    "@biomejs/cli-win32-arm64": "npm:1.9.1"
-    "@biomejs/cli-win32-x64": "npm:1.9.1"
+    "@biomejs/cli-darwin-arm64": "npm:1.9.2"
+    "@biomejs/cli-darwin-x64": "npm:1.9.2"
+    "@biomejs/cli-linux-arm64": "npm:1.9.2"
+    "@biomejs/cli-linux-arm64-musl": "npm:1.9.2"
+    "@biomejs/cli-linux-x64": "npm:1.9.2"
+    "@biomejs/cli-linux-x64-musl": "npm:1.9.2"
+    "@biomejs/cli-win32-arm64": "npm:1.9.2"
+    "@biomejs/cli-win32-x64": "npm:1.9.2"
   dependenciesMeta:
     "@biomejs/cli-darwin-arm64":
       optional: true
@@ -1509,62 +1509,62 @@ __metadata:
       optional: true
   bin:
     biome: bin/biome
-  checksum: 10/ca385e220d6aca88df60cfe3139f91dc094d8debdaf0582488f47b204d5ba2052d5f7d225e07b2e5bdca6a56fe34047928f95d75a4501d5fae67b7a996f39635
+  checksum: 10/154179a3e0160e7430e311bd9c39ddc37160296374bb16361798620a81febba2a514f685d5fceb85169f93f3fbdff048ea4b34c41736234ce3e42b3ea306e0fd
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-arm64@npm:1.9.1":
-  version: 1.9.1
-  resolution: "@biomejs/cli-darwin-arm64@npm:1.9.1"
+"@biomejs/cli-darwin-arm64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@biomejs/cli-darwin-arm64@npm:1.9.2"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-x64@npm:1.9.1":
-  version: 1.9.1
-  resolution: "@biomejs/cli-darwin-x64@npm:1.9.1"
+"@biomejs/cli-darwin-x64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@biomejs/cli-darwin-x64@npm:1.9.2"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64-musl@npm:1.9.1":
-  version: 1.9.1
-  resolution: "@biomejs/cli-linux-arm64-musl@npm:1.9.1"
+"@biomejs/cli-linux-arm64-musl@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@biomejs/cli-linux-arm64-musl@npm:1.9.2"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64@npm:1.9.1":
-  version: 1.9.1
-  resolution: "@biomejs/cli-linux-arm64@npm:1.9.1"
+"@biomejs/cli-linux-arm64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@biomejs/cli-linux-arm64@npm:1.9.2"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64-musl@npm:1.9.1":
-  version: 1.9.1
-  resolution: "@biomejs/cli-linux-x64-musl@npm:1.9.1"
+"@biomejs/cli-linux-x64-musl@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@biomejs/cli-linux-x64-musl@npm:1.9.2"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64@npm:1.9.1":
-  version: 1.9.1
-  resolution: "@biomejs/cli-linux-x64@npm:1.9.1"
+"@biomejs/cli-linux-x64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@biomejs/cli-linux-x64@npm:1.9.2"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-arm64@npm:1.9.1":
-  version: 1.9.1
-  resolution: "@biomejs/cli-win32-arm64@npm:1.9.1"
+"@biomejs/cli-win32-arm64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@biomejs/cli-win32-arm64@npm:1.9.2"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-x64@npm:1.9.1":
-  version: 1.9.1
-  resolution: "@biomejs/cli-win32-x64@npm:1.9.1"
+"@biomejs/cli-win32-x64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "@biomejs/cli-win32-x64@npm:1.9.2"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -4529,13 +4529,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pythnetwork/pyth-evm-js@npm:^1.56.1, @pythnetwork/pyth-evm-js@npm:^1.67.0":
-  version: 1.67.0
-  resolution: "@pythnetwork/pyth-evm-js@npm:1.67.0"
+"@pythnetwork/pyth-evm-js@npm:^1.56.1, @pythnetwork/pyth-evm-js@npm:^1.68.0":
+  version: 1.68.0
+  resolution: "@pythnetwork/pyth-evm-js@npm:1.68.0"
   dependencies:
     "@pythnetwork/price-service-client": "npm:1.9.0"
     buffer: "npm:^6.0.3"
-  checksum: 10/85721f625b9af095c7bc9d38cb0ea6f203683e43236890604b427b5711eb70862c8f2cc3a44fcb58b497c2ef2c4f70be55e16be46a2e0dfa512fa2325d9f4a34
+  checksum: 10/cda6acf64f866deff33e54fb7f4066c8a9b67f730ac88ca2b101fe4a671e4b59f8718b32424141b3f438f0fee1ef145efa137304a87123dd423f4ad16591336e
   languageName: node
   linkType: hard
 
@@ -4706,15 +4706,15 @@ __metadata:
     "@emotion/react": "npm:^11.13.3"
     "@emotion/styled": "npm:^11.13.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.15"
-    "@pythnetwork/pyth-evm-js": "npm:^1.67.0"
+    "@pythnetwork/pyth-evm-js": "npm:^1.68.0"
     "@safe-global/safe-apps-provider": "npm:^0.18.3"
     "@safe-global/safe-apps-sdk": "npm:^9.1.0"
     "@snx-v3/useParams": "workspace:*"
     "@synthetixio/react-sdk": "npm:^0.0.10"
     "@synthetixio/safe-import": "workspace:*"
     "@tanstack/react-query": "npm:^5.56.2"
-    "@tanstack/react-query-devtools": "npm:^5.56.2"
-    "@types/react": "npm:^18.3.7"
+    "@tanstack/react-query-devtools": "npm:^5.58.0"
+    "@types/react": "npm:^18.3.10"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-helmet": "npm:^6.1.11"
     "@web3-onboard/coinbase": "npm:^2.4.1"
@@ -4735,7 +4735,7 @@ __metadata:
     css-loader: "npm:^7.1.2"
     dotenv: "npm:^16.4.5"
     ethers: "npm:^5.7.2"
-    framer-motion: "npm:^11.5.4"
+    framer-motion: "npm:^11.9.0"
     html-webpack-plugin: "npm:^5.6.0"
     i18next: "npm:^23.15.1"
     i18next-resources-for-ts: "npm:^1.5.0"
@@ -4750,7 +4750,7 @@ __metadata:
     style-loader: "npm:^4.0.0"
     terser-webpack-plugin: "npm:^5.3.10"
     vm-browserify: "npm:^1.1.2"
-    webpack: "npm:^5.94.0"
+    webpack: "npm:^5.95.0"
     webpack-bundle-analyzer: "npm:^4.10.2"
     webpack-cli: "npm:^5.1.4"
     webpack-dev-server: "npm:^5.1.0"
@@ -5036,22 +5036,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-devtools@npm:5.56.1":
-  version: 5.56.1
-  resolution: "@tanstack/query-devtools@npm:5.56.1"
-  checksum: 10/cee8dc573acda85cd854855f923a6f6e7ed9d8777bac70d321a294ce746bcd49299b2f5833f4af0c7250479280297c31c07d51ee80856bb2bfb673d5f1e1d445
+"@tanstack/query-devtools@npm:5.58.0":
+  version: 5.58.0
+  resolution: "@tanstack/query-devtools@npm:5.58.0"
+  checksum: 10/ca16c47c943ea392dfddc301f7e09ecdb0c8b905fb684b8f26b908a244e2e897679efb0ead5fa8e728711017341fdd91d8c51ebb19f746819e26ade5549f539e
   languageName: node
   linkType: hard
 
-"@tanstack/react-query-devtools@npm:^5.56.2":
-  version: 5.56.2
-  resolution: "@tanstack/react-query-devtools@npm:5.56.2"
+"@tanstack/react-query-devtools@npm:^5.58.0":
+  version: 5.58.0
+  resolution: "@tanstack/react-query-devtools@npm:5.58.0"
   dependencies:
-    "@tanstack/query-devtools": "npm:5.56.1"
+    "@tanstack/query-devtools": "npm:5.58.0"
   peerDependencies:
     "@tanstack/react-query": ^5.56.2
     react: ^18 || ^19
-  checksum: 10/d87693893733232ffb6f11f72fc407cfc60a351d79ceb12e4e2e63def3f09b192469cdb407e0d89c8e176cba5dce128e0c7c494636c5ddaefea0f202b2d6f6b4
+  checksum: 10/8337ee516c7ec1c9ef4f25fad98e2a689074ad1151988e8ffa0daff543ecc032577707168624b16a6fe8af4f3bde187c154783b7a3dbb3c8bc4764523a5aa1af
   languageName: node
   linkType: hard
 
@@ -5617,13 +5617,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.3.7":
-  version: 18.3.7
-  resolution: "@types/react@npm:18.3.7"
+"@types/react@npm:*, @types/react@npm:^18.3.10":
+  version: 18.3.10
+  resolution: "@types/react@npm:18.3.10"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10/30cfbe33c82e8033df5f70a4f54068f4344a691cff3f2b3901dd678e89ce5477dc8faada4a45d333ea570e1992ca8fda5b096d9deddfafb8c373acababc40c70
+  checksum: 10/cdc946f15fcad62387e6485a2bbef3e45609708fd81e3ce30b03580077bb8a8a1bd0d19858d8602b33c3921bbb8907ddbc9411fd25294a2c2e944907dad8dd67
   languageName: node
   linkType: hard
 
@@ -9831,9 +9831,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^11.5.4":
-  version: 11.5.4
-  resolution: "framer-motion@npm:11.5.4"
+"framer-motion@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "framer-motion@npm:11.9.0"
   dependencies:
     tslib: "npm:^2.4.0"
   peerDependencies:
@@ -9847,7 +9847,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 10/49171015b9d4ff3584d2cd229a15a16cdffe828f9019a2673e2f3952816696c654f3407f41cb0cf0ac0d005ca961af21b96a797a32a779169932a1746151caad
+  checksum: 10/fa9dec871d99bd3289767eb2b1c2d4b68e142bbe3116deb6a17177c45e90d128e4184a0e96097bed15cf54d2db5c63c1ceed0b1156518e245b807ec8aa653a19
   languageName: node
   linkType: hard
 
@@ -13484,7 +13484,7 @@ __metadata:
     "@babel/core": "npm:^7.25.2"
     "@babel/preset-env": "npm:^7.25.4"
     "@babel/preset-typescript": "npm:^7.24.7"
-    "@biomejs/biome": "npm:^1.9.1"
+    "@biomejs/biome": "npm:^1.9.2"
     "@synthetixio/deps": "workspace:*"
     "@types/babel__core": "npm:^7.20.5"
     "@types/babel__preset-env": "npm:^7.9.7"
@@ -15198,9 +15198,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.94.0":
-  version: 5.94.0
-  resolution: "webpack@npm:5.94.0"
+"webpack@npm:^5.95.0":
+  version: 5.95.0
+  resolution: "webpack@npm:5.95.0"
   dependencies:
     "@types/estree": "npm:^1.0.5"
     "@webassemblyjs/ast": "npm:^1.12.1"
@@ -15230,7 +15230,7 @@ __metadata:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: 10/648449c5fbbb0839814116e3b2b044ac6c75a7ba272435155ddeb1e64dfaa2f8079be3adfbb691f648b69900756ce0f6fb73beab0ced3cf5e0fd46868b4593a6
+  checksum: 10/0377ad3a550b041f26237c96fb55754625b0ce6bae83c1c2447e3262ad056b0b0ad770dcbb92b59f188e9a2bd56155ce910add17dcf023cfbe78bdec774380c1
   languageName: node
   linkType: hard
 
