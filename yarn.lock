@@ -4710,7 +4710,7 @@ __metadata:
     "@safe-global/safe-apps-provider": "npm:^0.18.3"
     "@safe-global/safe-apps-sdk": "npm:^9.1.0"
     "@snx-v3/useParams": "workspace:*"
-    "@synthetixio/react-sdk": "npm:^0.0.9"
+    "@synthetixio/react-sdk": "npm:^0.0.10"
     "@synthetixio/safe-import": "workspace:*"
     "@tanstack/react-query": "npm:^5.56.2"
     "@tanstack/react-query-devtools": "npm:^5.56.2"
@@ -4999,9 +4999,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@synthetixio/react-sdk@npm:^0.0.9":
-  version: 0.0.9
-  resolution: "@synthetixio/react-sdk@npm:0.0.9"
+"@synthetixio/react-sdk@npm:^0.0.10":
+  version: 0.0.10
+  resolution: "@synthetixio/react-sdk@npm:0.0.10"
   dependencies:
     "@pythnetwork/pyth-evm-js": "npm:^1.56.1"
     "@synthetixio/v3-contracts": "github:synthetixio/v3-contracts#master"
@@ -5010,7 +5010,7 @@ __metadata:
     ethers: "npm:^5.7.2"
     react: "npm:^18.3.1"
     viem: "npm:^2.17.1"
-  checksum: 10/f13f0693256875040a7a4d504a207a1fbcc8bf690f3dd4b39f90dcec9eab2dfcc1f97d2cd98cfe4fb615de10c6ae1dab7fdf142bc3e77560ccc1837f0904c1db
+  checksum: 10/8847514d008e34af44d19de8362963ff934013b3104935b03f1a5aacfa7d187192032f9ad38a434d04c2e8a7e5f7f9a488ae95ace25db75d8de7fa5e1c770d7f
   languageName: node
   linkType: hard
 
