@@ -1,11 +1,10 @@
-import { fetchPriceUpdateTxn, useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
+import { fetchPriceUpdateTxn, useAllPriceFeeds, useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
 import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
 import { fetchWithdrawCollateral } from './fetchWithdrawCollateral';
 import { fetchWithdrawCollateralWithPriceUpdate } from './fetchWithdrawCollateralWithPriceUpdate';
-import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 

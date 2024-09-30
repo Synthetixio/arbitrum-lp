@@ -11,34 +11,30 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useImportContract, useImportSystemToken, useMintUsd, useSynthetix } from '@synthetixio/react-sdk';
-import { useQueryClient } from '@tanstack/react-query';
+import { useParams } from '@snx-v3/useParams';
+import { useImportSystemToken, useMintUsd, useSelectedCollateralType } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useCollateralPrice } from './useCollateralPrice';
 import { usePositionCollateral } from './usePositionCollateral';
 import { usePositionDebt } from './usePositionDebt';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function MintUsd() {
   const [{ wallet }] = useConnectWallet();
-  const queryClient = useQueryClient();
-  const { data: CoreProxyContract } = useImportContract('CoreProxy');
-  const { data: MulticallContract } = useImportContract('Multicall');
-  const { chainId } = useSynthetix();
-  const { data: priceIds } = useAllPriceFeeds();
+  const walletAddress = wallet?.accounts?.[0]?.address;
+
+  const [params] = useParams();
+
   const provider = useProvider();
   const accountId = useSelectedAccountId();
-  const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
-  const walletAddress = wallet?.accounts?.[0]?.address;
+  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
 
   const { data: positionCollateral } = usePositionCollateral({
     accountId,
@@ -69,45 +65,11 @@ export function MintUsd() {
   const parsedAmount = parseAmount(value, collateralType?.decimals);
   const mintUsd = useMintUsd({
     provider,
-    priceIds,
     walletAddress,
     accountId,
     collateralTokenAddress: collateralType?.address,
     poolId,
-    onSuccess: async ({ priceUpdated }) => {
-      if (priceUpdated) {
-        await queryClient.invalidateQueries({
-          queryKey: [chainId, 'PriceUpdateTxn', { priceIds: priceIds?.map((p) => p.slice(0, 8)) }],
-        });
-      }
-
-      // Intentionally do not await
-      queryClient.invalidateQueries({
-        queryKey: [
-          chainId,
-          'PositionDebt',
-          { CoreProxy: CoreProxyContract?.address, Multicall: MulticallContract?.address },
-          {
-            accountId: accountId?.toHexString(),
-            tokenAddress: collateralType?.address,
-          },
-        ],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [
-          chainId,
-          'AccountAvailableCollateral',
-          { CoreProxy: CoreProxyContract?.address },
-          {
-            accountId: accountId?.toHexString(),
-            tokenAddress: systemToken?.address,
-          },
-        ],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [chainId, 'AccountLastInteraction', { CoreProxy: CoreProxyContract?.address }, { accountId: accountId?.toHexString() }],
-      });
-
+    onSuccess: () => {
       setValue('');
     },
   });

@@ -1,8 +1,8 @@
-import { useErrorParser, useSynthetix } from '@synthetixio/react-sdk';
+import { fetchTokenAllowance, useErrorParser, useSynthetix } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
-import { useConnectWallet, useSetChain } from '@web3-onboard/react';
+import { useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
-import { fetchTokenAllowance } from './fetchTokenAllowance';
+import { useProvider } from './useProvider';
 
 export function useTokenAllowance({
   tokenAddress,
@@ -16,19 +16,19 @@ export function useTokenAllowance({
   const { chainId } = useSynthetix();
   const errorParser = useErrorParser();
   const [{ connectedChain }] = useSetChain();
-  const [{ wallet }] = useConnectWallet();
+  const provider = useProvider();
 
   const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
 
   return useQuery({
-    enabled: Boolean(isChainReady && wallet?.provider && tokenAddress && ownerAddress && spenderAddress),
+    enabled: Boolean(isChainReady && provider && tokenAddress && ownerAddress && spenderAddress),
     queryKey: [chainId, 'Allowance', { tokenAddress, ownerAddress, spenderAddress }],
     queryFn: async () => {
-      if (!(isChainReady && wallet?.provider && tokenAddress && ownerAddress && spenderAddress)) {
+      if (!(isChainReady && provider && tokenAddress && ownerAddress && spenderAddress)) {
         throw 'OMFG';
       }
       return fetchTokenAllowance({
-        wallet,
+        provider,
         tokenAddress,
         ownerAddress,
         spenderAddress,

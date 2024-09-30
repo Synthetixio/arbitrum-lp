@@ -1,14 +1,21 @@
-import { fetchPriceUpdateTxn, useErrorParser, useImportContract, useImportSystemToken, useSynthetix } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import {
+  fetchPriceUpdateTxn,
+  useAllPriceFeeds,
+  useErrorParser,
+  useImportContract,
+  useImportSystemToken,
+  useSelectedCollateralType,
+  useSynthetix,
+} from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
 import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
 import { fetchBurnUsd } from './fetchBurnUsd';
 import { fetchBurnUsdWithPriceUpdate } from './fetchBurnUsdWithPriceUpdate';
-import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function useBurnUsd({ onSuccess }: { onSuccess: () => void }) {
@@ -16,11 +23,13 @@ export function useBurnUsd({ onSuccess }: { onSuccess: () => void }) {
   const provider = useProvider();
   const errorParser = useErrorParser();
 
+  const [params] = useParams();
+
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
 
   const accountId = useSelectedAccountId();
-  const collateralType = useSelectedCollateralType();
+  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
   const poolId = useSelectedPoolId();
 
   const { data: systemToken } = useImportSystemToken();

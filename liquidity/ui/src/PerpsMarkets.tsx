@@ -17,7 +17,6 @@ import { useParams } from '@snx-v3/useParams';
 import { usePerpsGetMarketSummary, usePerpsGetMarkets, usePerpsMetadata } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
-import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useProvider } from './useProvider';
 
 function MarketRow({
@@ -28,8 +27,7 @@ function MarketRow({
   onMarketSelect: (perpsMarketId: ethers.BigNumber, symbol?: string) => void;
 }) {
   const provider = useProvider();
-  const { data: priceIds } = useAllPriceFeeds();
-  const { data: summary } = usePerpsGetMarketSummary({ provider, priceIds, perpsMarketId });
+  const { data: summary } = usePerpsGetMarketSummary({ provider, perpsMarketId });
   const { data: metadata } = usePerpsMetadata({ provider, perpsMarketId });
 
   return (

@@ -1,4 +1,12 @@
-import { fetchPriceUpdateTxn, useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import {
+  fetchPriceUpdateTxn,
+  useAllPriceFeeds,
+  useErrorParser,
+  useImportContract,
+  useSelectedCollateralType,
+  useSynthetix,
+} from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
@@ -6,10 +14,8 @@ import { delegateCollateral } from './delegateCollateral';
 import { delegateCollateralWithPriceUpdate } from './delegateCollateralWithPriceUpdate';
 import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
 import { fetchPositionCollateral } from './fetchPositionCollateral';
-import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function useDelegateCollateral({
@@ -21,11 +27,13 @@ export function useDelegateCollateral({
   const provider = useProvider();
   const errorParser = useErrorParser();
 
+  const [params] = useParams();
+
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
 
   const accountId = useSelectedAccountId();
-  const collateralType = useSelectedCollateralType();
+  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
   const poolId = useSelectedPoolId();
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');

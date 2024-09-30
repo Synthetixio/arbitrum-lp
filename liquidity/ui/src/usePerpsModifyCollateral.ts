@@ -1,11 +1,18 @@
-import { useErrorParser, useImportContract, useImportSystemToken, useSynthetix } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import {
+  fetchApproveToken,
+  fetchTokenAllowance,
+  fetchTokenBalance,
+  useErrorParser,
+  useImportContract,
+  useImportSystemToken,
+  usePerpsSelectedAccountId,
+  useSynthetix,
+} from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
-import { approveToken } from './approveToken';
-import { fetchTokenAllowance } from './fetchTokenAllowance';
-import { fetchTokenBalance } from './fetchTokenBalance';
-import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
+import { useProvider } from './useProvider';
 
 const USDx_MARKET_ID = 0;
 
@@ -14,7 +21,9 @@ export function usePerpsModifyCollateral() {
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-  const perpsAccountId = usePerpsSelectedAccountId();
+  const [params] = useParams();
+  const provider = useProvider();
+  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress, perpsAccountId: params.perpsAccountId });
   const queryClient = useQueryClient();
   const errorParser = useErrorParser();
   const { data: systemToken } = useImportSystemToken();
@@ -24,7 +33,7 @@ export function usePerpsModifyCollateral() {
 
   return useMutation({
     mutationFn: async (depositAmount: ethers.BigNumber) => {
-      if (!(isChainReady && PerpsMarketProxyContract?.address && walletAddress && wallet?.provider && perpsAccountId && systemToken)) {
+      if (!(isChainReady && PerpsMarketProxyContract?.address && walletAddress && provider && perpsAccountId && systemToken)) {
         throw 'OMFG';
       }
       if (depositAmount.lte(0)) {
@@ -32,7 +41,7 @@ export function usePerpsModifyCollateral() {
       }
 
       const freshBalance = await fetchTokenBalance({
-        wallet,
+        provider,
         ownerAddress: walletAddress,
         tokenAddress: systemToken?.address,
       });
@@ -42,7 +51,7 @@ export function usePerpsModifyCollateral() {
       }
 
       const freshAllowance = await fetchTokenAllowance({
-        wallet,
+        provider,
         ownerAddress: walletAddress,
         tokenAddress: systemToken.address,
         spenderAddress: PerpsMarketProxyContract.address,
@@ -51,15 +60,15 @@ export function usePerpsModifyCollateral() {
       console.log('freshAllowance', freshAllowance);
 
       if (freshAllowance.lt(depositAmount)) {
-        await approveToken({
-          wallet,
+        await fetchApproveToken({
+          provider,
+          walletAddress,
           tokenAddress: systemToken.address,
           spenderAddress: PerpsMarketProxyContract.address,
           allowance: depositAmount.sub(freshAllowance),
         });
       }
 
-      const provider = new ethers.providers.Web3Provider(wallet.provider);
       const signer = provider.getSigner(walletAddress);
       const PerpsMarketProxy = new ethers.Contract(PerpsMarketProxyContract.address, PerpsMarketProxyContract.abi, signer);
 
@@ -89,7 +98,7 @@ export function usePerpsModifyCollateral() {
         queryKey: [chainId, 'Balance', { tokenAddress: systemToken?.address, ownerAddress: walletAddress }],
       });
       queryClient.invalidateQueries({
-        queryKey: [chainId, 'PerpsGetAvailableMargin', { PerpsMarketProxy: PerpsMarketProxyContract?.address }, perpsAccountId],
+        queryKey: [chainId, 'Perps GetAvailableMargin', { PerpsMarketProxy: PerpsMarketProxyContract?.address }, perpsAccountId],
       });
     },
   });

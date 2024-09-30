@@ -11,18 +11,22 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { useParams } from '@snx-v3/useParams';
+import { useSelectedCollateralType } from '@synthetixio/react-sdk';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useDelegateCollateral } from './useDelegateCollateral';
 import { usePositionCollateral } from './usePositionCollateral';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function Undelegate() {
   const accountId = useSelectedAccountId();
-  const collateralType = useSelectedCollateralType();
+
+  const [params] = useParams();
+
+  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
   const poolId = useSelectedPoolId();
 
   const { data: positionCollateral } = usePositionCollateral({

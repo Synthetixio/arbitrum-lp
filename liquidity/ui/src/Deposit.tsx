@@ -11,7 +11,8 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useImportContract } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import { useImportContract, useSelectedCollateralType } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
@@ -19,7 +20,6 @@ import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useDeposit } from './useDeposit';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useTokenAllowance } from './useTokenAllowance';
 import { useTokenBalance } from './useTokenBalance';
 
@@ -27,8 +27,10 @@ export function Deposit() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
+  const [params] = useParams();
+
   const accountId = useSelectedAccountId();
-  const collateralType = useSelectedCollateralType();
+  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
