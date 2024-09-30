@@ -5022,10 +5022,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@synthetixio/v3-contracts@synthetixio/v3-contracts":
-  version: 6.8.0
-  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=dc5d461731eed4565c8dc1f43073d4638999adcc"
-  checksum: 10/d06525f7ebdadcdf9ddec9a7a44e740158b3c2f5bf97c748fd7b572267ccba79d4474fd131f6c7e679b96531de741e6a0570434ebb14799bcc79154c71dd3dbf
+"@synthetixio/v3-contracts@github:synthetixio/v3-contracts#master":
+  version: 6.11.0
+  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=7d40da8b50f7709a6f1770cd9f89d784cd4fef49"
+  checksum: 10/7511b20cdd8a05ed31d373ea134230397bee856be6f2c3ceb2b99674d132b7739a603ec29f5261ca366de2ea0d94838508239287911eb1b3326bed5ced4d2f3a
   languageName: node
   linkType: hard
 
@@ -14588,11 +14588,11 @@ __metadata:
 
 "typescript@patch:typescript@npm%3A^5.6.2#optional!builtin<compat/typescript>":
   version: 5.6.2
-  resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=8c6c40"
+  resolution: "typescript@patch:typescript@npm%3A5.6.2#optional!builtin<compat/typescript>::version=5.6.2&hash=74658d"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/8bfc7ca0d9feca4c3fcbd6c70741abfcd714197d6448e68225ae71e462447d904d3bfba49759a8fbe4956d87f054e2d346833c8349c222daa594a2626d4e1be8
+  checksum: 10/060a7349adf698477b411be4ace470aee6c2c1bd99917fdf5d33697c17ec55c64fe724eb10399387530b50e9913b41528dd8bfcca0a5fc8f8bac63fbb4580a2e
   languageName: node
   linkType: hard
 
