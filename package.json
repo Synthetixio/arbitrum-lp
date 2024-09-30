@@ -45,8 +45,7 @@
     "browserslist": "^4",
     "caniuse-lite": "^1",
     "ethers": "^5.7.2",
-    "classnames": "^2.3.2",
-    "@synthetixio/v3-contracts": "synthetixio/v3-contracts"
+    "classnames": "^2.3.2"
   },
   "browserslist": [
     "last 1 Chrome version",

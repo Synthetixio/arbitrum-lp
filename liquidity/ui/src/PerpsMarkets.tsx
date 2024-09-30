@@ -14,21 +14,21 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
+import { usePerpsGetMarketSummary, usePerpsGetMarkets, usePerpsMetadata } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
-import { useMarketMetadata } from './useMarketMetadata';
-import { useMarketSummary } from './useMarketSummary';
-import { useMarkets } from './useMarkets';
+import { useProvider } from './useProvider';
 
 function MarketRow({
-  marketId,
+  perpsMarketId,
   onMarketSelect,
 }: {
-  marketId: ethers.BigNumber;
-  onMarketSelect: (marketId: ethers.BigNumber, symbol?: string) => void;
+  perpsMarketId: ethers.BigNumber;
+  onMarketSelect: (perpsMarketId: ethers.BigNumber, symbol?: string) => void;
 }) {
-  const { data: summary } = useMarketSummary(marketId);
-  const { data: metadata } = useMarketMetadata(marketId);
+  const provider = useProvider();
+  const { data: summary } = usePerpsGetMarketSummary({ provider, perpsMarketId });
+  const { data: metadata } = usePerpsMetadata({ provider, perpsMarketId });
 
   return (
     <Tr
@@ -36,7 +36,7 @@ function MarketRow({
         cursor: 'pointer',
         color: 'teal.500',
       }}
-      onClick={() => metadata && onMarketSelect(marketId, metadata.symbol)}
+      onClick={() => metadata && onMarketSelect(perpsMarketId, metadata.symbol)}
     >
       <Td>{metadata?.symbol ?? ''}</Td>
       <Td isNumeric>{summary ? ethers.utils.commify(ethers.utils.formatUnits(summary.maxOpenInterest)) : ''}</Td>
@@ -46,7 +46,8 @@ function MarketRow({
 }
 
 export function PerpsMarkets() {
-  const { data: marketIds } = useMarkets();
+  const provider = useProvider();
+  const { data: marketIds } = usePerpsGetMarkets({ provider });
   const [params, setParams] = useParams();
   const [selectedMarket, setSelectedMarket] = React.useState('Market');
 
@@ -72,7 +73,7 @@ export function PerpsMarkets() {
                   ? marketIds.map((marketId) => (
                       <MarketRow
                         key={marketId.toString()}
-                        marketId={marketId}
+                        perpsMarketId={marketId}
                         onMarketSelect={(marketId: ethers.BigNumber, symbol?: string) => {
                           setParams({ ...params, market: marketId.toString() });
                           setSelectedMarket(symbol ? `${symbol}-PERP` : 'Market');

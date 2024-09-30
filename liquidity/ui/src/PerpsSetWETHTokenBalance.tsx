@@ -1,21 +1,24 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Text } from '@chakra-ui/react';
-import { useImportExtras } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import { useCollateralTokens, useImportExtras, usePerpsSelectedAccountId, useWethDeposit } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useCollateralTokens } from './useCollateralTokens';
 import { useEthBalance } from './useEthBalance';
-import { usePerpsDeposit } from './usePerpsDeposit';
+import { useProvider } from './useProvider';
 import { useTokenBalance } from './useTokenBalance';
 
 export function PerpsSetWETHTokenBalance() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
+  const [params] = useParams();
+  const provider = useProvider();
+  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress, perpsAccountId: params.perpsAccountId });
   const { data: extras } = useImportExtras();
   const collateralTokens = useCollateralTokens();
-  const tokenWETH = extras && collateralTokens?.find((token) => token.address === extras.weth_address);
+  const tokenWETH = extras && collateralTokens.find((token) => token.address === extras.weth_address);
 
   const currentEthBalance = useEthBalance();
   const { data: currentBalance } = useTokenBalance({
@@ -25,10 +28,14 @@ export function PerpsSetWETHTokenBalance() {
 
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, 18);
-
-  const perpsDeposit = usePerpsDeposit({
-    onSuccess: () => setValue(''),
+  const wethDeposit = useWethDeposit({
+    provider,
+    walletAddress,
+    perpsAccountId,
     tokenAddress: tokenWETH?.address,
+    onSuccess: () => {
+      setValue('');
+    },
   });
 
   return (
@@ -42,10 +49,10 @@ export function PerpsSetWETHTokenBalance() {
         as="form"
         onSubmit={(e) => {
           e.preventDefault();
-          perpsDeposit.mutate(parsedAmount);
+          wethDeposit.mutate(parsedAmount);
         }}
       >
-        <FormControl isInvalid={perpsDeposit.isError}>
+        <FormControl isInvalid={wethDeposit.isError}>
           <FormLabel fontSize="3xl">Convert ETH to WETH (Wrapped ETH)</FormLabel>
           <Text mb="2">
             Current WETH Balance:{' '}
@@ -55,15 +62,15 @@ export function PerpsSetWETHTokenBalance() {
             Current ETH Balance: <b>{renderAmount(currentEthBalance.data, { symbol: 'ETH', decimals: 18 })}</b>
           </Text>
           <Input required placeholder="Enter amount" value={value} onChange={(e) => setValue(e.target.value)} />
-          {perpsDeposit.isError ? (
-            <FormErrorMessage>{perpsDeposit.error?.message}</FormErrorMessage>
+          {wethDeposit.isError ? (
+            <FormErrorMessage>{wethDeposit.error?.message}</FormErrorMessage>
           ) : (
             <FormHelperText>
               Max: <b>{currentEthBalance ? renderAmount(currentEthBalance.data, { symbol: 'ETH', decimals: 18 }) : null}</b>
             </FormHelperText>
           )}
         </FormControl>
-        <Button type="submit" mt="5%" isLoading={perpsDeposit.isPending}>
+        <Button type="submit" mt="5%" isLoading={wethDeposit.isPending}>
           Convert ETH to WETH
         </Button>
       </Box>

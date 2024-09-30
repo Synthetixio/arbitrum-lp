@@ -11,8 +11,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useImportContract } from '@synthetixio/react-sdk';
-import { useImportSystemToken } from '@synthetixio/react-sdk';
+import { useImportContract, useImportSystemToken } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';

@@ -1,13 +1,19 @@
-import { useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import {
+  fetchApproveToken,
+  fetchTokenAllowance,
+  fetchTokenBalance,
+  useErrorParser,
+  useImportContract,
+  useSelectedCollateralType,
+  useSynthetix,
+} from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
-import { approveToken } from './approveToken';
 import { depositCollateral } from './depositCollateral';
-import { fetchTokenAllowance } from './fetchTokenAllowance';
-import { fetchTokenBalance } from './fetchTokenBalance';
+import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
@@ -16,9 +22,12 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
+  const [params] = useParams();
+
   const accountId = useSelectedAccountId();
-  const collateralType = useSelectedCollateralType();
+  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
   const poolId = useSelectedPoolId();
+  const provider = useProvider();
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
@@ -27,7 +36,7 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
   const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
   return useMutation({
     mutationFn: async (depositAmount: ethers.BigNumber) => {
-      if (!(isChainReady && CoreProxyContract && wallet && walletAddress && accountId && collateralType)) {
+      if (!(isChainReady && CoreProxyContract && wallet && walletAddress && accountId && collateralType && provider)) {
         throw 'OMFG';
       }
 
@@ -36,7 +45,7 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
       }
 
       const freshBalance = await fetchTokenBalance({
-        wallet,
+        provider,
         ownerAddress: walletAddress,
         tokenAddress: collateralType?.address,
       });
@@ -47,7 +56,7 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
       }
 
       const freshAllowance = await fetchTokenAllowance({
-        wallet,
+        provider,
         ownerAddress: walletAddress,
         tokenAddress: collateralType?.address,
         spenderAddress: CoreProxyContract?.address,
@@ -55,8 +64,9 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
       console.log('freshAllowance', freshAllowance);
 
       if (freshAllowance.lt(depositAmount)) {
-        await approveToken({
-          wallet,
+        await fetchApproveToken({
+          provider,
+          walletAddress,
           tokenAddress: collateralType.address,
           spenderAddress: CoreProxyContract.address,
           allowance: depositAmount.sub(freshAllowance),

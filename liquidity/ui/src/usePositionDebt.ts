@@ -4,7 +4,6 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { fetchPositionDebt } from './fetchPositionDebt';
 import { fetchPositionDebtWithPriceUpdate } from './fetchPositionDebtWithPriceUpdate';
-import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useProvider } from './useProvider';
 
 export function usePositionDebt({
@@ -20,8 +19,7 @@ export function usePositionDebt({
   const provider = useProvider();
   const errorParser = useErrorParser();
 
-  const { data: priceIds } = useAllPriceFeeds();
-  const { data: priceUpdateTxn } = usePriceUpdateTxn({ provider, priceIds });
+  const { data: priceUpdateTxn } = usePriceUpdateTxn({ provider });
 
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();

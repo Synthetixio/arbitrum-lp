@@ -1,17 +1,21 @@
-import { useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
+import {
+  fetchApproveToken,
+  fetchTokenAllowance,
+  fetchTokenBalance,
+  useAllPriceFeeds,
+  useErrorParser,
+  useImportContract,
+  useSpotGetPriceData,
+  useSpotGetSettlementStrategy,
+  useSynthetix,
+} from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
-import { approveToken } from './approveToken';
 import { fetchPriceUpdateTxn } from './fetchPriceUpdateTxn';
 import { fetchSpotWrap } from './fetchSpotWrap';
 import { fetchSpotWrapWithPriceUpdate } from './fetchSpotWrapWithPriceUpdate';
-import { fetchTokenAllowance } from './fetchTokenAllowance';
-import { fetchTokenBalance } from './fetchTokenBalance';
-import { useAllPriceFeeds } from './useAllPriceFeeds';
-import { useGetPriceData } from './useGetPriceData';
 import { useProvider } from './useProvider';
-import { useSpotGetSettlementStrategy } from './useSpotGetSettlementStrategy';
 
 export function useSpotWrap({
   onSuccess,
@@ -35,8 +39,9 @@ export function useSpotWrap({
   const { data: SpotMarketProxyContract } = useImportContract('SpotMarketProxy');
   const { data: MulticallContract } = useImportContract('Multicall');
   const { data: PythERC7412WrapperContract } = useImportContract('PythERC7412Wrapper');
-  const { data: priceData } = useGetPriceData({ synthMarketId });
+  const { data: priceData } = useSpotGetPriceData({ provider, synthMarketId });
   const { data: spotSettlementStrategy } = useSpotGetSettlementStrategy({
+    provider,
     synthMarketId,
     settlementStrategyId,
   });
@@ -68,9 +73,9 @@ export function useSpotWrap({
       }
 
       const freshBalance = await fetchTokenBalance({
-        wallet,
-        ownerAddress: walletAddress,
+        provider,
         tokenAddress,
+        ownerAddress: walletAddress,
       });
 
       if (freshBalance.lt(amount)) {
@@ -78,15 +83,16 @@ export function useSpotWrap({
       }
 
       const freshAllowance = await fetchTokenAllowance({
-        wallet,
-        ownerAddress: walletAddress,
+        provider,
         tokenAddress,
+        ownerAddress: walletAddress,
         spenderAddress: SpotMarketProxyContract.address,
       });
 
       if (freshAllowance.lt(amount)) {
-        await approveToken({
-          wallet,
+        await fetchApproveToken({
+          provider,
+          walletAddress,
           tokenAddress,
           spenderAddress: SpotMarketProxyContract.address,
           allowance: amount.sub(freshAllowance),

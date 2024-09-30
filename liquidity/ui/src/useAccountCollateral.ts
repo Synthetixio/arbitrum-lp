@@ -4,7 +4,6 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { fetchAccountCollateral } from './fetchAccountCollateral';
 import { fetchAccountCollateralWithPriceUpdate } from './fetchAccountCollateralWithPriceUpdate';
-import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useProvider } from './useProvider';
 
 export function useAccountCollateral({
@@ -23,8 +22,7 @@ export function useAccountCollateral({
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
   const { data: MulticallContract } = useImportContract('Multicall');
 
-  const { data: priceIds } = useAllPriceFeeds();
-  const { data: priceUpdateTxn } = usePriceUpdateTxn({ provider, priceIds });
+  const { data: priceUpdateTxn } = usePriceUpdateTxn({ provider });
 
   const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
 

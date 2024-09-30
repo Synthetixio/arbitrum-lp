@@ -11,6 +11,8 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { useParams } from '@snx-v3/useParams';
+import { useSelectedCollateralType } from '@synthetixio/react-sdk';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
@@ -18,12 +20,14 @@ import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useDelegateCollateral } from './useDelegateCollateral';
 import { usePositionCollateral } from './usePositionCollateral';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function Delegate() {
   const accountId = useSelectedAccountId();
-  const collateralType = useSelectedCollateralType();
+
+  const [params] = useParams();
+
+  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
   const poolId = useSelectedPoolId();
 
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({

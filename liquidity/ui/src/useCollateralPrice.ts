@@ -4,7 +4,6 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import { fetchCollateralPrice } from './fetchCollateralPrice';
 import { fetchCollateralPriceWithPriceUpdate } from './fetchCollateralPriceWithPriceUpdate';
-import { useAllPriceFeeds } from './useAllPriceFeeds';
 import { useProvider } from './useProvider';
 
 export function useCollateralPrice({
@@ -16,8 +15,7 @@ export function useCollateralPrice({
   const provider = useProvider();
   const errorParser = useErrorParser();
 
-  const { data: priceIds } = useAllPriceFeeds();
-  const { data: priceUpdateTxn } = usePriceUpdateTxn({ provider, priceIds });
+  const { data: priceUpdateTxn } = usePriceUpdateTxn({ provider });
 
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();

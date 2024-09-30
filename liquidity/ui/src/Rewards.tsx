@@ -1,5 +1,12 @@
 import { Button, Heading, InputGroup, Stack } from '@chakra-ui/react';
-import { useErrorParser, useImportContract, useImportRewardsDistributors, useSynthetix } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import {
+  useErrorParser,
+  useImportContract,
+  useImportRewardsDistributors,
+  useSelectedCollateralType,
+  useSynthetix,
+} from '@synthetixio/react-sdk';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
@@ -7,7 +14,6 @@ import React from 'react';
 import { renderAmount } from './renderAmount';
 import { useDeposit } from './useDeposit';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 function ClaimRewards({
@@ -162,7 +168,8 @@ function ClaimRewards({
 }
 
 export function Rewards() {
-  const collateralType = useSelectedCollateralType();
+  const [params] = useParams();
+  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
   const poolId = useSelectedPoolId();
   const accountId = useSelectedAccountId();
 

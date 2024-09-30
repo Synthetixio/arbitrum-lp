@@ -1,13 +1,12 @@
 import { Button, Heading, Stack } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
+import { useCollateralTokens, useSelectedCollateralType } from '@synthetixio/react-sdk';
 import React from 'react';
-import { useCollateralTokens } from './useCollateralTokens';
-import { useSelectedCollateralType } from './useSelectedCollateralType';
 
 export function CollateralTokens() {
   const [params, setParams] = useParams();
   const collateralTokens = useCollateralTokens();
-  const selectedCollateralType = useSelectedCollateralType();
+  const selectedCollateralType = useSelectedCollateralType({ collateralType: params.collateralType });
 
   return (
     <Stack gap={3}>
@@ -15,7 +14,7 @@ export function CollateralTokens() {
         Vaults
       </Heading>
       <Stack flexDirection="row" gap={3}>
-        {collateralTokens?.map((token: { address: string; symbol: string }) => (
+        {collateralTokens.map((token: { address: string; symbol: string }) => (
           <Button
             key={token.address}
             type="button"
