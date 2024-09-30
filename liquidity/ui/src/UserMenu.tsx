@@ -1,25 +1,30 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { Button, Menu, MenuButton, MenuDivider, MenuItem, MenuItemOption, MenuList, MenuOptionGroup } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
+import { useAccounts, useSelectedAccountId } from '@synthetixio/react-sdk';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import React from 'react';
 import { renderAccountId } from './renderAccountId';
-import { useAccounts } from './useAccounts';
 import { useCreateAccount } from './useCreateAccount';
-import { useSelectedAccountId } from './useSelectedAccountId';
+import { useProvider } from './useProvider';
 
 export function UserMenu() {
   const [{ chains, connectedChain }, setChain] = useSetChain();
   const [{ wallet }, connect, disconnect] = useConnectWallet();
-
+  const walletAddress = wallet?.accounts?.[0]?.address;
   const isChainSupported = React.useMemo(() => {
     return chains.some((chain) => chain.id === connectedChain?.id);
   }, [chains, connectedChain?.id]);
 
   const [params, setParams] = useParams();
-  const { data: accounts } = useAccounts();
+  const provider = useProvider();
+  const { data: accounts } = useAccounts({ provider, walletAddress });
   const createAccount = useCreateAccount();
-  const accountId = useSelectedAccountId();
+  const accountId = useSelectedAccountId({
+    accountId: params.accountId,
+    provider,
+    walletAddress,
+  });
 
   return (
     <>

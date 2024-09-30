@@ -12,13 +12,13 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useSelectedCollateralType } from '@synthetixio/react-sdk';
+import { useSelectedAccountId, useSelectedCollateralType } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
-import { useSelectedAccountId } from './useSelectedAccountId';
+import { useProvider } from './useProvider';
 import { useTokenBalance } from './useTokenBalance';
 import { useWithdraw } from './useWithdraw';
 import { useWithdrawTimer } from './useWithdrawTimer';
@@ -28,8 +28,12 @@ export function WithdrawCollateral() {
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const [params] = useParams();
-
-  const accountId = useSelectedAccountId();
+  const provider = useProvider();
+  const accountId = useSelectedAccountId({
+    accountId: params.accountId,
+    provider,
+    walletAddress,
+  });
   const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
 
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({

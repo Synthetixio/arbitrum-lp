@@ -11,22 +11,28 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useImportContract, useImportSystemToken } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import { useImportContract, useImportSystemToken, useSelectedAccountId } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useDeposit } from './useDeposit';
-import { useSelectedAccountId } from './useSelectedAccountId';
+import { useProvider } from './useProvider';
 import { useTokenAllowance } from './useTokenAllowance';
 import { useTokenBalance } from './useTokenBalance';
 
 export function DepositUsd() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-
-  const accountId = useSelectedAccountId();
+  const [params] = useParams();
+  const provider = useProvider();
+  const accountId = useSelectedAccountId({
+    accountId: params.accountId,
+    provider,
+    walletAddress,
+  });
   const { data: systemToken } = useImportSystemToken();
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');

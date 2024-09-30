@@ -1,11 +1,17 @@
 import { useParams } from '@snx-v3/useParams';
-import { useAllPriceFeeds, useErrorParser, useImportContract, usePerpsSelectedAccountId, useSynthetix } from '@synthetixio/react-sdk';
+import {
+  useAllPriceFeeds,
+  useErrorParser,
+  useImportContract,
+  usePerpsGetOrder,
+  usePerpsSelectedAccountId,
+  useSynthetix,
+} from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { fetchStrictPriceUpdateTxn } from './fetchStrictPriceUpdateTxn';
 import { settleOrder } from './settleOrder';
 import { settleOrderWithPriceUpdate } from './settleOrderWithPriceUpdate';
-import { usePerpsGetOrder } from './usePerpsGetOrder';
 import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
 import { useProvider } from './useProvider';
 
@@ -17,7 +23,10 @@ export function usePerpsSettleOrder({ settlementStrategyId }: { settlementStrate
   const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress, perpsAccountId: params.perpsAccountId });
   const { data: priceIds } = useAllPriceFeeds();
   const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ settlementStrategyId });
-  const { data: order } = usePerpsGetOrder();
+  const { data: order } = usePerpsGetOrder({
+    provider,
+    perpsAccountId,
+  });
   const { data: PerpsMarketProxyContract } = useImportContract('PerpsMarketProxy');
   const { data: MulticallContract } = useImportContract('Multicall');
   const { data: PythERC7412WrapperContract } = useImportContract('PythERC7412Wrapper');

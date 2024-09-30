@@ -12,23 +12,29 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useImportSystemToken, useSelectedCollateralType } from '@synthetixio/react-sdk';
+import { useImportSystemToken, useSelectedAccountId, useSelectedCollateralType, useSelectedPoolId } from '@synthetixio/react-sdk';
+import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useBurnUsd } from './useBurnUsd';
 import { usePositionDebt } from './usePositionDebt';
-import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedPoolId } from './useSelectedPoolId';
+import { useProvider } from './useProvider';
 
 export function BurnUsd() {
-  const accountId = useSelectedAccountId();
-
   const [params] = useParams();
+  const provider = useProvider();
 
   const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
-  const poolId = useSelectedPoolId();
+  const poolId = useSelectedPoolId({ poolId: params.poolId });
+  const [{ wallet }] = useConnectWallet();
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const accountId = useSelectedAccountId({
+    accountId: params.accountId,
+    provider,
+    walletAddress,
+  });
 
   const { data: positionDebt } = usePositionDebt({
     accountId,

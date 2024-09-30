@@ -5,7 +5,9 @@ import {
   fetchTokenBalance,
   useErrorParser,
   useImportContract,
+  useSelectedAccountId,
   useSelectedCollateralType,
+  useSelectedPoolId,
   useSynthetix,
 } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,8 +15,6 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
 import { depositCollateral } from './depositCollateral';
 import { useProvider } from './useProvider';
-import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
   const { chainId } = useSynthetix();
@@ -24,10 +24,14 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
 
   const [params] = useParams();
 
-  const accountId = useSelectedAccountId();
   const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
-  const poolId = useSelectedPoolId();
+  const poolId = useSelectedPoolId({ poolId: params.poolId });
   const provider = useProvider();
+  const accountId = useSelectedAccountId({
+    accountId: params.accountId,
+    provider,
+    walletAddress,
+  });
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
@@ -111,6 +115,9 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
             tokenAddress: collateralType?.address,
           },
         ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [chainId, 'Balance', { tokenAddress: collateralType?.address, ownerAddress: walletAddress }],
       });
 
       onSuccess();

@@ -4,7 +4,9 @@ import {
   useErrorParser,
   useImportContract,
   useImportRewardsDistributors,
+  useSelectedAccountId,
   useSelectedCollateralType,
+  useSelectedPoolId,
   useSynthetix,
 } from '@synthetixio/react-sdk';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -13,8 +15,7 @@ import { ethers } from 'ethers';
 import React from 'react';
 import { renderAmount } from './renderAmount';
 import { useDeposit } from './useDeposit';
-import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedPoolId } from './useSelectedPoolId';
+import { useProvider } from './useProvider';
 
 function ClaimRewards({
   accountId,
@@ -170,8 +171,15 @@ function ClaimRewards({
 export function Rewards() {
   const [params] = useParams();
   const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
-  const poolId = useSelectedPoolId();
-  const accountId = useSelectedAccountId();
+  const poolId = useSelectedPoolId({ poolId: params.poolId });
+  const provider = useProvider();
+  const [{ wallet }] = useConnectWallet();
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const accountId = useSelectedAccountId({
+    accountId: params.accountId,
+    provider,
+    walletAddress,
+  });
 
   const { data: rewardsDistributors } = useImportRewardsDistributors();
   return (

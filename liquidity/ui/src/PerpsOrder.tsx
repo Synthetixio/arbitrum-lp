@@ -1,14 +1,24 @@
 import { Alert, AlertIcon, Box, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
-import { useImportExtras, useImportSystemToken } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import { useImportExtras, useImportSystemToken, usePerpsGetOrder, usePerpsSelectedAccountId } from '@synthetixio/react-sdk';
+import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 import { PerpsSettleOrder } from './PerpsSettleOrder';
 import { renderAmount } from './renderAmount';
-import { usePerpsGetOrder } from './usePerpsGetOrder';
 import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
+import { useProvider } from './useProvider';
 
 export function PerpsOrder() {
-  const order = usePerpsGetOrder();
+  const [{ wallet }] = useConnectWallet();
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const provider = useProvider();
+  const [params] = useParams();
+  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress, perpsAccountId: params.perpsAccountId });
+  const order = usePerpsGetOrder({
+    provider,
+    perpsAccountId,
+  });
   const { data: systemToken } = useImportSystemToken();
   const { data: extras } = useImportExtras();
   const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ settlementStrategyId: extras?.eth_pyth_settlement_strategy });

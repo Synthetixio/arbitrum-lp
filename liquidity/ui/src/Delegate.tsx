@@ -12,23 +12,33 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useSelectedCollateralType } from '@synthetixio/react-sdk';
+import {
+  useDelegateCollateral,
+  usePositionCollateral,
+  useSelectedAccountId,
+  useSelectedCollateralType,
+  useSelectedPoolId,
+} from '@synthetixio/react-sdk';
+import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
-import { useDelegateCollateral } from './useDelegateCollateral';
-import { usePositionCollateral } from './usePositionCollateral';
-import { useSelectedAccountId } from './useSelectedAccountId';
-import { useSelectedPoolId } from './useSelectedPoolId';
+import { useProvider } from './useProvider';
 
 export function Delegate() {
-  const accountId = useSelectedAccountId();
-
   const [params] = useParams();
+  const provider = useProvider();
+  const [{ wallet }] = useConnectWallet();
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const accountId = useSelectedAccountId({
+    accountId: params.accountId,
+    provider,
+    walletAddress,
+  });
 
   const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
-  const poolId = useSelectedPoolId();
+  const poolId = useSelectedPoolId({ poolId: params.poolId });
 
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
     accountId,
@@ -36,6 +46,7 @@ export function Delegate() {
   });
 
   const { data: positionCollateral } = usePositionCollateral({
+    provider,
     accountId,
     poolId,
     tokenAddress: collateralType?.address,
@@ -45,6 +56,11 @@ export function Delegate() {
   const parsedAmount = parseAmount(value, collateralType?.decimals);
 
   const delegate = useDelegateCollateral({
+    provider,
+    walletAddress,
+    collateralTypeTokenAddress: collateralType?.address,
+    poolIdFromParams: params.poolId,
+    accountIdFromParams: params.accountId,
     onSuccess: () => setValue(''),
   });
 

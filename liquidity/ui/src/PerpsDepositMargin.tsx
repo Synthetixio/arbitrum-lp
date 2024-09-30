@@ -1,18 +1,25 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Text } from '@chakra-ui/react';
-import { useImportContract, useImportSystemToken } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import { useImportContract, useImportSystemToken, usePerpsGetCollateralAmount, usePerpsSelectedAccountId } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { usePerpsGetCollateralAmount } from './usePerpsGetCollateralAmount';
 import { usePerpsModifyCollateral } from './usePerpsModifyCollateral';
+import { useProvider } from './useProvider';
 import { useTokenAllowance } from './useTokenAllowance';
 import { useTokenBalance } from './useTokenBalance';
 
 export function PerpsDepositMargin() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-  const { data: collateralAmount } = usePerpsGetCollateralAmount();
+  const provider = useProvider();
+  const [params] = useParams();
+  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress, perpsAccountId: params.perpsAccountId });
+  const { data: collateralAmount } = usePerpsGetCollateralAmount({
+    provider,
+    perpsAccountId,
+  });
   const modifyCollateral = usePerpsModifyCollateral();
   const { data: systemToken } = useImportSystemToken();
   const { data: PerpsMarketProxyContract } = useImportContract('PerpsMarketProxy');

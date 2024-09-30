@@ -1,10 +1,21 @@
+import { useParams } from '@snx-v3/useParams';
+import { useSelectedAccountId } from '@synthetixio/react-sdk';
+import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { useAccountLastInteraction } from './useAccountLastInteraction';
 import { useAccountTimeoutWithdraw } from './useAccountTimeoutWithdraw';
-import { useSelectedAccountId } from './useSelectedAccountId';
+import { useProvider } from './useProvider';
 
 export function useWithdrawTimer() {
-  const accountId = useSelectedAccountId();
+  const provider = useProvider();
+  const [params] = useParams();
+  const [{ wallet }] = useConnectWallet();
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const accountId = useSelectedAccountId({
+    accountId: params.accountId,
+    provider,
+    walletAddress,
+  });
   const { data: accountTimeoutWithdraw } = useAccountTimeoutWithdraw();
   const { data: accountLastInteraction } = useAccountLastInteraction({
     accountId,

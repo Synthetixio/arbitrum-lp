@@ -83,11 +83,11 @@ export function usePerpsModifyCollateral() {
       errorParser(error);
       return false;
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [
           chainId,
-          'GetPerpsCollateralAmount',
+          'PerpsGetCollateralAmount',
           { PerpsMarketProxy: PerpsMarketProxyContract?.address },
           { collateral: USDx_MARKET_ID },
           perpsAccountId,

@@ -1,8 +1,8 @@
-import { useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
+import { fetchAccountAvailableCollateral, useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
 import { useQuery } from '@tanstack/react-query';
-import { useConnectWallet, useSetChain } from '@web3-onboard/react';
+import { useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
-import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
+import { useProvider } from './useProvider';
 
 export function useAccountAvailableCollateral({
   accountId,
@@ -13,14 +13,14 @@ export function useAccountAvailableCollateral({
 }) {
   const { chainId } = useSynthetix();
   const errorParser = useErrorParser();
+  const provider = useProvider();
   const [{ connectedChain }] = useSetChain();
-  const [{ wallet }] = useConnectWallet();
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
   const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
 
   return useQuery({
-    enabled: Boolean(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && tokenAddress),
+    enabled: Boolean(isChainReady && CoreProxyContract?.address && provider && accountId && tokenAddress),
     queryKey: [
       chainId,
       'AccountAvailableCollateral',
@@ -28,12 +28,12 @@ export function useAccountAvailableCollateral({
       { accountId: accountId?.toHexString(), tokenAddress },
     ],
     queryFn: async () => {
-      if (!(isChainReady && CoreProxyContract?.address && wallet?.provider && accountId && tokenAddress)) {
+      if (!(isChainReady && CoreProxyContract?.address && provider && accountId && tokenAddress)) {
         throw 'OMFG';
       }
 
       return fetchAccountAvailableCollateral({
-        wallet,
+        provider,
         CoreProxyContract,
         accountId,
         tokenAddress,
