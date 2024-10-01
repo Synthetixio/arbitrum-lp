@@ -4710,7 +4710,7 @@ __metadata:
     "@safe-global/safe-apps-provider": "npm:^0.18.3"
     "@safe-global/safe-apps-sdk": "npm:^9.1.0"
     "@snx-v3/useParams": "workspace:*"
-    "@synthetixio/react-sdk": "npm:^0.0.10"
+    "@synthetixio/react-sdk": "npm:^0.0.11"
     "@synthetixio/safe-import": "workspace:*"
     "@tanstack/react-query": "npm:^5.56.2"
     "@tanstack/react-query-devtools": "npm:^5.58.0"
@@ -4999,9 +4999,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@synthetixio/react-sdk@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "@synthetixio/react-sdk@npm:0.0.10"
+"@synthetixio/react-sdk@npm:^0.0.11":
+  version: 0.0.11
+  resolution: "@synthetixio/react-sdk@npm:0.0.11"
   dependencies:
     "@pythnetwork/pyth-evm-js": "npm:^1.56.1"
     "@synthetixio/v3-contracts": "github:synthetixio/v3-contracts#master"
@@ -5010,7 +5010,7 @@ __metadata:
     ethers: "npm:^5.7.2"
     react: "npm:^18.3.1"
     viem: "npm:^2.17.1"
-  checksum: 10/8847514d008e34af44d19de8362963ff934013b3104935b03f1a5aacfa7d187192032f9ad38a434d04c2e8a7e5f7f9a488ae95ace25db75d8de7fa5e1c770d7f
+  checksum: 10/4303c2ec1fcdb4269ca28f8690b1f8b79941d6be82b34d06a3328791e9f51f985540fd6b67a000b77d545b7c09d104c307dd8342c4cd0115b2f6d782fcbdc148
   languageName: node
   linkType: hard
 
@@ -5023,9 +5023,9 @@ __metadata:
   linkType: soft
 
 "@synthetixio/v3-contracts@github:synthetixio/v3-contracts#master":
-  version: 6.11.0
-  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=7d40da8b50f7709a6f1770cd9f89d784cd4fef49"
-  checksum: 10/7511b20cdd8a05ed31d373ea134230397bee856be6f2c3ceb2b99674d132b7739a603ec29f5261ca366de2ea0d94838508239287911eb1b3326bed5ced4d2f3a
+  version: 6.12.0
+  resolution: "@synthetixio/v3-contracts@https://github.com/synthetixio/v3-contracts.git#commit=75161474646f45dd10e000773e7801d2a9be88ae"
+  checksum: 10/c3cf33ac0ef8fffe378218dc7bea9a61b91619c1238a8e82d7f255f13ae3c4bfd21df9f4ea90ac74398d094126475db216b3a50ad2e0b081f38deeaa9a9b72a0
   languageName: node
   linkType: hard
 
