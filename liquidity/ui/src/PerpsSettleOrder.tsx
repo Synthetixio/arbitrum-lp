@@ -16,7 +16,7 @@ export function PerpsSettleOrder({ commitmentTime }: { commitmentTime: ethers.Bi
   const settleOrder = usePerpsSettleOrder({
     provider,
     walletAddress,
-    market: params.market,
+    perpsMarketId: params.market,
     perpsAccountIdFromParams: params.perpsAccountId,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,
   });

@@ -13,7 +13,7 @@ export function usePriceUpdateTimer({
 }) {
   const [params] = useParams();
   const provider = useProvider();
-  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ provider, market: params.market, settlementStrategyId });
+  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ provider, perpsMarketId: params.market, settlementStrategyId });
 
   const settlementWindowDuration = settlementStrategy?.settlementWindowDuration ?? ethers.BigNumber.from(0);
   const unlockUnixtime = commitmentTime ? commitmentTime.add(settlementWindowDuration) : ethers.BigNumber.from(0);

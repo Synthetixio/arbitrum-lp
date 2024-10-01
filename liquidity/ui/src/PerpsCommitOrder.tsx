@@ -50,7 +50,7 @@ export function PerpsCommitOrder() {
 
   const { data: settlementStrategy } = usePerpsGetSettlementStrategy({
     provider,
-    market: params.market,
+    perpsMarketId: params.market,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,
   });
 
@@ -58,7 +58,7 @@ export function PerpsCommitOrder() {
 
   const commitOrder = usePerpsCommitOrder({
     perpsAccountId,
-    marketId: params.market,
+    perpsMarketId: params.market,
     provider,
     walletAddress,
     feedId: settlementStrategy?.feedId,

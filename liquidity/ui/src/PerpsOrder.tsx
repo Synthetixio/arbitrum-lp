@@ -28,7 +28,7 @@ export function PerpsOrder() {
   const { data: extras } = useImportExtras();
   const { data: settlementStrategy } = usePerpsGetSettlementStrategy({
     provider,
-    market: params.market,
+    perpsMarketId: params.market,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,
   });
 

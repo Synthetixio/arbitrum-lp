@@ -14,7 +14,7 @@ export function PerpsOpenPosition() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
   const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress, perpsAccountId: params.perpsAccountId });
-  const openPosition = usePerpsGetOpenPosition({ provider, walletAddress, perpsAccountId, market: params.market });
+  const openPosition = usePerpsGetOpenPosition({ provider, walletAddress, perpsAccountId, perpsMarketId: params.market });
   const { data: systemToken } = useImportSystemToken();
 
   if (openPosition.isPending) {
