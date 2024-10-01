@@ -1,17 +1,20 @@
 import { Alert, AlertIcon, Box, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useImportSystemToken, usePerpsMetadata } from '@synthetixio/react-sdk';
+import { useImportSystemToken, usePerpsGetOpenPosition, usePerpsMetadata, usePerpsSelectedAccountId } from '@synthetixio/react-sdk';
+import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 import { renderAmount } from './renderAmount';
-import { usePerpsGetOpenPosition } from './usePerpsGetOpenPosition';
 import { useProvider } from './useProvider';
 
 export function PerpsOpenPosition() {
   const [params] = useParams();
   const provider = useProvider();
   const market = usePerpsMetadata({ provider, perpsMarketId: params.market ? ethers.BigNumber.from(params.market) : undefined });
-  const openPosition = usePerpsGetOpenPosition();
+  const [{ wallet }] = useConnectWallet();
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress, perpsAccountId: params.perpsAccountId });
+  const openPosition = usePerpsGetOpenPosition({ provider, walletAddress, perpsAccountId, market: params.market });
   const { data: systemToken } = useImportSystemToken();
 
   if (openPosition.isPending) {

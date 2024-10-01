@@ -1,12 +1,17 @@
 import { Alert, AlertIcon, Box, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useImportExtras, useImportSystemToken, usePerpsGetOrder, usePerpsSelectedAccountId } from '@synthetixio/react-sdk';
+import {
+  useImportExtras,
+  useImportSystemToken,
+  usePerpsGetOrder,
+  usePerpsGetSettlementStrategy,
+  usePerpsSelectedAccountId,
+} from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 import { PerpsSettleOrder } from './PerpsSettleOrder';
 import { renderAmount } from './renderAmount';
-import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
 import { useProvider } from './useProvider';
 
 export function PerpsOrder() {
@@ -21,7 +26,11 @@ export function PerpsOrder() {
   });
   const { data: systemToken } = useImportSystemToken();
   const { data: extras } = useImportExtras();
-  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ settlementStrategyId: extras?.eth_pyth_settlement_strategy });
+  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({
+    provider,
+    market: params.market,
+    settlementStrategyId: extras?.eth_pyth_settlement_strategy,
+  });
 
   if (order.isPending) {
     return (

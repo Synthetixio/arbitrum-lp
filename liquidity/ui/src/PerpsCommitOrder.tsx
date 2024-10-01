@@ -5,6 +5,7 @@ import {
   useImportSystemToken,
   usePerpsCommitOrder,
   usePerpsGetAvailableMargin,
+  usePerpsGetSettlementStrategy,
   usePerpsMetadata,
   usePerpsSelectedAccountId,
 } from '@synthetixio/react-sdk';
@@ -16,7 +17,6 @@ import { PerpsOrder } from './PerpsOrder';
 import { PerpsRequiredMargins } from './PerpsRequiredMargins';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
 import { useProvider } from './useProvider';
 
 export function PerpsCommitOrder() {
@@ -49,6 +49,8 @@ export function PerpsCommitOrder() {
   });
 
   const { data: settlementStrategy } = usePerpsGetSettlementStrategy({
+    provider,
+    market: params.market,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,
   });
 
