@@ -59,8 +59,8 @@ export function Delegate() {
     provider,
     walletAddress,
     collateralTypeTokenAddress: collateralType?.address,
-    poolIdFromParams: params.poolId,
-    accountIdFromParams: params.accountId,
+    poolId,
+    accountId,
     onSuccess: () => setValue(''),
   });
 
