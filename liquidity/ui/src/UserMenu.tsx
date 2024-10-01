@@ -1,12 +1,13 @@
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { Button, Menu, MenuButton, MenuDivider, MenuItem, MenuItemOption, MenuList, MenuOptionGroup } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useAccounts, useSelectedAccountId } from '@synthetixio/react-sdk';
+import { useAccounts } from '@synthetixio/react-sdk';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import React from 'react';
 import { renderAccountId } from './renderAccountId';
 import { useCreateAccount } from './useCreateAccount';
 import { useProvider } from './useProvider';
+import { useSelectedAccountId } from './useSelectedAccountId';
 
 export function UserMenu() {
   const [{ chains, connectedChain }, setChain] = useSetChain();
@@ -21,7 +22,6 @@ export function UserMenu() {
   const { data: accounts } = useAccounts({ provider, walletAddress });
   const createAccount = useCreateAccount();
   const accountId = useSelectedAccountId({
-    accountId: params.accountId,
     provider,
     walletAddress,
   });

@@ -11,36 +11,30 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useParams } from '@snx-v3/useParams';
-import {
-  useDelegateCollateral,
-  usePositionCollateral,
-  useSelectedAccountId,
-  useSelectedCollateralType,
-  useSelectedPoolId,
-} from '@synthetixio/react-sdk';
+import { useAccountAvailableCollateral, useDelegateCollateral, usePositionCollateral } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useProvider } from './useProvider';
+import { useSelectedAccountId } from './useSelectedAccountId';
+import { useSelectedCollateralType } from './useSelectedCollateralType';
+import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function Delegate() {
-  const [params] = useParams();
   const provider = useProvider();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
   const accountId = useSelectedAccountId({
-    accountId: params.accountId,
     provider,
     walletAddress,
   });
 
-  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
-  const poolId = useSelectedPoolId({ poolId: params.poolId });
+  const collateralType = useSelectedCollateralType();
+  const poolId = useSelectedPoolId();
 
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
+    provider,
     accountId,
     tokenAddress: collateralType?.address,
   });

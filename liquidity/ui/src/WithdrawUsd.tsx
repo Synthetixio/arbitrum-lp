@@ -11,36 +11,34 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useParams } from '@snx-v3/useParams';
-import { useImportSystemToken, useSelectedAccountId } from '@synthetixio/react-sdk';
+import { useAccountAvailableCollateral, useImportSystemToken, useTokenBalance } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useProvider } from './useProvider';
-import { useTokenBalance } from './useTokenBalance';
+import { useSelectedAccountId } from './useSelectedAccountId';
 import { useWithdraw } from './useWithdraw';
 import { useWithdrawTimer } from './useWithdrawTimer';
 
 export function WithdrawUsd() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-  const [params] = useParams();
   const provider = useProvider();
   const accountId = useSelectedAccountId({
-    accountId: params.accountId,
     provider,
     walletAddress,
   });
   const { data: systemToken } = useImportSystemToken();
 
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
+    provider,
     accountId,
     tokenAddress: systemToken?.address,
   });
 
   const { data: currentBalance } = useTokenBalance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: systemToken?.address,
   });

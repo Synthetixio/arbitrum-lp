@@ -1,12 +1,13 @@
 import { Button, Heading, Stack } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { useCollateralTokens, useSelectedCollateralType } from '@synthetixio/react-sdk';
+import { useCollateralTokens } from '@synthetixio/react-sdk';
 import React from 'react';
+import { useSelectedCollateralType } from './useSelectedCollateralType';
 
 export function CollateralTokens() {
   const [params, setParams] = useParams();
   const collateralTokens = useCollateralTokens();
-  const selectedCollateralType = useSelectedCollateralType({ collateralType: params.collateralType });
+  const selectedCollateralType = useSelectedCollateralType();
 
   return (
     <Stack gap={3}>

@@ -1,13 +1,9 @@
-import { useParams } from '@snx-v3/useParams';
 import {
   fetchApproveToken,
   fetchTokenAllowance,
   fetchTokenBalance,
   useErrorParser,
   useImportContract,
-  useSelectedAccountId,
-  useSelectedCollateralType,
-  useSelectedPoolId,
   useSynthetix,
 } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,6 +11,9 @@ import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
 import { depositCollateral } from './depositCollateral';
 import { useProvider } from './useProvider';
+import { useSelectedAccountId } from './useSelectedAccountId';
+import { useSelectedCollateralType } from './useSelectedCollateralType';
+import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
   const { chainId } = useSynthetix();
@@ -22,13 +21,10 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
-  const [params] = useParams();
-
-  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
-  const poolId = useSelectedPoolId({ poolId: params.poolId });
+  const collateralType = useSelectedCollateralType();
+  const poolId = useSelectedPoolId();
   const provider = useProvider();
   const accountId = useSelectedAccountId({
-    accountId: params.accountId,
     provider,
     walletAddress,
   });

@@ -43,4 +43,4 @@ const settleOrderTxn = {
 
 Invoke the `settleOrder` (`PerpsMarketProxy.settleOrder(perpsAccountId)`) function.
 
-After successful execution, be sure to refresh the cache for `PerpsMarketProxy.getOrder(perpsAccountId)` and call to update the status of the previously opened order. Also, you need to refresh the cache and call `PerpsMarketProxy.getOpenPosition(perpsAccountId, params.market)` to update the UI and show the user the details of the open position.
+After successful execution, be sure to refresh the cache for `PerpsMarketProxy.getOrder(perpsAccountId)` and call to update the status of the previously opened order. Also, you need to refresh the cache and call `PerpsMarketProxy.getOpenPosition(perpsAccountId, params.perpsMarketId)` to update the UI and show the user the details of the open position.

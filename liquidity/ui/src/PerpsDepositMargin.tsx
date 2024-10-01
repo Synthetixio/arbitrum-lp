@@ -1,35 +1,44 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Text } from '@chakra-ui/react';
-import { useParams } from '@snx-v3/useParams';
-import { useImportContract, useImportSystemToken, usePerpsGetCollateralAmount, usePerpsSelectedAccountId } from '@synthetixio/react-sdk';
+import {
+  useImportContract,
+  useImportSystemToken,
+  usePerpsGetCollateralAmount,
+  usePerpsModifyCollateral,
+  useTokenAllowance,
+  useTokenBalance,
+} from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { usePerpsModifyCollateral } from './usePerpsModifyCollateral';
+import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 import { useProvider } from './useProvider';
-import { useTokenAllowance } from './useTokenAllowance';
-import { useTokenBalance } from './useTokenBalance';
 
 export function PerpsDepositMargin() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = useProvider();
-  const [params] = useParams();
-  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress, perpsAccountId: params.perpsAccountId });
+  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress });
   const { data: collateralAmount } = usePerpsGetCollateralAmount({
     provider,
     perpsAccountId,
   });
-  const modifyCollateral = usePerpsModifyCollateral();
+  const modifyCollateral = usePerpsModifyCollateral({
+    provider,
+    walletAddress,
+    perpsAccountId,
+  });
   const { data: systemToken } = useImportSystemToken();
   const { data: PerpsMarketProxyContract } = useImportContract('PerpsMarketProxy');
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, 18);
   const { data: currentBalance } = useTokenBalance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: systemToken?.address,
   });
   const { data: currentAllowance } = useTokenAllowance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: systemToken?.address,
     spenderAddress: PerpsMarketProxyContract?.address,

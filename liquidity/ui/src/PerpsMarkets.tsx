@@ -47,7 +47,7 @@ function MarketRow({
 
 export function PerpsMarkets() {
   const provider = useProvider();
-  const { data: marketIds } = usePerpsGetMarkets({ provider });
+  const { data: perpsMarketIds } = usePerpsGetMarkets({ provider });
   const [params, setParams] = useParams();
   const [selectedMarket, setSelectedMarket] = React.useState('Market');
 
@@ -69,13 +69,13 @@ export function PerpsMarkets() {
                 </Tr>
               </Thead>
               <Tbody>
-                {marketIds && marketIds.length > 0
-                  ? marketIds.map((marketId) => (
+                {perpsMarketIds && perpsMarketIds.length > 0
+                  ? perpsMarketIds.map((perpsMarketId) => (
                       <MarketRow
-                        key={marketId.toString()}
-                        perpsMarketId={marketId}
-                        onMarketSelect={(marketId: ethers.BigNumber, symbol?: string) => {
-                          setParams({ ...params, market: marketId.toString() });
+                        key={perpsMarketId.toString()}
+                        perpsMarketId={perpsMarketId}
+                        onMarketSelect={(perpsMarketId: ethers.BigNumber, symbol?: string) => {
+                          setParams({ ...params, perpsMarketId: perpsMarketId.toString() });
                           setSelectedMarket(symbol ? `${symbol}-PERP` : 'Market');
                         }}
                       />

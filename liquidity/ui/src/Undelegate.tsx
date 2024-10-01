@@ -11,29 +11,23 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useParams } from '@snx-v3/useParams';
-import {
-  useDelegateCollateral,
-  usePositionCollateral,
-  useSelectedAccountId,
-  useSelectedCollateralType,
-  useSelectedPoolId,
-} from '@synthetixio/react-sdk';
+import { useDelegateCollateral, usePositionCollateral } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useProvider } from './useProvider';
+import { useSelectedAccountId } from './useSelectedAccountId';
+import { useSelectedCollateralType } from './useSelectedCollateralType';
+import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function Undelegate() {
-  const [params] = useParams();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
-  const poolId = useSelectedPoolId({ poolId: params.poolId });
+  const collateralType = useSelectedCollateralType();
+  const poolId = useSelectedPoolId();
   const provider = useProvider();
   const accountId = useSelectedAccountId({
-    accountId: params.accountId,
     provider,
     walletAddress,
   });

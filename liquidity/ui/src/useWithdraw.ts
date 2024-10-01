@@ -1,11 +1,9 @@
-import { useParams } from '@snx-v3/useParams';
 import {
   fetchAccountAvailableCollateral,
   fetchPriceUpdateTxn,
   useAllPriceFeeds,
   useErrorParser,
   useImportContract,
-  useSelectedAccountId,
   useSynthetix,
 } from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -14,6 +12,7 @@ import type { ethers } from 'ethers';
 import { fetchWithdrawCollateral } from './fetchWithdrawCollateral';
 import { fetchWithdrawCollateralWithPriceUpdate } from './fetchWithdrawCollateralWithPriceUpdate';
 import { useProvider } from './useProvider';
+import { useSelectedAccountId } from './useSelectedAccountId';
 
 export function useWithdraw({
   tokenAddress,
@@ -30,9 +29,7 @@ export function useWithdraw({
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
-  const [params] = useParams();
   const accountId = useSelectedAccountId({
-    accountId: params.accountId,
     provider,
     walletAddress,
   });
