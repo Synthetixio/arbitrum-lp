@@ -19,7 +19,7 @@ function ClaimRewards({
     address: string;
     name: string;
     poolId: string;
-    collateralType: {
+    collateralType?: {
       address: string;
       symbol: string;
       name: string;
@@ -71,7 +71,7 @@ function ClaimRewards({
       const availableRewards = await CoreProxy.callStatic.claimRewards(
         accountId,
         rewardsDistributor.poolId,
-        rewardsDistributor.collateralType.address,
+        rewardsDistributor.collateralType?.address ?? ethers.constants.AddressZero,
         rewardsDistributor.address
       );
       console.timeEnd('useAvailableRewards');
@@ -97,7 +97,7 @@ function ClaimRewards({
         //
         accountId,
         rewardsDistributor.poolId,
-        rewardsDistributor.collateralType.address,
+        rewardsDistributor.collateralType?.address ?? ethers.constants.AddressZero,
         rewardsDistributor.address,
       ];
       console.log({ claimRewardsTxnArgs });
@@ -156,7 +156,7 @@ function ClaimRewards({
     <Button type="button" isLoading={claim.isPending} isDisabled={!rewardsAmount?.gt(0)} onClick={() => claimRewards.mutate()}>
       {rewardsAmount?.gt(0)
         ? `Claim ${renderAmount(rewardsAmount, rewardsDistributor.payoutToken)}`
-        : `No ${rewardsDistributor.payoutToken.symbol} rewards available for ${rewardsDistributor.collateralType.symbol}`}
+        : `No ${rewardsDistributor.payoutToken.symbol} rewards available`}
     </Button>
   );
 }
@@ -176,7 +176,7 @@ export function Rewards() {
         {collateralType && rewardsDistributors && poolId && accountId ? (
           rewardsDistributors
             .filter((rd) => rd.collateralType)
-            .filter((rd) => rd.collateralType.address.toLowerCase() === collateralType.address.toLowerCase() && poolId.eq(rd.poolId))
+            .filter((rd) => rd.collateralType?.address.toLowerCase() === collateralType.address.toLowerCase() && poolId.eq(rd.poolId))
             .map((rd) => <ClaimRewards key={rd.address} rewardsDistributor={rd} accountId={accountId} />)
         ) : (
           <Button type="button" isDisabled>
