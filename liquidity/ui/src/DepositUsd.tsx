@@ -11,38 +11,45 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useImportContract, useImportSystemToken } from '@synthetixio/react-sdk';
+import {
+  useAccountAvailableCollateral,
+  useImportContract,
+  useImportSystemToken,
+  useTokenAllowance,
+  useTokenBalance,
+} from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useAccountAvailableCollateral } from './useAccountAvailableCollateral';
 import { useDeposit } from './useDeposit';
+import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
-import { useTokenAllowance } from './useTokenAllowance';
-import { useTokenBalance } from './useTokenBalance';
 
 export function DepositUsd() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-
+  const provider = useProvider();
   const accountId = useSelectedAccountId();
   const { data: systemToken } = useImportSystemToken();
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
 
   const { data: currentBalance } = useTokenBalance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: systemToken?.address,
   });
 
   const { data: currentAllowance } = useTokenAllowance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: systemToken?.address,
     spenderAddress: CoreProxyContract?.address,
   });
 
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
+    provider,
     accountId,
     tokenAddress: systemToken?.address,
   });

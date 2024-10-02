@@ -1,11 +1,17 @@
 import { Alert, AlertIcon, Box, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
-import { useImportSystemToken } from '@synthetixio/react-sdk';
+import { useImportSystemToken, usePerpsGetRequiredMargins } from '@synthetixio/react-sdk';
 import React from 'react';
 import { renderAmount } from './renderAmount';
-import { usePerpsGetRequiredMargins } from './usePerpsGetRequiredMargins';
+import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
+import { useProvider } from './useProvider';
 
 export function PerpsRequiredMargins() {
-  const requiredMargins = usePerpsGetRequiredMargins();
+  const provider = useProvider();
+  const perpsAccountId = usePerpsSelectedAccountId();
+  const requiredMargins = usePerpsGetRequiredMargins({
+    provider,
+    perpsAccountId,
+  });
   const { data: systemToken } = useImportSystemToken();
 
   if (requiredMargins.isPending) {

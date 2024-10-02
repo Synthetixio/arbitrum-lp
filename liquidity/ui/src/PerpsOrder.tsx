@@ -1,17 +1,28 @@
 import { Alert, AlertIcon, Box, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
-import { useImportExtras, useImportSystemToken } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import { useImportExtras, useImportSystemToken, usePerpsGetOrder, usePerpsGetSettlementStrategy } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
 import { PerpsSettleOrder } from './PerpsSettleOrder';
 import { renderAmount } from './renderAmount';
-import { usePerpsGetOrder } from './usePerpsGetOrder';
-import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
+import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
+import { useProvider } from './useProvider';
 
 export function PerpsOrder() {
-  const order = usePerpsGetOrder();
+  const provider = useProvider();
+  const [params] = useParams();
+  const perpsAccountId = usePerpsSelectedAccountId();
+  const order = usePerpsGetOrder({
+    provider,
+    perpsAccountId,
+  });
   const { data: systemToken } = useImportSystemToken();
   const { data: extras } = useImportExtras();
-  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ settlementStrategyId: extras?.eth_pyth_settlement_strategy });
+  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({
+    provider,
+    perpsMarketId: params.perpsMarketId,
+    settlementStrategyId: extras?.eth_pyth_settlement_strategy,
+  });
 
   if (order.isPending) {
     return (

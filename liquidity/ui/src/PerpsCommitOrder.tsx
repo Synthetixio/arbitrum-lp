@@ -5,8 +5,8 @@ import {
   useImportSystemToken,
   usePerpsCommitOrder,
   usePerpsGetAvailableMargin,
+  usePerpsGetSettlementStrategy,
   usePerpsMetadata,
-  usePerpsSelectedAccountId,
 } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
@@ -16,7 +16,7 @@ import { PerpsOrder } from './PerpsOrder';
 import { PerpsRequiredMargins } from './PerpsRequiredMargins';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
+import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 import { useProvider } from './useProvider';
 
 export function PerpsCommitOrder() {
@@ -33,22 +33,19 @@ export function PerpsCommitOrder() {
   const provider = useProvider();
   const market = usePerpsMetadata({
     provider,
-    perpsMarketId: params.market ? ethers.BigNumber.from(params.market) : undefined,
+    perpsMarketId: params.perpsMarketId ? ethers.BigNumber.from(params.perpsMarketId) : undefined,
   });
+
+  const perpsAccountId = usePerpsSelectedAccountId();
 
   const availableMargin = usePerpsGetAvailableMargin({
     provider,
-    walletAddress,
-    perpsAccountId: params.perpsAccountId,
-  });
-
-  const perpsAccountId = usePerpsSelectedAccountId({
-    provider,
-    walletAddress,
-    perpsAccountId: params.perpsAccountId,
+    perpsAccountId,
   });
 
   const { data: settlementStrategy } = usePerpsGetSettlementStrategy({
+    provider,
+    perpsMarketId: params.perpsMarketId,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,
   });
 
@@ -56,7 +53,7 @@ export function PerpsCommitOrder() {
 
   const commitOrder = usePerpsCommitOrder({
     perpsAccountId,
-    marketId: params.market,
+    perpsMarketId: params.perpsMarketId,
     provider,
     walletAddress,
     feedId: settlementStrategy?.feedId,

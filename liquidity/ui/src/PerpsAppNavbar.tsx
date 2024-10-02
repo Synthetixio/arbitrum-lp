@@ -20,11 +20,11 @@ import React, { useEffect, useState } from 'react';
 import { renderAccountId } from './renderAccountId';
 import './i18n/config';
 import { useParams } from '@snx-v3/useParams';
-import { usePerpsAccounts, usePerpsSelectedAccountId } from '@synthetixio/react-sdk';
+import { usePerpsAccounts, usePerpsCreateAccount } from '@synthetixio/react-sdk';
 import { useTranslation } from 'react-i18next';
 import { ChainMenu } from './ChainMenu';
 import { PerpsMarkets } from './PerpsMarkets';
-import { usePerpsCreateAccount } from './usePerpsCreateAccount';
+import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 import { useProvider } from './useProvider';
 
 interface Account {
@@ -70,7 +70,7 @@ const AccountHandler = () => {
   const provider = useProvider();
   const { data: accounts } = usePerpsAccounts({ provider, walletAddress });
   const [params, setParams] = useParams();
-  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress, perpsAccountId: params.perpsAccountId });
+  const perpsAccountId = usePerpsSelectedAccountId();
 
   const { t } = useTranslation();
 
@@ -148,7 +148,15 @@ const CreateAccount = () => {
   const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = useProvider();
   const { data: accounts } = usePerpsAccounts({ provider, walletAddress });
-  const createAccount = usePerpsCreateAccount();
+  const [params, setParams] = useParams();
+  const handleAccountCreated = (accountId: string) => {
+    setParams({ ...params, perpsAccountId: accountId });
+  };
+  const createAccount = usePerpsCreateAccount({
+    provider,
+    walletAddress,
+    handleAccountCreated,
+  });
   const { t } = useTranslation();
 
   if (accounts && !accounts.length) {

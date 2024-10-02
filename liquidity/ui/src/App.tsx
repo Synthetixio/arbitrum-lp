@@ -1,6 +1,6 @@
 import { ChakraProvider, Container, Flex, Link, useColorMode, useDisclosure } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
-import { SynthetixProvider, useErrorParser, useSynthetix } from '@synthetixio/react-sdk';
+import { SynthetixProvider, useAccounts, useErrorParser, useSynthetix } from '@synthetixio/react-sdk';
 // import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -35,7 +35,7 @@ import GithubIcon from './github.svg';
 import LogoIcon from './logo-icon.svg';
 import Logo from './logo.svg';
 import { theme } from './theme';
-import { useAccounts } from './useAccounts';
+import { useProvider } from './useProvider';
 import WarpcastIcon from './warpcast.svg';
 import XIcon from './x.svg';
 import YoutubeIcon from './youtube.svg';
@@ -247,7 +247,9 @@ function Router() {
 
   // Initial account pre-selection
   const [params, setParams] = useParams();
-  const { data: accounts } = useAccounts();
+  const provider = useProvider();
+  const walletAddress = wallet?.accounts?.[0]?.address;
+  const { data: accounts } = useAccounts({ provider, walletAddress });
   React.useEffect(() => {
     if (!accounts) {
       return;

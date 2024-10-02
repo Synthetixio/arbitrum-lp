@@ -1,13 +1,27 @@
 import { Alert, AlertIcon, Box, Button, Spinner, Text } from '@chakra-ui/react';
-import { useImportExtras } from '@synthetixio/react-sdk';
+import { useParams } from '@snx-v3/useParams';
+import { useImportExtras, usePerpsSettleOrder } from '@synthetixio/react-sdk';
+import { useConnectWallet } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
 import React from 'react';
-import { usePerpsSettleOrder } from './usePerpsSettleOrder';
+import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 import { usePriceUpdateTimer } from './usePriceUpdateTimer';
+import { useProvider } from './useProvider';
 
 export function PerpsSettleOrder({ commitmentTime }: { commitmentTime: ethers.BigNumber }) {
+  const [{ wallet }] = useConnectWallet();
+  const [params] = useParams();
+  const walletAddress = wallet?.accounts?.[0]?.address;
   const { data: extras } = useImportExtras();
-  const settleOrder = usePerpsSettleOrder({ settlementStrategyId: extras?.eth_pyth_settlement_strategy });
+  const provider = useProvider();
+  const perpsAccountId = usePerpsSelectedAccountId();
+  const settleOrder = usePerpsSettleOrder({
+    provider,
+    walletAddress,
+    perpsMarketId: params.perpsMarketId,
+    perpsAccountId,
+    settlementStrategyId: extras?.eth_pyth_settlement_strategy,
+  });
   const { h, m, s } = usePriceUpdateTimer({
     commitmentTime: settleOrder.isError ? undefined : commitmentTime,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,

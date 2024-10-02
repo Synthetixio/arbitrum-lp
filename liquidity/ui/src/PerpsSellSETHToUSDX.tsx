@@ -1,11 +1,10 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Text } from '@chakra-ui/react';
-import { useImportExtras, useImportSystemToken, useSpotSell } from '@synthetixio/react-sdk';
+import { useImportExtras, useImportSystemToken, useSpotSell, useTokenBalance } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useProvider } from './useProvider';
-import { useTokenBalance } from './useTokenBalance';
 
 export function PerpsSellSETHToUSDX() {
   const [{ wallet }] = useConnectWallet();
@@ -24,11 +23,13 @@ export function PerpsSellSETHToUSDX() {
 
   const { data: systemToken } = useImportSystemToken();
   const { data: currentUSDXBalance } = useTokenBalance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: systemToken?.address,
   });
 
   const { data: currentSynthBalance } = useTokenBalance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: extras?.synth_eth_token_address,
   });

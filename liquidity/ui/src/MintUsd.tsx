@@ -11,32 +11,30 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useParams } from '@snx-v3/useParams';
-import { useImportSystemToken, useMintUsd, useSelectedCollateralType } from '@synthetixio/react-sdk';
+import { useImportSystemToken, useMintUsd, usePositionCollateral } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
 import { useCollateralPrice } from './useCollateralPrice';
-import { usePositionCollateral } from './usePositionCollateral';
 import { usePositionDebt } from './usePositionDebt';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
+import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function MintUsd() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
 
-  const [params] = useParams();
-
   const provider = useProvider();
   const accountId = useSelectedAccountId();
   const poolId = useSelectedPoolId();
-  const collateralType = useSelectedCollateralType({ collateralType: params.collateralType });
+  const collateralType = useSelectedCollateralType();
 
   const { data: positionCollateral } = usePositionCollateral({
+    provider,
     accountId,
     poolId,
     tokenAddress: collateralType?.address,

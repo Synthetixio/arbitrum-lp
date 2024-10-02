@@ -1,8 +1,14 @@
-import { fetchPriceUpdateTxn, useAllPriceFeeds, useErrorParser, useImportContract, useSynthetix } from '@synthetixio/react-sdk';
+import {
+  fetchAccountAvailableCollateral,
+  fetchPriceUpdateTxn,
+  useAllPriceFeeds,
+  useErrorParser,
+  useImportContract,
+  useSynthetix,
+} from '@synthetixio/react-sdk';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import type { ethers } from 'ethers';
-import { fetchAccountAvailableCollateral } from './fetchAccountAvailableCollateral';
 import { fetchWithdrawCollateral } from './fetchWithdrawCollateral';
 import { fetchWithdrawCollateralWithPriceUpdate } from './fetchWithdrawCollateralWithPriceUpdate';
 import { useProvider } from './useProvider';
@@ -22,7 +28,6 @@ export function useClaimReward({
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-
   const accountId = useSelectedAccountId();
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
@@ -65,7 +70,7 @@ export function useClaimReward({
       console.log('freshPriceUpdateTxn', freshPriceUpdateTxn);
 
       const freshAccountAvailableCollateral = await fetchAccountAvailableCollateral({
-        wallet,
+        provider,
         CoreProxyContract,
         accountId,
         tokenAddress,

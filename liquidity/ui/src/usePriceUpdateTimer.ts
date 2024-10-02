@@ -1,6 +1,8 @@
+import { useParams } from '@snx-v3/useParams';
+import { usePerpsGetSettlementStrategy } from '@synthetixio/react-sdk';
 import { ethers } from 'ethers';
 import React from 'react';
-import { usePerpsGetSettlementStrategy } from './usePerpsGetSettlementStrategy';
+import { useProvider } from './useProvider';
 
 export function usePriceUpdateTimer({
   commitmentTime,
@@ -9,7 +11,13 @@ export function usePriceUpdateTimer({
   commitmentTime?: ethers.BigNumber;
   settlementStrategyId?: string;
 }) {
-  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({ settlementStrategyId });
+  const [params] = useParams();
+  const provider = useProvider();
+  const { data: settlementStrategy } = usePerpsGetSettlementStrategy({
+    provider,
+    perpsMarketId: params.perpsMarketId,
+    settlementStrategyId,
+  });
 
   const settlementWindowDuration = settlementStrategy?.settlementWindowDuration ?? ethers.BigNumber.from(0);
   const unlockUnixtime = commitmentTime ? commitmentTime.add(settlementWindowDuration) : ethers.BigNumber.from(0);

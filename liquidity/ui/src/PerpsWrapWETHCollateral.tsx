@@ -1,16 +1,22 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Text } from '@chakra-ui/react';
-import { useCollateralTokens, useImportContract, useImportExtras } from '@synthetixio/react-sdk';
+import {
+  useCollateralTokens,
+  useImportContract,
+  useImportExtras,
+  useSpotWrap,
+  useTokenAllowance,
+  useTokenBalance,
+} from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useSpotWrap } from './useSpotWrap';
-import { useTokenAllowance } from './useTokenAllowance';
-import { useTokenBalance } from './useTokenBalance';
+import { useProvider } from './useProvider';
 
 export function PerpsWrapWETHCollateral() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
+  const provider = useProvider();
 
   const { data: SpotMarketProxyContract } = useImportContract('SpotMarketProxy');
   const { data: extras } = useImportExtras();
@@ -19,17 +25,20 @@ export function PerpsWrapWETHCollateral() {
   const tokenWETH = extras && collateralTokens.find((token) => token.address === extras.weth_address);
 
   const { data: currentBalance } = useTokenBalance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: tokenWETH?.address,
   });
 
   const { data: currentAllowance } = useTokenAllowance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: tokenWETH?.address,
     spenderAddress: SpotMarketProxyContract?.address,
   });
 
   const { data: currentSynthBalance } = useTokenBalance({
+    provider,
     ownerAddress: walletAddress,
     tokenAddress: extras?.synth_eth_token_address,
   });
@@ -38,11 +47,13 @@ export function PerpsWrapWETHCollateral() {
   const parsedAmount = parseAmount(value, 18);
 
   const wrap = useSpotWrap({
-    onSuccess: () => setValue(''),
+    provider,
+    walletAddress,
     tokenAddress: tokenWETH?.address,
     synthTokenAddress: extras?.synth_eth_token_address,
     synthMarketId: extras?.synth_eth_market_id,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,
+    onSuccess: () => setValue(''),
   });
 
   return (
