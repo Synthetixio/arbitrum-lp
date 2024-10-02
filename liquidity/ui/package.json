@@ -18,7 +18,7 @@
     "@safe-global/safe-apps-provider": "^0.18.3",
     "@safe-global/safe-apps-sdk": "^9.1.0",
     "@snx-v3/useParams": "workspace:*",
-    "@synthetixio/react-sdk": "^0.0.11",
+    "@synthetixio/react-sdk": "^0.0.13",
     "@synthetixio/safe-import": "workspace:*",
     "@tanstack/react-query-devtools": "^5.58.0",
     "@web3-onboard/coinbase": "^2.4.1",
