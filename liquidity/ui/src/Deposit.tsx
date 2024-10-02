@@ -26,10 +26,7 @@ export function Deposit() {
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const provider = useProvider();
-  const accountId = useSelectedAccountId({
-    provider,
-    walletAddress,
-  });
+  const accountId = useSelectedAccountId();
   const collateralType = useSelectedCollateralType();
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');

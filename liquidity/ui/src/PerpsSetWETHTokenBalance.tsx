@@ -13,7 +13,7 @@ export function PerpsSetWETHTokenBalance() {
   const walletAddress = wallet?.accounts?.[0]?.address;
 
   const provider = useProvider();
-  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress });
+  const perpsAccountId = usePerpsSelectedAccountId();
   const { data: extras } = useImportExtras();
   const collateralTokens = useCollateralTokens();
   const tokenWETH = extras && collateralTokens.find((token) => token.address === extras.weth_address);

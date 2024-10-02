@@ -24,10 +24,7 @@ export function useDeposit({ onSuccess }: { onSuccess: () => void }) {
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
   const provider = useProvider();
-  const accountId = useSelectedAccountId({
-    provider,
-    walletAddress,
-  });
+  const accountId = useSelectedAccountId();
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
 

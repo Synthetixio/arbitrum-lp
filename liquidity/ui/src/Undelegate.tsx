@@ -27,10 +27,7 @@ export function Undelegate() {
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
   const provider = useProvider();
-  const accountId = useSelectedAccountId({
-    provider,
-    walletAddress,
-  });
+  const accountId = useSelectedAccountId();
   const { data: positionCollateral } = usePositionCollateral({
     provider,
     accountId,

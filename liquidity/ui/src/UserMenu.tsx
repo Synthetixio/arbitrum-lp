@@ -21,10 +21,7 @@ export function UserMenu() {
   const provider = useProvider();
   const { data: accounts } = useAccounts({ provider, walletAddress });
   const createAccount = useCreateAccount();
-  const accountId = useSelectedAccountId({
-    provider,
-    walletAddress,
-  });
+  const accountId = useSelectedAccountId();
 
   return (
     <>

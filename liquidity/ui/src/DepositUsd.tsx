@@ -30,10 +30,7 @@ export function DepositUsd() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = useProvider();
-  const accountId = useSelectedAccountId({
-    provider,
-    walletAddress,
-  });
+  const accountId = useSelectedAccountId();
   const { data: systemToken } = useImportSystemToken();
 
   const { data: CoreProxyContract } = useImportContract('CoreProxy');

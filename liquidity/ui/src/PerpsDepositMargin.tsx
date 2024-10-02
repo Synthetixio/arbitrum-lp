@@ -18,7 +18,7 @@ export function PerpsDepositMargin() {
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = useProvider();
-  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress });
+  const perpsAccountId = usePerpsSelectedAccountId();
   const { data: collateralAmount } = usePerpsGetCollateralAmount({
     provider,
     perpsAccountId,

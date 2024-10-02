@@ -1,16 +1,13 @@
 import { Alert, AlertIcon, Box, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useImportSystemToken, usePerpsGetRequiredMargins } from '@synthetixio/react-sdk';
-import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { renderAmount } from './renderAmount';
 import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 import { useProvider } from './useProvider';
 
 export function PerpsRequiredMargins() {
-  const [{ wallet }] = useConnectWallet();
-  const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = useProvider();
-  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress });
+  const perpsAccountId = usePerpsSelectedAccountId();
   const requiredMargins = usePerpsGetRequiredMargins({
     provider,
     perpsAccountId,

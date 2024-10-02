@@ -70,7 +70,7 @@ const AccountHandler = () => {
   const provider = useProvider();
   const { data: accounts } = usePerpsAccounts({ provider, walletAddress });
   const [params, setParams] = useParams();
-  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress });
+  const perpsAccountId = usePerpsSelectedAccountId();
 
   const { t } = useTranslation();
 

@@ -6,7 +6,6 @@ import { ethers } from 'ethers';
 import React from 'react';
 import { renderAmount } from './renderAmount';
 import { useDeposit } from './useDeposit';
-import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
@@ -165,13 +164,7 @@ function ClaimRewards({
 export function Rewards() {
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
-  const provider = useProvider();
-  const [{ wallet }] = useConnectWallet();
-  const walletAddress = wallet?.accounts?.[0]?.address;
-  const accountId = useSelectedAccountId({
-    provider,
-    walletAddress,
-  });
+  const accountId = useSelectedAccountId();
 
   const { data: rewardsDistributors } = useImportRewardsDistributors();
   return (

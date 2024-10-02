@@ -25,10 +25,7 @@ export function Delegate() {
   const provider = useProvider();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
-  const accountId = useSelectedAccountId({
-    provider,
-    walletAddress,
-  });
+  const accountId = useSelectedAccountId();
 
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();

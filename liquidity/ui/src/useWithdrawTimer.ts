@@ -1,18 +1,10 @@
-import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { useAccountLastInteraction } from './useAccountLastInteraction';
 import { useAccountTimeoutWithdraw } from './useAccountTimeoutWithdraw';
-import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 
 export function useWithdrawTimer() {
-  const provider = useProvider();
-  const [{ wallet }] = useConnectWallet();
-  const walletAddress = wallet?.accounts?.[0]?.address;
-  const accountId = useSelectedAccountId({
-    provider,
-    walletAddress,
-  });
+  const accountId = useSelectedAccountId();
   const { data: accountTimeoutWithdraw } = useAccountTimeoutWithdraw();
   const { data: accountLastInteraction } = useAccountLastInteraction({
     accountId,

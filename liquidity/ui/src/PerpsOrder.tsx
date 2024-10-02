@@ -1,7 +1,6 @@
 import { Alert, AlertIcon, Box, Heading, Spinner, Text, VStack } from '@chakra-ui/react';
 import { useParams } from '@snx-v3/useParams';
 import { useImportExtras, useImportSystemToken, usePerpsGetOrder, usePerpsGetSettlementStrategy } from '@synthetixio/react-sdk';
-import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 import { PerpsSettleOrder } from './PerpsSettleOrder';
@@ -10,11 +9,9 @@ import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 import { useProvider } from './useProvider';
 
 export function PerpsOrder() {
-  const [{ wallet }] = useConnectWallet();
-  const walletAddress = wallet?.accounts?.[0]?.address;
   const provider = useProvider();
   const [params] = useParams();
-  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress });
+  const perpsAccountId = usePerpsSelectedAccountId();
   const order = usePerpsGetOrder({
     provider,
     perpsAccountId,

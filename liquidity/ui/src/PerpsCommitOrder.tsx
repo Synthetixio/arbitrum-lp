@@ -36,7 +36,7 @@ export function PerpsCommitOrder() {
     perpsMarketId: params.perpsMarketId ? ethers.BigNumber.from(params.perpsMarketId) : undefined,
   });
 
-  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress });
+  const perpsAccountId = usePerpsSelectedAccountId();
 
   const availableMargin = usePerpsGetAvailableMargin({
     provider,

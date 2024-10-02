@@ -47,11 +47,13 @@ export function PerpsWrapWETHCollateral() {
   const parsedAmount = parseAmount(value, 18);
 
   const wrap = useSpotWrap({
-    onSuccess: () => setValue(''),
+    provider,
+    walletAddress,
     tokenAddress: tokenWETH?.address,
     synthTokenAddress: extras?.synth_eth_token_address,
     synthMarketId: extras?.synth_eth_market_id,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,
+    onSuccess: () => setValue(''),
   });
 
   return (

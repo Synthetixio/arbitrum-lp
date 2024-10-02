@@ -14,7 +14,7 @@ export function PerpsSettleOrder({ commitmentTime }: { commitmentTime: ethers.Bi
   const walletAddress = wallet?.accounts?.[0]?.address;
   const { data: extras } = useImportExtras();
   const provider = useProvider();
-  const perpsAccountId = usePerpsSelectedAccountId({ provider, walletAddress });
+  const perpsAccountId = usePerpsSelectedAccountId();
   const settleOrder = usePerpsSettleOrder({
     provider,
     walletAddress,

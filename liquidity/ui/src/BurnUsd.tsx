@@ -12,7 +12,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useAccountAvailableCollateral, useImportSystemToken } from '@synthetixio/react-sdk';
-import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
@@ -28,12 +27,8 @@ export function BurnUsd() {
 
   const collateralType = useSelectedCollateralType();
   const poolId = useSelectedPoolId();
-  const [{ wallet }] = useConnectWallet();
-  const walletAddress = wallet?.accounts?.[0]?.address;
-  const accountId = useSelectedAccountId({
-    provider,
-    walletAddress,
-  });
+
+  const accountId = useSelectedAccountId();
 
   const { data: positionDebt } = usePositionDebt({
     accountId,
