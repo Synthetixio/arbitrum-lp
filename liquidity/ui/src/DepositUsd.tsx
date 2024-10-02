@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import {
   useAccountAvailableCollateral,
+  useDeposit,
   useImportContract,
   useImportSystemToken,
   useTokenAllowance,
@@ -22,9 +23,10 @@ import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useDeposit } from './useDeposit';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
+import { useSelectedCollateralType } from './useSelectedCollateralType';
+import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function DepositUsd() {
   const [{ wallet }] = useConnectWallet();
@@ -56,8 +58,14 @@ export function DepositUsd() {
 
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, systemToken?.decimals);
-
+  const poolId = useSelectedPoolId();
+  const collateralType = useSelectedCollateralType();
   const deposit = useDeposit({
+    provider,
+    walletAddress,
+    accountId,
+    poolId,
+    collateralTypeTokenAddress: collateralType?.address,
     onSuccess: () => setValue(''),
   });
 

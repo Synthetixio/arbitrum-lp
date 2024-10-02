@@ -11,7 +11,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useAccountAvailableCollateral, useTokenBalance } from '@synthetixio/react-sdk';
+import { useAccountAvailableCollateral, useTokenBalance, useWithdraw, useWithdrawTimer } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
@@ -19,8 +19,6 @@ import { renderAmount } from './renderAmount';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
-import { useWithdraw } from './useWithdraw';
-import { useWithdrawTimer } from './useWithdrawTimer';
 
 export function WithdrawCollateral() {
   const [{ wallet }] = useConnectWallet();
@@ -46,11 +44,16 @@ export function WithdrawCollateral() {
   const parsedAmount = parseAmount(value, collateralType?.decimals);
 
   const withdraw = useWithdraw({
+    provider,
+    walletAddress,
+    accountId,
     tokenAddress: collateralType?.address,
     onSuccess: () => setValue(''),
   });
-
-  const withdrawTimer = useWithdrawTimer();
+  const withdrawTimer = useWithdrawTimer({
+    provider,
+    accountId,
+  });
 
   return (
     <Stack
