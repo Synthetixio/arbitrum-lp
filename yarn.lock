@@ -4529,7 +4529,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pythnetwork/pyth-evm-js@npm:^1.56.1, @pythnetwork/pyth-evm-js@npm:^1.68.0":
+"@pythnetwork/pyth-evm-js@npm:^1.56.1":
   version: 1.68.0
   resolution: "@pythnetwork/pyth-evm-js@npm:1.68.0"
   dependencies:
@@ -4706,7 +4706,6 @@ __metadata:
     "@emotion/react": "npm:^11.13.3"
     "@emotion/styled": "npm:^11.13.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.15"
-    "@pythnetwork/pyth-evm-js": "npm:^1.68.0"
     "@safe-global/safe-apps-provider": "npm:^0.18.3"
     "@safe-global/safe-apps-sdk": "npm:^9.1.0"
     "@snx-v3/useParams": "workspace:*"
@@ -4718,7 +4717,6 @@ __metadata:
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-helmet": "npm:^6.1.11"
     "@web3-onboard/coinbase": "npm:^2.4.1"
-    "@web3-onboard/core": "npm:^2.22.3"
     "@web3-onboard/gnosis": "npm:^2.3.2"
     "@web3-onboard/injected-wallets": "npm:^2.11.2"
     "@web3-onboard/ledger": "npm:2.7.1"
@@ -6453,7 +6451,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/core@npm:2.22.3, @web3-onboard/core@npm:^2.22.3":
+"@web3-onboard/core@npm:2.22.3":
   version: 2.22.3
   resolution: "@web3-onboard/core@npm:2.22.3"
   dependencies:
