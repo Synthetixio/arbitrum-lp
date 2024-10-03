@@ -11,15 +11,15 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useAccountAvailableCollateral, useImportContract, useTokenAllowance, useTokenBalance } from '@synthetixio/react-sdk';
+import { useAccountAvailableCollateral, useDeposit, useImportContract, useTokenAllowance, useTokenBalance } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useDeposit } from './useDeposit';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
+import { useSelectedPoolId } from './useSelectedPoolId';
 
 export function Deposit() {
   const [{ wallet }] = useConnectWallet();
@@ -52,8 +52,14 @@ export function Deposit() {
 
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, collateralType?.decimals);
+  const poolId = useSelectedPoolId();
 
   const deposit = useDeposit({
+    provider,
+    walletAddress,
+    accountId,
+    poolId,
+    collateralTypeTokenAddress: collateralType?.address,
     onSuccess: () => setValue(''),
   });
 

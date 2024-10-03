@@ -4529,7 +4529,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pythnetwork/pyth-evm-js@npm:^1.56.1, @pythnetwork/pyth-evm-js@npm:^1.68.0":
+"@pythnetwork/pyth-evm-js@npm:^1.56.1":
   version: 1.68.0
   resolution: "@pythnetwork/pyth-evm-js@npm:1.68.0"
   dependencies:
@@ -4706,11 +4706,10 @@ __metadata:
     "@emotion/react": "npm:^11.13.3"
     "@emotion/styled": "npm:^11.13.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:^0.5.15"
-    "@pythnetwork/pyth-evm-js": "npm:^1.68.0"
     "@safe-global/safe-apps-provider": "npm:^0.18.3"
     "@safe-global/safe-apps-sdk": "npm:^9.1.0"
     "@snx-v3/useParams": "workspace:*"
-    "@synthetixio/react-sdk": "npm:^0.0.13"
+    "@synthetixio/react-sdk": "npm:^0.0.14"
     "@synthetixio/safe-import": "workspace:*"
     "@tanstack/react-query": "npm:^5.56.2"
     "@tanstack/react-query-devtools": "npm:^5.58.0"
@@ -4718,7 +4717,6 @@ __metadata:
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-helmet": "npm:^6.1.11"
     "@web3-onboard/coinbase": "npm:^2.4.1"
-    "@web3-onboard/core": "npm:^2.22.3"
     "@web3-onboard/gnosis": "npm:^2.3.2"
     "@web3-onboard/injected-wallets": "npm:^2.11.2"
     "@web3-onboard/ledger": "npm:2.7.1"
@@ -4999,9 +4997,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@synthetixio/react-sdk@npm:^0.0.13":
-  version: 0.0.13
-  resolution: "@synthetixio/react-sdk@npm:0.0.13"
+"@synthetixio/react-sdk@npm:^0.0.14":
+  version: 0.0.14
+  resolution: "@synthetixio/react-sdk@npm:0.0.14"
   dependencies:
     "@pythnetwork/pyth-evm-js": "npm:^1.56.1"
     "@synthetixio/v3-contracts": "npm:^6.13.0"
@@ -5010,7 +5008,7 @@ __metadata:
     ethers: "npm:^5.7.2"
     react: "npm:^18.3.1"
     viem: "npm:^2.17.1"
-  checksum: 10/39219ed66694ee699a09ec98002d1ae4f54355a69d59a28bd9583d652851209c87b045d554698529c3da3146c080f934a3f52dd2950b93eb1038602448b97528
+  checksum: 10/4cdfe1c3aed8b20502ec7d1063dd9c8691ac91dba3836634714779b4e3773d60811a3d15cb7001ad0626ea81fa4a10e2878b51159974dbd8e8ef961459415269
   languageName: node
   linkType: hard
 
@@ -6453,7 +6451,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/core@npm:2.22.3, @web3-onboard/core@npm:^2.22.3":
+"@web3-onboard/core@npm:2.22.3":
   version: 2.22.3
   resolution: "@web3-onboard/core@npm:2.22.3"
   dependencies:

@@ -1,10 +1,9 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Text } from '@chakra-ui/react';
-import { useCollateralTokens, useImportExtras, useTokenBalance, useWethDeposit } from '@synthetixio/react-sdk';
+import { useCollateralTokens, useEthBalance, useImportExtras, useTokenBalance, useWethDeposit } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useEthBalance } from './useEthBalance';
 import { usePerpsSelectedAccountId } from './usePerpsSelectedAccountId';
 import { useProvider } from './useProvider';
 
@@ -18,7 +17,7 @@ export function PerpsSetWETHTokenBalance() {
   const collateralTokens = useCollateralTokens();
   const tokenWETH = extras && collateralTokens.find((token) => token.address === extras.weth_address);
 
-  const currentEthBalance = useEthBalance();
+  const currentEthBalance = useEthBalance({ provider, walletAddress });
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,

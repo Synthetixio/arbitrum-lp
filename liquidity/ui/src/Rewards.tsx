@@ -1,11 +1,11 @@
 import { Button, Heading, InputGroup, Stack } from '@chakra-ui/react';
-import { useErrorParser, useImportContract, useImportRewardsDistributors, useSynthetix } from '@synthetixio/react-sdk';
+import { useDeposit, useErrorParser, useImportContract, useImportRewardsDistributors, useSynthetix } from '@synthetixio/react-sdk';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useConnectWallet, useSetChain } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 import { renderAmount } from './renderAmount';
-import { useDeposit } from './useDeposit';
+import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
 import { useSelectedPoolId } from './useSelectedPoolId';
@@ -35,16 +35,23 @@ function ClaimRewards({
     isRegistered: boolean;
   };
 }) {
-  const claim = useDeposit({
-    onSuccess: () => {},
-  });
-
   const { chainId } = useSynthetix();
   const errorParser = useErrorParser();
   const [{ connectedChain }] = useSetChain();
   const [{ wallet }] = useConnectWallet();
   const walletAddress = wallet?.accounts?.[0]?.address;
   const { data: CoreProxyContract } = useImportContract('CoreProxy');
+  const provider = useProvider();
+  const poolId = useSelectedPoolId();
+  const collateralType = useSelectedCollateralType();
+  const claim = useDeposit({
+    provider,
+    walletAddress,
+    accountId,
+    poolId,
+    collateralTypeTokenAddress: collateralType?.address,
+    onSuccess: () => {},
+  });
 
   const isChainReady = connectedChain?.id && chainId && chainId === Number.parseInt(connectedChain?.id, 16);
 

@@ -11,14 +11,12 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useImportSystemToken, useMintUsd, usePositionCollateral } from '@synthetixio/react-sdk';
+import { useCollateralPrice, useImportSystemToken, useMintUsd, usePositionCollateral, usePositionDebt } from '@synthetixio/react-sdk';
 import { useConnectWallet } from '@web3-onboard/react';
 import { ethers } from 'ethers';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useCollateralPrice } from './useCollateralPrice';
-import { usePositionDebt } from './usePositionDebt';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
@@ -41,10 +39,12 @@ export function MintUsd() {
   });
 
   const { data: collateralPrice } = useCollateralPrice({
+    provider,
     tokenAddress: collateralType?.address,
   });
 
   const { data: positionDebt } = usePositionDebt({
+    provider,
     accountId,
     poolId,
     tokenAddress: collateralType?.address,

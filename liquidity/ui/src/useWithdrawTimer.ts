@@ -1,12 +1,14 @@
+import { useAccountLastInteraction, useAccountTimeoutWithdraw } from '@synthetixio/react-sdk';
 import React from 'react';
-import { useAccountLastInteraction } from './useAccountLastInteraction';
-import { useAccountTimeoutWithdraw } from './useAccountTimeoutWithdraw';
+import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 
 export function useWithdrawTimer() {
+  const provider = useProvider();
   const accountId = useSelectedAccountId();
-  const { data: accountTimeoutWithdraw } = useAccountTimeoutWithdraw();
+  const { data: accountTimeoutWithdraw } = useAccountTimeoutWithdraw({ provider });
   const { data: accountLastInteraction } = useAccountLastInteraction({
+    provider,
     accountId,
   });
   const unlockUnixtime =

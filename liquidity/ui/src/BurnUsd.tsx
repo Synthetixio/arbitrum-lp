@@ -11,12 +11,10 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { useAccountAvailableCollateral, useImportSystemToken } from '@synthetixio/react-sdk';
+import { useAccountAvailableCollateral, useBurnUsd, useImportSystemToken, usePositionDebt } from '@synthetixio/react-sdk';
 import React from 'react';
 import { parseAmount } from './parseAmount';
 import { renderAmount } from './renderAmount';
-import { useBurnUsd } from './useBurnUsd';
-import { usePositionDebt } from './usePositionDebt';
 import { useProvider } from './useProvider';
 import { useSelectedAccountId } from './useSelectedAccountId';
 import { useSelectedCollateralType } from './useSelectedCollateralType';
@@ -31,6 +29,7 @@ export function BurnUsd() {
   const accountId = useSelectedAccountId();
 
   const { data: positionDebt } = usePositionDebt({
+    provider,
     accountId,
     poolId,
     tokenAddress: collateralType?.address,
@@ -48,6 +47,10 @@ export function BurnUsd() {
   const parsedAmount = parseAmount(value, collateralType?.decimals);
 
   const burnUsd = useBurnUsd({
+    provider,
+    accountId,
+    collateralTypeTokenAddress: collateralType?.address,
+    poolId,
     onSuccess: () => setValue(''),
   });
 
