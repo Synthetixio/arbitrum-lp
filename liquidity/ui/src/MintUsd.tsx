@@ -65,7 +65,7 @@ export function MintUsd() {
     provider,
     walletAddress,
     accountId,
-    collateralTokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
     poolId,
     onSuccess: () => {
       setValue('');
