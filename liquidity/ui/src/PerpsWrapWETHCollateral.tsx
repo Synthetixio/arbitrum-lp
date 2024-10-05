@@ -27,20 +27,20 @@ export function PerpsWrapWETHCollateral() {
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: tokenWETH?.address,
+    collateralTypeTokenAddress: tokenWETH?.address,
   });
 
   const { data: currentAllowance } = useTokenAllowance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: tokenWETH?.address,
+    collateralTypeTokenAddress: tokenWETH?.address,
     spenderAddress: SpotMarketProxyContract?.address,
   });
 
   const { data: currentSynthBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: extras?.synth_eth_token_address,
+    collateralTypeTokenAddress: extras?.synth_eth_token_address,
   });
 
   const [value, setValue] = React.useState('');
@@ -49,7 +49,7 @@ export function PerpsWrapWETHCollateral() {
   const wrap = useSpotWrap({
     provider,
     walletAddress,
-    tokenAddress: tokenWETH?.address,
+    collateralTypeTokenAddress: tokenWETH?.address,
     synthTokenAddress: extras?.synth_eth_token_address,
     synthMarketId: extras?.synth_eth_market_id,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,

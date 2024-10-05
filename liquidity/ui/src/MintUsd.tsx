@@ -35,19 +35,19 @@ export function MintUsd() {
     provider,
     accountId,
     poolId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
 
   const { data: collateralPrice } = useCollateralPrice({
     provider,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
 
   const { data: positionDebt } = usePositionDebt({
     provider,
     accountId,
     poolId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
   const readableDebt = positionDebt?.abs().gte(ethers.utils.parseUnits('0.1', 18)) ? positionDebt : ethers.BigNumber.from(0);
 

@@ -25,13 +25,13 @@ export function PerpsSellSETHToUSDX() {
   const { data: currentUSDXBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: systemToken?.address,
+    collateralTypeTokenAddress: systemToken?.address,
   });
 
   const { data: currentSynthBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: extras?.synth_eth_token_address,
+    collateralTypeTokenAddress: extras?.synth_eth_token_address,
   });
 
   const [value, setValue] = React.useState('');

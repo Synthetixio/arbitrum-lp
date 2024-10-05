@@ -35,12 +35,12 @@ export function PerpsDepositMargin() {
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: systemToken?.address,
+    collateralTypeTokenAddress: systemToken?.address,
   });
   const { data: currentAllowance } = useTokenAllowance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: systemToken?.address,
+    collateralTypeTokenAddress: systemToken?.address,
     spenderAddress: PerpsMarketProxyContract?.address,
   });
 

@@ -34,20 +34,20 @@ export function Deposit() {
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
 
   const { data: currentAllowance } = useTokenAllowance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
     spenderAddress: CoreProxyContract?.address,
   });
 
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
     provider,
     accountId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
 
   const [value, setValue] = React.useState('');

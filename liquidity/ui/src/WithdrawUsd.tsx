@@ -30,13 +30,13 @@ export function WithdrawUsd() {
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
     provider,
     accountId,
-    tokenAddress: systemToken?.address,
+    collateralTypeTokenAddress: systemToken?.address,
   });
 
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    tokenAddress: systemToken?.address,
+    collateralTypeTokenAddress: systemToken?.address,
   });
 
   const [value, setValue] = React.useState('');
@@ -46,7 +46,7 @@ export function WithdrawUsd() {
     provider,
     walletAddress,
     accountId,
-    tokenAddress: systemToken?.address,
+    collateralTypeTokenAddress: systemToken?.address,
     onSuccess: () => setValue(''),
   });
 
