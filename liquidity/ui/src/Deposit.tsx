@@ -34,13 +34,13 @@ export function Deposit() {
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    collateralTypeTokenAddress: collateralType?.address,
+    tokenAddress: collateralType?.address,
   });
 
   const { data: currentAllowance } = useTokenAllowance({
     provider,
     ownerAddress: walletAddress,
-    collateralTypeTokenAddress: collateralType?.address,
+    tokenAddress: collateralType?.address,
     spenderAddress: CoreProxyContract?.address,
   });
 

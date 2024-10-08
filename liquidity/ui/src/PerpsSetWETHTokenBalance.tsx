@@ -21,7 +21,7 @@ export function PerpsSetWETHTokenBalance() {
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    collateralTypeTokenAddress: tokenWETH?.address,
+    tokenAddress: tokenWETH?.address,
   });
 
   const [value, setValue] = React.useState('');

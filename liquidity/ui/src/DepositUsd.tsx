@@ -40,13 +40,13 @@ export function DepositUsd() {
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    collateralTypeTokenAddress: systemToken?.address,
+    tokenAddress: systemToken?.address,
   });
 
   const { data: currentAllowance } = useTokenAllowance({
     provider,
     ownerAddress: walletAddress,
-    collateralTypeTokenAddress: systemToken?.address,
+    tokenAddress: systemToken?.address,
     spenderAddress: CoreProxyContract?.address,
   });
 

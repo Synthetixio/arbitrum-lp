@@ -36,7 +36,7 @@ export function WithdrawUsd() {
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    collateralTypeTokenAddress: systemToken?.address,
+    tokenAddress: systemToken?.address,
   });
 
   const [value, setValue] = React.useState('');

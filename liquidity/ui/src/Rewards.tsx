@@ -151,7 +151,7 @@ function ClaimRewards({
           chainId,
           'Balance',
           {
-            collateralTypeTokenAddress: rewardsDistributor?.collateralType?.address,
+            tokenAddress: rewardsDistributor?.collateralType?.address,
             ownerAddress: walletAddress,
           },
         ],

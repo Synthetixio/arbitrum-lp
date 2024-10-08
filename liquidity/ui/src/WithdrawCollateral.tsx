@@ -38,7 +38,7 @@ export function WithdrawCollateral() {
   const { data: currentBalance } = useTokenBalance({
     provider,
     ownerAddress: walletAddress,
-    collateralTypeTokenAddress: collateralType?.address,
+    tokenAddress: collateralType?.address,
   });
 
   const [value, setValue] = React.useState('');
