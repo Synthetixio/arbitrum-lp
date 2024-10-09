@@ -32,7 +32,7 @@ export function BurnUsd() {
     provider,
     accountId,
     poolId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
 
   const { data: systemToken } = useImportSystemToken();
@@ -40,7 +40,7 @@ export function BurnUsd() {
   const { data: accountAvailableUsd } = useAccountAvailableCollateral({
     provider,
     accountId,
-    tokenAddress: systemToken?.address,
+    collateralTypeTokenAddress: systemToken?.address,
   });
 
   const [value, setValue] = React.useState('');

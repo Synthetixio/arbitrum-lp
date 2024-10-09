@@ -33,14 +33,14 @@ export function Delegate() {
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
     provider,
     accountId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
 
   const { data: positionCollateral } = usePositionCollateral({
     provider,
     accountId,
     poolId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
 
   const [value, setValue] = React.useState('');

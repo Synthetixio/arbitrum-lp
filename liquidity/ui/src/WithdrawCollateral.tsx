@@ -32,7 +32,7 @@ export function WithdrawCollateral() {
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
     provider,
     accountId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
 
   const { data: currentBalance } = useTokenBalance({
@@ -48,7 +48,7 @@ export function WithdrawCollateral() {
     provider,
     walletAddress,
     accountId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
     onSuccess: () => setValue(''),
   });
   const withdrawTimer = useWithdrawTimer();

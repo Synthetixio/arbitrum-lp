@@ -47,7 +47,7 @@ export function Deposit() {
   const { data: accountAvailableCollateral } = useAccountAvailableCollateral({
     provider,
     accountId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
 
   const [value, setValue] = React.useState('');

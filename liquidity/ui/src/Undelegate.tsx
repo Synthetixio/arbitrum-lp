@@ -32,7 +32,7 @@ export function Undelegate() {
     provider,
     accountId,
     poolId,
-    tokenAddress: collateralType?.address,
+    collateralTypeTokenAddress: collateralType?.address,
   });
   const [value, setValue] = React.useState('');
   const parsedAmount = parseAmount(value, collateralType?.decimals);

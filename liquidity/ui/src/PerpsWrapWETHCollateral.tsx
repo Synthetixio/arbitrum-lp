@@ -49,7 +49,7 @@ export function PerpsWrapWETHCollateral() {
   const wrap = useSpotWrap({
     provider,
     walletAddress,
-    tokenAddress: tokenWETH?.address,
+    collateralTypeTokenAddress: tokenWETH?.address,
     synthTokenAddress: extras?.synth_eth_token_address,
     synthMarketId: extras?.synth_eth_market_id,
     settlementStrategyId: extras?.eth_pyth_settlement_strategy,

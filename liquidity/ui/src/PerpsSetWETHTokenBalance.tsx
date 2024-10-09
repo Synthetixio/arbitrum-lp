@@ -30,7 +30,7 @@ export function PerpsSetWETHTokenBalance() {
     provider,
     walletAddress,
     perpsAccountId,
-    tokenAddress: tokenWETH?.address,
+    collateralTypeTokenAddress: tokenWETH?.address,
     onSuccess: () => {
       setValue('');
     },
