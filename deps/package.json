@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "depcheck": "^1.4.7",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   },
   "depcheck": {
     "ignorePatterns": [],
