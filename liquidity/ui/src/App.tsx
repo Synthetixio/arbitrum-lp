@@ -73,7 +73,7 @@ export const onboard = init({
       displayUnavailable: [ProviderLabel.MetaMask, ProviderLabel.Trust],
     }),
     trezorModule({
-      appUrl: 'https://liquidity.synthetix.eth.limo',
+      appUrl: 'https://liquidity.synthetix.io',
       email: 'info@synthetix.io',
     }),
     ledgerModule({
@@ -83,7 +83,7 @@ export const onboard = init({
     walletConnectModule({
       version: 2,
       projectId: 'd6eac005846a1c3be1f8eea3a294eed9',
-      dappUrl: 'liquidity.synthetix.eth.limo',
+      dappUrl: 'liquidity.synthetix.io',
     }),
     gnosisModule(),
   ],
