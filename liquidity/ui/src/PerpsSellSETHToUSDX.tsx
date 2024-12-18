@@ -46,7 +46,7 @@ export function PerpsSellSETHToUSDX() {
         p={6}
         m="5% auto"
         as="form"
-        onSubmit={(e) => {
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           sell.mutate(parsedAmount);
         }}
