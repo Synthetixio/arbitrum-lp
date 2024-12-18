@@ -76,7 +76,7 @@ export function PerpsCommitOrder() {
         p={6}
         m="5% auto"
         as="form"
-        onSubmit={(e) => {
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           commitOrder.mutate(parsedAmount);
         }}
