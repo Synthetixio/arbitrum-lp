@@ -10,14 +10,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 //   PersistedClient,
 //   Persister,
 // } from '@tanstack/react-query-persist-client'
-import coinbaseModule from '@web3-onboard/coinbase';
-import gnosisModule from '@web3-onboard/gnosis';
 import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets';
-import ledgerModule from '@web3-onboard/ledger';
-import metamaskSDK from '@web3-onboard/metamask';
 import { Web3OnboardProvider, init, useConnectWallet, useSetChain } from '@web3-onboard/react';
-import trezorModule from '@web3-onboard/trezor';
-import walletConnectModule from '@web3-onboard/walletconnect';
 import { ethers } from 'ethers';
 import React, { useEffect } from 'react';
 import { HashRouter, Outlet, Route, NavLink as RouterLink, Routes } from 'react-router-dom';
@@ -40,15 +34,6 @@ import WarpcastIcon from './warpcast.svg';
 import XIcon from './x.svg';
 import YoutubeIcon from './youtube.svg';
 
-const metamaskSDKWallet = metamaskSDK({
-  options: {
-    extensionOnly: true,
-    dappMetadata: {
-      name: 'Example Web3-Onboard Dapp',
-    },
-  },
-});
-
 export const appMetadata = {
   name: 'Synthetix Liquidity',
   icon: SynthetixIcon,
@@ -66,27 +51,7 @@ export const onboard = init({
     autoConnectLastWallet: true,
     autoConnectAllPreviousWallet: true,
   },
-  wallets: [
-    metamaskSDKWallet,
-    coinbaseModule(),
-    injectedModule({
-      displayUnavailable: [ProviderLabel.MetaMask, ProviderLabel.Trust],
-    }),
-    trezorModule({
-      appUrl: 'https://liquidity.synthetix.io',
-      email: 'info@synthetix.io',
-    }),
-    ledgerModule({
-      projectId: 'd6eac005846a1c3be1f8eea3a294eed9',
-      walletConnectVersion: 2,
-    }),
-    walletConnectModule({
-      version: 2,
-      projectId: 'd6eac005846a1c3be1f8eea3a294eed9',
-      dappUrl: 'liquidity.synthetix.io',
-    }),
-    gnosisModule(),
-  ],
+  wallets: [injectedModule()],
   chains: [
     {
       id: 42161,
